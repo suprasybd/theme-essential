@@ -29,7 +29,7 @@ const NavBar: React.FC = () => {
   }, [cart]);
 
   return (
-    <div className="w-full max-w-[1220px] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
+    <div className="w-full max-w-[1220px] mx-auto gap-6 py-6 px-4 sm:px-8  bg-white  border border-t-0 border-l-0 border-r-0 border-b-slate-300">
       <div className="flex justify-between">
         <div>
           <Search strokeWidth={'1px'} />
