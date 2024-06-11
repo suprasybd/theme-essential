@@ -8,6 +8,7 @@ import {
   CarouselPrevious,
 } from '@frontend.suprasy.com/ui';
 import { ProductImagesTypes } from '../../api/types';
+import ImagePreview from '@web/components/Image/ImagePreview';
 
 interface ProductImagesPropTypes {
   Images: ProductImagesTypes[];
@@ -20,7 +21,7 @@ const ProductImages: React.FC<ProductImagesPropTypes> = ({ Images }) => {
   return (
     <div>
       <div className="max-w-[500px] max-h-[500px] sm:w-[500px] sm:h-[500px] flex justify-center items-center">
-        <img
+        <ImagePreview
           alt="prodcut details"
           className="mb-3"
           sizes="(min-width: 1200px) 495px, (min-width: 990px) calc(45.0vw - 10rem), (min-width: 750px) calc((100vw - 11.5rem) / 2), calc(100vw / 1 - 4rem)"
@@ -41,7 +42,7 @@ const ProductImages: React.FC<ProductImagesPropTypes> = ({ Images }) => {
               <div className="p-1">
                 <Card>
                   <CardContent className="flex aspect-square items-center justify-center p-2">
-                    <img src={image.ImageUrl} alt="single product" />
+                    <ImagePreview src={image.ImageUrl} alt="single product" />
                   </CardContent>
                 </Card>
               </div>
