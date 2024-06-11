@@ -15,6 +15,7 @@ import {
 } from '@web/pages/products/api';
 import { useCartStore } from '@web/store/cartStore';
 import React from 'react';
+import ImagePreview from '../Image/ImagePreview';
 
 const ProductCard: React.FC<{ ProductId: number }> = ({ ProductId }) => {
   const { data: productsDetailsResponse } = useQuery({
@@ -73,7 +74,7 @@ const ProductCard: React.FC<{ ProductId: number }> = ({ ProductId }) => {
         >
           <div>
             {productImages && productImages.length > 0 && (
-              <img
+              <ImagePreview
                 className="w-full h-[200px] object-fill"
                 src={productImages[0].ImageUrl}
                 alt="Zifriend ZA981 Gaming Headset"
