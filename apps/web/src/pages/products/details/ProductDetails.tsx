@@ -8,7 +8,7 @@ import React, { useEffect, useState } from 'react';
 import {
   getProductAttributeName,
   getProductAttributeOptions,
-  getProductImages,
+  getProductImagesOption,
   getProductSku,
   getProductsDetails,
 } from '../api';
@@ -56,11 +56,9 @@ const ProductDetails: React.FC = () => {
 
   const productDetails = productsDetailsResponse?.Data;
 
-  const { data: productImagesResponse } = useQuery({
-    queryKey: ['getProductImages', productDetails?.Id],
-    queryFn: () => getProductImages(productDetails?.Id || 0),
-    enabled: !!productDetails?.Id,
-  });
+  const { data: productImagesResponse } = useSuspenseQuery(
+    getProductImagesOption(productDetails.Id)
+  );
 
   const { data: productSkuResponse } = useQuery({
     queryKey: ['getProductSku', productDetails?.Id],

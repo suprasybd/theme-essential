@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import cn from 'classnames';
 
 import './styles.css';
+import { Image } from 'lucide-react';
 
 const ImagePreview: React.FC<{
   alt: string;
@@ -18,17 +19,14 @@ const ImagePreview: React.FC<{
   };
 
   return (
-    <div className={cn(className, 'image-preview')}>
-      {isLoading && (
-        <div
-          className={cn(
-            className,
-            'flex justify-center items-center bg-[#e8e8e8] text-white'
-          )}
-        >
-          <div className="loader"></div>
-        </div>
+    <div
+      className={cn(
+        className,
+        'image-preview',
+        isLoading && 'bg-slate-200 flex justify-center items-center'
       )}
+    >
+      {isLoading && <Image size={'50px'} className="text-slate-400" />}
 
       <img
         sizes={sizes || ''}
