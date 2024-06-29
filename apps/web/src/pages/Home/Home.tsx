@@ -1,15 +1,19 @@
 import Cards from '@web/components/Home/Cards';
 import { Discount } from '@web/components/Home/Discount';
-import { getHomeSections, getHomesectionsProducts } from './api/index';
-import { useQuery } from '@tanstack/react-query';
+import {
+  getHomeSections,
+  getHomeSectionsOptions,
+  getHomesectionsProducts,
+  getHomesectionsProductsOptions,
+} from './api/index';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Button, RichTextRender } from '@frontend.suprasy.com/ui';
 import ProductCard from '@web/components/ProductCard/ProductCard';
 
 const Home = () => {
-  const { data: homeSectionsResponse, refetch } = useQuery({
-    queryKey: ['getHomeSections'],
-    queryFn: () => getHomeSections(),
-  });
+  const { data: homeSectionsResponse, refetch } = useSuspenseQuery(
+    getHomeSectionsOptions()
+  );
 
   const homeSesctions = homeSectionsResponse?.Data;
 
@@ -37,11 +41,9 @@ const Home = () => {
 };
 
 const SectionProducts: React.FC<{ sectionId: number }> = ({ sectionId }) => {
-  const { data: sectionProductsResponse } = useQuery({
-    queryKey: ['getSectionsProducts', sectionId],
-    queryFn: () => getHomesectionsProducts(sectionId),
-    enabled: !!sectionId,
-  });
+  const { data: sectionProductsResponse } = useSuspenseQuery(
+    getHomesectionsProductsOptions(sectionId)
+  );
   const sectionProducts = sectionProductsResponse?.Data;
 
   return (

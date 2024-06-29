@@ -1,5 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
-import { redirect, useNavigate, useParams } from '@tanstack/react-router';
+import {
+  queryOptions,
+  useQuery,
+  useSuspenseQuery,
+} from '@tanstack/react-query';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import React, { useEffect, useState } from 'react';
 import {
   getProductAttributeName,
@@ -14,23 +18,23 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-  Card,
-  CardContent,
   Button,
 } from '@frontend.suprasy.com/ui';
 import cn from 'classnames';
 import ProductImages from './components/ProductImages';
-import ProductInfo from './components/ProductInfo';
+
 import {
   calculateDiscountPercentage,
   formatPrice,
 } from '@web/libs/helpers/formatPrice';
 import { useCartStore } from '@web/store/cartStore';
+
+export const getProductsDetailsOptions = (slug: string) =>
+  queryOptions({
+    queryKey: ['getProductsDetails', slug],
+    queryFn: () => getProductsDetails(slug),
+    enabled: !!slug,
+  });
 
 const ProductDetails: React.FC = () => {
   const { slug } = useParams({ strict: false }) as { slug: string };
@@ -45,12 +49,10 @@ const ProductDetails: React.FC = () => {
     setQuantity: setQtyCart,
     clearCart,
   } = useCartStore((state) => state);
-  console.log(cart, 'cart');
-  const { data: productsDetailsResponse } = useQuery({
-    queryKey: ['getProductsDetails', slug],
-    queryFn: () => getProductsDetails(slug),
-    enabled: !!slug,
-  });
+
+  const { data: productsDetailsResponse } = useSuspenseQuery(
+    getProductsDetailsOptions(slug)
+  );
 
   const productDetails = productsDetailsResponse?.Data;
 

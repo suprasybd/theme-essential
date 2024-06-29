@@ -1,19 +1,16 @@
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { useCartStore } from '@web/store/cartStore';
 import { useModalStore } from '@web/store/modalStore';
-import { Search, ShoppingBag, ShoppingCart, User } from 'lucide-react';
+import { Search, ShoppingBag, User } from 'lucide-react';
 import React, { useMemo } from 'react';
-import { getCategories } from './api';
+import { getCategoriesOptions } from './api';
 
 const NavBar: React.FC = () => {
   const { setModalPath } = useModalStore((state) => state);
   const { cart } = useCartStore((state) => state);
 
-  const { data: catagoriesResponse } = useQuery({
-    queryFn: () => getCategories(),
-    queryKey: ['getCategoriesResponse'],
-  });
+  const { data: catagoriesResponse } = useSuspenseQuery(getCategoriesOptions());
   const categories = catagoriesResponse?.Data;
 
   const totalCartQuantity = useMemo(() => {
