@@ -5,6 +5,7 @@ import { routeTree } from './routeTree.gen';
 
 import { Toaster } from '@frontend.suprasy.com/ui';
 import PendingComponent from './components/PendingComponent/PendingComponent';
+import FullScreenLoader from './components/Loader/Loader';
 
 const queryClient = new QueryClient();
 
@@ -14,6 +15,7 @@ export const router = createRouter({
     hasCookie: false,
     queryClient,
   },
+  defaultPendingComponent: undefined,
   defaultPreload: 'intent',
   defaultPreloadStaleTime: 0,
 });
@@ -30,7 +32,7 @@ const App: React.FC = () => {
     <>
       <Toaster />
       <QueryClientProvider client={queryClient}>
-        <Suspense fallback={<PendingComponent hScreen />}>
+        <Suspense fallback={<FullScreenLoader className="bg-white" />}>
           <RouterProvider
             router={router}
             context={{ hasCookie: false }}
