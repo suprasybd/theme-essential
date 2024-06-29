@@ -16,7 +16,7 @@ const NavBar: React.FC = () => {
   const totalCartQuantity = useMemo(() => {
     if (cart) {
       let total = 0;
-      cart.map((cartItem) => {
+      cart.forEach((cartItem) => {
         total += cartItem.Quantity;
       });
       return total;
@@ -62,6 +62,7 @@ const NavBar: React.FC = () => {
           categories.length &&
           categories.map((category) => (
             <Link
+              key={category.Id.toString()}
               to={'/category/' + category.Name}
               className="hover:underline hover:font-normal"
             >

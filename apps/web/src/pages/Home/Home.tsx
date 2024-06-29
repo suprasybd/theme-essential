@@ -1,17 +1,14 @@
-import Cards from '@web/components/Home/Cards';
 import { Discount } from '@web/components/Home/Discount';
 import {
-  getHomeSections,
   getHomeSectionsOptions,
-  getHomesectionsProducts,
   getHomesectionsProductsOptions,
 } from './api/index';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Button, RichTextRender } from '@frontend.suprasy.com/ui';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { RichTextRender } from '@frontend.suprasy.com/ui';
 import ProductCard from '@web/components/ProductCard/ProductCard';
 
 const Home = () => {
-  const { data: homeSectionsResponse, refetch } = useSuspenseQuery(
+  const { data: homeSectionsResponse } = useSuspenseQuery(
     getHomeSectionsOptions()
   );
 
@@ -24,7 +21,7 @@ const Home = () => {
       {homeSesctions &&
         homeSesctions.length > 0 &&
         homeSesctions.map((section) => (
-          <div className="mb-24">
+          <div className="mb-24" key={section.Id.toString()}>
             <div>
               <h1 className="text-5xl font-bold mb-5">{section.Title}</h1>
               <RichTextRender
@@ -51,7 +48,10 @@ const SectionProducts: React.FC<{ sectionId: number }> = ({ sectionId }) => {
       {sectionProducts &&
         sectionProducts.length &&
         sectionProducts.map((products) => (
-          <ProductCard ProductId={products.ProductId} />
+          <ProductCard
+            key={products.Id.toString()}
+            ProductId={products.ProductId}
+          />
         ))}
     </div>
   );

@@ -1,5 +1,5 @@
 import { Button } from '@frontend.suprasy.com/ui';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import {
   calculateDiscountPercentage,
@@ -9,9 +9,12 @@ import {
   getProductAttributeName,
   getProductAttributeOptions,
   getProductImages,
+  getProductImagesOption,
   getProductSku,
+  getProductSkuOption,
   getProductsDetails,
   getProductsDetailsById,
+  getProductsDetailsByIdOption,
 } from '@web/pages/products/api';
 import { useCartStore } from '@web/store/cartStore';
 import React from 'react';
@@ -20,36 +23,32 @@ import cn from 'classnames';
 import { Image } from 'lucide-react';
 
 const ProductCard: React.FC<{ ProductId: number }> = ({ ProductId }) => {
-  const { data: productsDetailsResponse } = useQuery({
-    queryKey: ['getProductsDetails', ProductId],
-    queryFn: () => getProductsDetailsById(ProductId.toString()),
-    enabled: !!ProductId,
-  });
+  const { data: productsDetailsResponse } = useSuspenseQuery(
+    getProductsDetailsByIdOption(ProductId)
+  );
 
   const productDetails = productsDetailsResponse?.Data;
 
-  const { data: productImagesResponse } = useQuery({
-    queryKey: ['getProductImages', productDetails?.Id],
-    queryFn: () => getProductImages(productDetails?.Id || 0),
-    enabled: !!productDetails?.Id,
-  });
+  const { data: productImagesResponse } = useSuspenseQuery(
+    getProductImagesOption(ProductId)
+  );
 
-  const { data: productSkuResponse } = useQuery({
-    queryKey: ['getProductSku', productDetails?.Id],
-    queryFn: () => getProductSku(productDetails?.Id || 0),
-    enabled: !!productDetails?.Id,
-  });
+  const { data: productSkuResponse } = useSuspenseQuery(
+    getProductSkuOption(ProductId)
+  );
 
   const { data: attributeNameResponse } = useQuery({
     queryKey: ['getProductAttributeName', productDetails?.Id],
     queryFn: () => getProductAttributeName(productDetails?.Id || 0),
-    enabled: productDetails?.HasVariant && !!productDetails?.Id,
+    // enabled: productDetails?.HasVariant && !!productDetails?.Id,
+    enabled: false,
   });
 
   const { data: attributeOptionsResponse } = useQuery({
     queryKey: ['getProductAttributeOptions', productDetails?.Id],
     queryFn: () => getProductAttributeOptions(productDetails?.Id || 0),
-    enabled: productDetails?.HasVariant && !!productDetails?.Id,
+    // enabled: productDetails?.HasVariant && !!productDetails?.Id,
+    enabled: false,
   });
 
   const productImages = productImagesResponse?.Data;

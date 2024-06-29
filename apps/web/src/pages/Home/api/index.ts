@@ -1,6 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
 import ApiClient from '@web/libs/ApiClient';
-import { ListResponseType, ResponseType } from '@web/libs/types/responseTypes';
+import { ListResponseType } from '@web/libs/types/responseTypes';
 
 export interface AreaType {
   Id: number;
