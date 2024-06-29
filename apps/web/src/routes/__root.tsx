@@ -1,4 +1,8 @@
-import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
+import {
+  createRootRouteWithContext,
+  Outlet,
+  ScrollRestoration,
+} from '@tanstack/react-router';
 import NavBar from '../components/NavBar/NavBar';
 import Modals from '@web/components/Modals/Modals';
 import Cart from '@web/components/Cart/Cart';
@@ -12,6 +16,7 @@ const RootComponent: React.FC = () => {
       </header>
       <Cart />
       <Modals />
+      <ScrollRestoration />
       <Outlet />
       {/* <TanStackRouterDevtools /> */}
     </>

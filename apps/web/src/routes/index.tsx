@@ -23,7 +23,7 @@ export const Route = createFileRoute('/')({
       );
     });
 
-    return Promise.all(allPromsie);
+    await Promise.all(allPromsie);
   },
 
   pendingComponent: () => <PendingComponent hScreen />,

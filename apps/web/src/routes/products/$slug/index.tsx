@@ -3,14 +3,15 @@ import ProductDetails, {
 } from '@web/pages/products/details/ProductDetails';
 import { createFileRoute } from '@tanstack/react-router';
 import PendingComponent from '@web/components/PendingComponent/PendingComponent';
+import { getProductImagesOption } from '@web/pages/products/api';
 
 export const Route = createFileRoute('/products/$slug/')({
-  loader: ({ context: { queryClient }, params }) => {
-    const a = queryClient.ensureQueryData(
+  loader: async ({ context: { queryClient }, params }) => {
+    const pDetails = await queryClient.ensureQueryData(
       getProductsDetailsOptions(params.slug)
     );
 
-    return a;
+    await queryClient.ensureQueryData(getProductImagesOption(pDetails.Data.Id));
   },
   pendingComponent: () => <PendingComponent />,
   component: () => <ProductDetails />,

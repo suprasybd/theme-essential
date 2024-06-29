@@ -8,12 +8,8 @@ import {
 import {
   getProductAttributeName,
   getProductAttributeOptions,
-  getProductImages,
   getProductImagesOption,
-  getProductSku,
   getProductSkuOption,
-  getProductsDetails,
-  getProductsDetailsById,
   getProductsDetailsByIdOption,
 } from '@web/pages/products/api';
 import { useCartStore } from '@web/store/cartStore';
