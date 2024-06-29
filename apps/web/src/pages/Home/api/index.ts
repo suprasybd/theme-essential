@@ -1,3 +1,4 @@
+import { queryOptions } from '@tanstack/react-query';
 import ApiClient from '@web/libs/ApiClient';
 import { ListResponseType, ResponseType } from '@web/libs/types/responseTypes';
 
@@ -45,3 +46,17 @@ export const getHomesectionsProducts = async (
 
   return response.data;
 };
+
+// options
+export const getHomeSectionsOptions = () =>
+  queryOptions({
+    queryKey: ['getHomeSections'],
+    queryFn: () => getHomeSections(),
+  });
+
+export const getHomesectionsProductsOptions = (sectionId: number) =>
+  queryOptions({
+    queryKey: ['getSectionsProducts', sectionId],
+    queryFn: () => getHomesectionsProducts(sectionId),
+    enabled: !!sectionId,
+  });

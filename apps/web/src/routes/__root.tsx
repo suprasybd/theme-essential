@@ -2,6 +2,7 @@ import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
 import NavBar from '../components/NavBar/NavBar';
 import Modals from '@web/components/Modals/Modals';
 import Cart from '@web/components/Cart/Cart';
+import { QueryClient } from '@tanstack/react-query';
 
 const RootComponent: React.FC = () => {
   return (
@@ -18,6 +19,7 @@ const RootComponent: React.FC = () => {
 };
 interface MyRouterContext {
   hasCookie: boolean;
+  queryClient: QueryClient;
 }
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: () => <RootComponent />,

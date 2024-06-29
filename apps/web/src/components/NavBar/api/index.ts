@@ -1,6 +1,6 @@
+import { queryOptions } from '@tanstack/react-query';
 import ApiClient from '@web/libs/ApiClient';
-import { ListResponseType, ResponseType } from '@web/libs/types/responseTypes';
-import { z } from 'zod';
+import { ListResponseType } from '@web/libs/types/responseTypes';
 
 export interface CategoryType {
   Id: number;
@@ -19,3 +19,10 @@ export const getCategories = async (): Promise<
 
   return response.data;
 };
+
+// options
+export const getCategoriesOptions = () =>
+  queryOptions({
+    queryFn: () => getCategories(),
+    queryKey: ['getCategoriesResponse'],
+  });

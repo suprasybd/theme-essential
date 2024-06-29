@@ -16,6 +16,8 @@ import {
 import { useCartStore } from '@web/store/cartStore';
 import React from 'react';
 import ImagePreview from '../Image/ImagePreview';
+import cn from 'classnames';
+import { Image } from 'lucide-react';
 
 const ProductCard: React.FC<{ ProductId: number }> = ({ ProductId }) => {
   const { data: productsDetailsResponse } = useQuery({
@@ -73,13 +75,25 @@ const ProductCard: React.FC<{ ProductId: number }> = ({ ProductId }) => {
           params={{ slug: productDetails?.Slug || '/' }}
         >
           <div>
-            {productImages && productImages.length > 0 && (
-              <ImagePreview
-                className="w-full h-[200px] object-fill"
-                src={productImages[0].ImageUrl}
-                alt="Zifriend ZA981 Gaming Headset"
-              />
-            )}
+            <div
+              className={cn(
+                'h-[200px]',
+                !productImages &&
+                  'bg-slate-200 flex justify-center items-center'
+              )}
+            >
+              {productImages && productImages.length > 0 && (
+                <ImagePreview
+                  className="w-full h-[200px] object-fill"
+                  src={productImages[0].ImageUrl}
+                  alt="product"
+                />
+              )}
+
+              {!productImages && (
+                <Image size={'50px'} className="text-slate-400" />
+              )}
+            </div>
 
             <div className="p-2">
               <div className="font-normal text-base mb-2">
