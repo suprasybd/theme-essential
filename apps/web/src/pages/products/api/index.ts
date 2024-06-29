@@ -7,6 +7,7 @@ import {
   ProductSku,
   ProductType,
 } from './types';
+import { queryOptions } from '@tanstack/react-query';
 
 export interface AreaType {
   Id: number;
@@ -82,3 +83,34 @@ export const getProductAttributeName = async (
 
   return response.data;
 };
+
+// options
+
+export const getProductsDetailsByIdOption = (ProductId: number) =>
+  queryOptions({
+    queryKey: ['getProductsDetails', ProductId],
+    queryFn: () => getProductsDetailsById(ProductId.toString()),
+    enabled: !!ProductId,
+  });
+
+export const getProductImagesOption = (ProductId: number) =>
+  queryOptions({
+    queryKey: ['getProductImages', ProductId],
+    queryFn: () => getProductImages(ProductId || 0),
+    enabled: !!ProductId,
+  });
+
+export const getProductSkuOption = (ProductId: number) =>
+  queryOptions({
+    queryKey: ['getProductSku', ProductId],
+    queryFn: () => getProductSku(ProductId || 0),
+    enabled: !!ProductId,
+  });
+
+// bellow - only run on HasVariant
+export const getProductAttributeNameOption = (ProductId: number) =>
+  queryOptions({
+    queryKey: ['getProductAttributeName', ProductId],
+    queryFn: () => getProductAttributeName(ProductId || 0),
+    enabled: !!ProductId,
+  });

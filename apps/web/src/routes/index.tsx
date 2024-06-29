@@ -1,21 +1,32 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { getCategoriesOptions } from '@web/components/NavBar/api';
+import PendingComponent from '@web/components/PendingComponent/PendingComponent';
 import Home from '@web/pages/home/Home';
-import { getHomeSectionsOptions } from '@web/pages/home/api';
-import { Loader } from 'lucide-react';
+import {
+  getHomeSectionsOptions,
+  getHomesectionsProductsOptions,
+} from '@web/pages/home/api';
 
 export const Route = createFileRoute('/')({
-  loader: ({ context: { queryClient } }) => {
-    const a = queryClient.ensureQueryData(getHomeSectionsOptions());
+  loader: async ({ context: { queryClient } }) => {
+    const sectionList = await queryClient.ensureQueryData(
+      getHomeSectionsOptions()
+    );
     const b = queryClient.ensureQueryData(getCategoriesOptions());
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const allPromsie: Array<any> = [b];
 
-    return Promise.all([a, b]);
+    const sectionIds = sectionList.Data.map((sec) => sec.Id);
+    sectionIds.forEach(async (secId) => {
+      allPromsie.push(
+        queryClient.ensureQueryData(getHomesectionsProductsOptions(secId))
+      );
+    });
+
+    return Promise.all(allPromsie);
   },
-  pendingComponent: () => (
-    <div className="w-full flex justify-center items-center">
-      <Loader />
-    </div>
-  ),
+
+  pendingComponent: () => <PendingComponent hScreen />,
 
   component: () => (
     <div>
