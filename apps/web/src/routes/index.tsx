@@ -26,7 +26,7 @@ export const Route = createFileRoute('/')({
     await Promise.all(allPromsie);
   },
 
-  pendingComponent: () => <PendingComponent hScreen />,
+  // pendingComponent: () => <PendingComponent hScreen />,
 
   component: () => (
     <div>
