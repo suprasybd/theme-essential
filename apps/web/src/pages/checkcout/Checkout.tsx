@@ -1,13 +1,5 @@
 import { formatPrice } from '@web/libs/helpers/formatPrice';
-import { Trash2 } from 'lucide-react';
-import React, { useEffect, useMemo, useState } from 'react';
-import {
-  getProductAttributeName,
-  getProductAttributeOptions,
-  getProductImages,
-  getProductSku,
-  getProductsDetailsById,
-} from '../products/api';
+import { useEffect, useMemo, useState } from 'react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -16,7 +8,6 @@ import { Button, Label } from '@frontend.suprasy.com/ui';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -27,7 +18,7 @@ import {
 import { Input } from '@frontend.suprasy.com/ui';
 
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { ProductCartType, useCartStore } from '@web/store/cartStore';
+import { useCartStore } from '@web/store/cartStore';
 import {
   Accordion,
   AccordionContent,
@@ -38,6 +29,9 @@ import { CartItem } from '@web/components/Modals/Cart/Cart';
 import { getDevliveryMethods, getShippingMethods, placeOrderPost } from './api';
 import FullScreenLoader from '@web/components/Loader/Loader';
 import { Link } from '@tanstack/react-router';
+import { Turnstile } from '@marsidev/react-turnstile';
+import useTurnStileHook from '@web/hooks/turnstile';
+import { ReloadIcon } from '@radix-ui/react-icons';
 
 const orderProducts = z.object({
   ProductId: z.number(),
@@ -137,10 +131,9 @@ const Checkout = () => {
   }, [cart]);
 
   function onSubmit(values: z.infer<typeof formSchemaCheckout>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-    handlePlaceOrder(values);
+    const turnstileResponse = localStorage.getItem('cf-turnstile-in-storage');
+
+    handlePlaceOrder({ ...values, 'cf-turnstile-response': turnstileResponse });
   }
 
   const estimatedTotal = useMemo(() => {
@@ -154,6 +147,28 @@ const Checkout = () => {
       return 0;
     }
   }, [priceMap]);
+
+  const [siteKey, turnstileLoaded] = useTurnStileHook();
+
+  const forceUpdate = () => {
+    window.location.reload();
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleFormWrapper = (e: any) => {
+    e.preventDefault();
+    try {
+      const tRes = e.target['cf-turnstile-response'].value;
+
+      if (!tRes) return;
+
+      localStorage.setItem('cf-turnstile-in-storage', tRes);
+
+      form.handleSubmit(onSubmit)(e);
+    } catch (error) {
+      forceUpdate();
+    }
+  };
 
   if (isSuccess) {
     return (
@@ -208,7 +223,7 @@ const Checkout = () => {
         <h1 className="text-2xl font-medium mb-3">Devilery</h1>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={handleFormWrapper} className="space-y-8">
             <div className="flex w-full gap-[10px]">
               <FormField
                 control={form.control}
@@ -406,8 +421,20 @@ const Checkout = () => {
               </RadioGroup>
             )}
 
-            <Button type="submit" className="w-full">
-              Place Order
+            {siteKey && <Turnstile siteKey={siteKey} />}
+
+            <Button
+              type="submit"
+              className="w-full h-14"
+              disabled={!turnstileLoaded}
+            >
+              {!turnstileLoaded && (
+                <>
+                  <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                  wait a few moment..
+                </>
+              )}
+              {turnstileLoaded && <span>Place Order</span>}
             </Button>
           </form>
         </Form>

@@ -37,7 +37,7 @@ export const getDevliveryMethods = async (): Promise<
 };
 
 export const placeOrderPost = async (
-  data: z.infer<typeof formSchemaCheckout>
+  data: any
 ): Promise<ResponseType<{ Password?: string }>> => {
   const response = await ApiClient.post('/storefront-order/place-order', data);
 
