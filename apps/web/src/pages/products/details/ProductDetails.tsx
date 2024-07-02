@@ -183,10 +183,10 @@ const ProductDetails: React.FC = () => {
                   </div>
                 )}
 
-              <span className="block mb-2 font-light">Quantity</span>
+              <span className="block mb-2 ">Quantity</span>
               <div className="flex">
                 <button
-                  className="border border-gray-400 py-2 px-5"
+                  className="border border-r-0 border-gray-400 py-1 px-5 font-bold rounded-l-full hover:!bg-slate-200"
                   onClick={(e) => {
                     e.preventDefault();
                     if (quantity - 1 >= 1) {
@@ -206,7 +206,7 @@ const ProductDetails: React.FC = () => {
                   step={'any'}
                 />
                 <button
-                  className="border border-gray-400 py-2 px-5"
+                  className="border border-l-0 border-gray-400 py-1 px-5 font-bold rounded-r-full hover:!bg-slate-200"
                   onClick={(e) => {
                     e.preventDefault();
 
@@ -341,18 +341,12 @@ const ProductDetails: React.FC = () => {
               </div>
             </div>
           </div>
-          <Tabs defaultValue="description" className="w-full">
-            <TabsList>
-              <TabsTrigger value="description">Description</TabsTrigger>
-              <TabsTrigger value="reviews">Reviews</TabsTrigger>
-            </TabsList>
-            <TabsContent value="description" className="w-full">
-              {productDetails?.Description && (
-                <RichTextRender initialVal={productDetails?.Description} />
-              )}
-            </TabsContent>
-            <TabsContent value="reviews">Change your reviews here.</TabsContent>
-          </Tabs>
+          <div>
+            <h2 className="font-medium text-xl mb-5">Description</h2>
+            {productDetails?.Description && (
+              <RichTextRender initialVal={productDetails?.Description} />
+            )}
+          </div>
         </div>
       </section>
     </section>
