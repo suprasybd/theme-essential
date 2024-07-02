@@ -186,8 +186,9 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
     <div className="flex p-2">
       <div className="mr-3">
         {productImages && (
-          <div className="w-[60px] h-fit">
+          <div className="w-[120px] h-fit">
             <img
+              className="rounded-md"
               src={productImages[0].ImageUrl}
               style={{ width: '100%', height: '100%' }}
               alt="product cart"
@@ -197,7 +198,7 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
       </div>
 
       <div>
-        <h1 className="text-sm">{productDetails?.Title}</h1>
+        <h1 className="text-sm font-bold">{productDetails?.Title}</h1>
 
         {productSku && !productDetails?.HasVariant && (
           <div>
@@ -205,7 +206,7 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
               Price: {formatPrice(productSku[0].Price)}
             </h3>
             <h3 className="text-sm">
-              Total Price: {formatPrice(productSku[0].Price * Cart.Quantity)}
+              Price x Qty: {formatPrice(productSku[0].Price * Cart.Quantity)}
             </h3>{' '}
           </div>
         )}
@@ -245,7 +246,7 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
         <div className="flex justify-between">
           <div className="flex">
             <button
-              className="border border-gray-400 py-2 px-5"
+              className="border border-r-0 border-gray-400 py-1 px-5 font-bold rounded-l-full hover:!bg-slate-200"
               onClick={(e) => {
                 e.preventDefault();
                 if (quantity - 1 >= 1) {
@@ -260,12 +261,12 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
                 setQuantity(Cart.Id || '0', parseInt(e.target.value) || 1);
               }}
               type="text"
-              className="border w-[50px] border-gray-400 text-center"
+              className="border w-[50px] border-gray-400 text-center "
               value={quantity}
               step={'any'}
             />
             <button
-              className="border border-gray-400 py-2 px-5"
+              className="border border-l-0 border-gray-400 py-1 px-5 font-bold rounded-r-full hover:!bg-slate-200"
               onClick={(e) => {
                 e.preventDefault();
 
@@ -277,6 +278,7 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
           </div>
 
           <button
+            className="ml-3"
             onClick={() => {
               if (Cart.Id) {
                 setPriceMap(Cart.Id, 0);
