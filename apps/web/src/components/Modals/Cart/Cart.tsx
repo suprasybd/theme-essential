@@ -171,13 +171,16 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
 
     if (HasVariant && productDetails && productSku) {
       productSku.map((sku) => {
-        if (sku.AttributeOptionId === Cart.ProductAttribute) {
+        const attr = productAttributeOptions?.find(
+          (o) => o.Id === sku.AttributeOptionId
+        );
+        if (attr?.Value === Cart.ProductAttribute) {
           setPriceMap(Cart.Id || '', sku.Price * Cart.Quantity);
         }
       });
     }
   }, [HasVariant, productDetails, productSku, Cart, setPriceMap]);
-
+  console.log('options', productAttributeOptions);
   return (
     <div className="flex p-2">
       <div className="mr-3">
@@ -210,7 +213,10 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
         {productSku && productDetails?.HasVariant && (
           <div>
             {productSku.map((sku) => {
-              if (sku.AttributeOptionId === Cart.ProductAttribute) {
+              const attr = productAttributeOptions?.find(
+                (o) => o.Id === sku.AttributeOptionId
+              );
+              if (attr?.Value === Cart.ProductAttribute) {
                 return (
                   <>
                     <h3 className="text-sm">Price: {formatPrice(sku.Price)}</h3>
@@ -229,9 +235,19 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
             <span className="block mb-2 font-light text-sm">
               {productAttributeName?.Name}:{' '}
               {productAttributeOptions &&
-                productAttributeOptions.map((attribute) => {
-                  if (attribute.Id === Cart.ProductAttribute) {
+                productAttributeOptions.map((attribute, i) => {
+                  if (attribute.Value === Cart.ProductAttribute) {
                     return attribute.Value;
+                  }
+                  const isFound = productAttributeOptions.find(
+                    (o) => o.Value === Cart.ProductAttribute
+                  );
+                  if (i === productAttributeOptions.length - 1 && !isFound) {
+                    console.log(attribute.Value, Cart.ProductAttribute);
+                    // no attribute found remove it from cart
+                    if (Cart.Id) {
+                      removeFromCart(Cart.Id);
+                    }
                   }
                 })}
             </span>

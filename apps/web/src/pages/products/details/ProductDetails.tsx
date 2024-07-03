@@ -12,14 +12,7 @@ import {
   getProductSku,
   getProductsDetails,
 } from '../api';
-import {
-  RichTextRender,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-  Button,
-} from '@frontend.suprasy.com/ui';
+import { RichTextRender, Button } from '@frontend.suprasy.com/ui';
 import cn from 'classnames';
 import ProductImages from './components/ProductImages';
 
@@ -223,18 +216,24 @@ const ProductDetails: React.FC = () => {
                     if (productDetails && productDetails?.HasVariant) {
                       productSku?.forEach((sku) => {
                         if (sku.Id === selectedSku) {
+                          const attr = productAttributeOptions?.find(
+                            (o) => o.Id === sku.AttributeOptionId
+                          );
+                          if (!attr) {
+                            return;
+                          }
                           // if already have increase qty
                           if (
                             cart.find(
                               (c) =>
                                 c.ProductId === sku.ProductId &&
-                                c.ProductAttribute === sku.AttributeOptionId
+                                c.ProductAttribute === attr.Value
                             )
                           ) {
                             const theCartItem = cart.find(
                               (c) =>
                                 c.ProductId === sku.ProductId &&
-                                c.ProductAttribute === sku.AttributeOptionId
+                                c.ProductAttribute === attr.Value
                             );
                             setQtyCart(
                               theCartItem?.Id || '0',
@@ -246,7 +245,7 @@ const ProductDetails: React.FC = () => {
                           addToCart({
                             ProductId: productDetails?.Id,
                             Quantity: quantity,
-                            ProductAttribute: sku.AttributeOptionId,
+                            ProductAttribute: attr.Value,
                           });
                         }
                       });
@@ -278,56 +277,36 @@ const ProductDetails: React.FC = () => {
                 <Button
                   onClick={(e) => {
                     e.preventDefault();
-                    clearCart();
 
                     if (productDetails && productDetails?.HasVariant) {
-                      productSku?.forEach((sku) => {
-                        if (sku.Id === selectedSku) {
-                          // if already have increase qty
-                          if (
-                            cart.find(
-                              (c) =>
-                                c.ProductId === sku.ProductId &&
-                                c.ProductAttribute === sku.AttributeOptionId
-                            )
-                          ) {
-                            const theCartItem = cart.find(
-                              (c) =>
-                                c.ProductId === sku.ProductId &&
-                                c.ProductAttribute === sku.AttributeOptionId
-                            );
-                            setQtyCart(
-                              theCartItem?.Id || '0',
-                              (theCartItem?.Quantity || 0) + 1
-                            );
-                            return;
-                          }
-                          // if not already in cart add it
+                      clearCart();
+
+                      if (productSku && productSku.length > 0) {
+                        const sk = productSku.find((s) => s.Id === selectedSku);
+                        if (!sk) {
+                          return;
+                        }
+
+                        const attr = productAttributeOptions?.find(
+                          (o) => o.Id === sk.AttributeOptionId
+                        );
+
+                        if (attr) {
                           addToCart({
                             ProductId: productDetails?.Id,
-                            Quantity: quantity,
-                            ProductAttribute: sku.AttributeOptionId,
+                            Quantity: 1,
+                            ProductAttribute: attr.Value,
                           });
                         }
-                      });
+                      }
                     }
 
                     if (productDetails && !productDetails.HasVariant) {
-                      // if already have increase qty
-                      if (cart.find((c) => c.ProductId === productDetails.Id)) {
-                        const theCartItem = cart.find(
-                          (c) => c.ProductId === productDetails.Id
-                        );
-                        setQtyCart(
-                          theCartItem?.Id || '0',
-                          (theCartItem?.Quantity || 0) + 1
-                        );
-                        return;
-                      }
+                      clearCart();
                       // if not already in cart add it
                       addToCart({
                         ProductId: productDetails?.Id,
-                        Quantity: quantity,
+                        Quantity: 1,
                       });
                     }
 

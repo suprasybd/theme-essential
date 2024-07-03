@@ -5,7 +5,7 @@ import { v4 as uuid } from 'uuid';
 export interface ProductCartType {
   Id?: string;
   ProductId: number;
-  ProductAttribute?: number;
+  ProductAttribute?: string;
   Quantity: number;
 }
 

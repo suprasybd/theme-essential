@@ -31,12 +31,14 @@ import { useCartStore } from '@web/store/cartStore';
 import { CartItem } from '@web/components/Modals/Cart/Cart';
 import { getDevliveryMethods, getShippingMethods, placeOrderPost } from './api';
 import FullScreenLoader from '@web/components/Loader/Loader';
-import { Link } from '@tanstack/react-router';
+import { Link, useParams, useSearch } from '@tanstack/react-router';
 import { Turnstile } from '@marsidev/react-turnstile';
 import useTurnStileHook from '@web/hooks/turnstile';
 import { ReloadIcon } from '@radix-ui/react-icons';
 import { Lock } from 'lucide-react';
-
+import { Route as CheckoutRoute } from '@web/routes/checkout';
+import { encode, decode } from 'js-base64';
+import { getProductAttributeOptions } from '../products/api';
 const orderProducts = z.object({
   ProductId: z.number(),
   Quantity: z.number(),
@@ -56,6 +58,9 @@ export const formSchemaCheckout = z.object({
 });
 
 const Checkout = () => {
+  const { products } = useSearch({
+    from: CheckoutRoute.fullPath,
+  });
   const { cart, priceMap, clearCart } = useCartStore((state) => state);
 
   const [selectedShippingMethod, setSelectedShippingMethod] =
@@ -79,6 +84,8 @@ const Checkout = () => {
       clearCart();
     },
   });
+
+  console.log('products', products);
 
   const { data: shippingMethodsResponse } = useQuery({
     queryKey: ['getShippingMethods'],
@@ -115,22 +122,38 @@ const Checkout = () => {
 
   useEffect(() => {
     if (cart && cart.length) {
-      const formatedCart = cart.map((cartItem) => {
-        if (cartItem.ProductAttribute) {
-          return {
-            ProductId: cartItem.ProductId,
-            Quantity: cartItem.Quantity,
-            AttributeOptionsId: cartItem.ProductAttribute,
-          };
-        } else {
-          return {
-            ProductId: cartItem.ProductId,
-            Quantity: cartItem.Quantity,
-          };
-        }
-      });
+      const cartFormatter = async () => {
+        const formatedCart = cart.map(async (cartItem) => {
+          if (cartItem.ProductAttribute) {
+            const optionsResponse = await getProductAttributeOptions(
+              cartItem.ProductId
+            );
+            const options = optionsResponse.Data;
 
-      form.setValue('Products', formatedCart);
+            if (options && options.length > 0) {
+              const attr = options.find(
+                (o) => o.Value === cartItem.ProductAttribute
+              );
+              return {
+                ProductId: cartItem.ProductId,
+                Quantity: cartItem.Quantity,
+                AttributeOptionsId: attr?.Id,
+              };
+            }
+          } else {
+            return {
+              ProductId: cartItem.ProductId,
+              Quantity: cartItem.Quantity,
+            };
+          }
+        });
+
+        console.log('formated cart', await Promise.all(formatedCart));
+      };
+
+      cartFormatter();
+
+      // form.setValue('Products', d);
     }
   }, [cart]);
 
