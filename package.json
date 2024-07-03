@@ -44,6 +44,7 @@
     "slate-react": "^0.102.0",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
+    "use-debounce": "^10.0.1",
     "uuid": "^9.0.1",
     "zod": "^3.22.4",
     "zustand": "^4.5.0"

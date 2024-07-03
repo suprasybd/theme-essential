@@ -7,8 +7,9 @@ import React, { useMemo } from 'react';
 import { getCategoriesOptions } from './api';
 
 const NavBar: React.FC = () => {
-  const { setModalPath } = useModalStore((state) => state);
   const { cart } = useCartStore((state) => state);
+
+  const { setModalPath } = useModalStore((state) => state);
 
   const { data: catagoriesResponse } = useSuspenseQuery(getCategoriesOptions());
   const categories = catagoriesResponse?.Data;
@@ -29,7 +30,13 @@ const NavBar: React.FC = () => {
     <div className="w-full max-w-[1220px] mx-auto gap-6 py-6 px-4 sm:px-8  bg-white  border border-t-0 border-l-0 border-r-0 border-b-slate-300">
       <div className="flex justify-between">
         <div>
-          <Search strokeWidth={'1px'} />
+          <Search
+            className="cursor-pointer"
+            onClick={() => {
+              setModalPath({ modal: 'search' });
+            }}
+            strokeWidth={'1px'}
+          />
         </div>
         <div>
           <Link to="/">
