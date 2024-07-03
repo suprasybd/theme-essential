@@ -36,6 +36,11 @@ const CategoryProducts: React.FC = () => {
             value: categoryId?.toString() || '0',
             isActive: !!categoryId,
           },
+          {
+            key: 'Status',
+            value: 'active',
+            isActive: true,
+          },
         ]),
       }),
     queryKey: ['getAllProdcutsForCategory', categoryId, name],

@@ -27,25 +27,27 @@ const Home = () => {
 
   return (
     <div className="w-full max-w-[1220px] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
-      <div className="mb-10">
-        <Carousel className="rounded-md">
-          <CarouselContent className="rounded-md">
-            {homeHero.map((hero) => (
-              <CarouselItem>
-                <img
-                  className="rounded-md"
-                  width={'100%'}
-                  height={'auto'}
-                  src={hero.ImageLink}
-                  alt="hero"
-                />
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
-      </div>
+      {homeHero?.length > 0 && (
+        <div className="mb-10">
+          <Carousel className="rounded-md">
+            <CarouselContent className="rounded-md">
+              {homeHero.map((hero) => (
+                <CarouselItem>
+                  <img
+                    className="rounded-md"
+                    width={'100%'}
+                    height={'auto'}
+                    src={hero.ImageLink}
+                    alt="hero"
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
+        </div>
+      )}
 
       {homeSesctions &&
         homeSesctions.length > 0 &&
