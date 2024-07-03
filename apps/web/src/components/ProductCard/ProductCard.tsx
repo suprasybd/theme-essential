@@ -63,7 +63,7 @@ const ProductCard: React.FC<{ ProductId: number }> = ({ ProductId }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="max-w-[274px] h-[424px] hover:cursor-pointer">
+    <div className="w-[310px] md:max-w-[274px] h-[424px] hover:cursor-pointer">
       <div className="rounded-md overflow-hidden  relative">
         <Link
           to="/products/$slug"

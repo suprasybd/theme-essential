@@ -29,10 +29,23 @@ export interface SectionProductsType {
   UpdatedAt: string;
 }
 
+export interface Hero {
+  Id: number;
+  ImageLink: string;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
+
 export const getHomeSections = async (): Promise<
   ListResponseType<HomeSectionsTypes>
 > => {
   const response = await ApiClient.get('/storefront-home/sections');
+
+  return response.data;
+};
+
+export const getHomeHero = async (): Promise<ListResponseType<Hero>> => {
+  const response = await ApiClient.get('/storefront-hero');
 
   return response.data;
 };
@@ -59,4 +72,10 @@ export const getHomesectionsProductsOptions = (sectionId: number) =>
     queryKey: ['getSectionsProducts', sectionId],
     queryFn: () => getHomesectionsProducts(sectionId),
     enabled: !!sectionId,
+  });
+
+export const getHomeHeroOptions = () =>
+  queryOptions({
+    queryKey: ['getHomeHero'],
+    queryFn: () => getHomeHero(),
   });

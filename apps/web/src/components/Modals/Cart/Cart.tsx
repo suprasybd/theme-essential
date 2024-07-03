@@ -1,13 +1,10 @@
 import {
   Button,
   Sheet,
-  SheetClose,
   SheetContent,
   SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from '@frontend.suprasy.com/ui';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
@@ -17,7 +14,6 @@ import {
   getProductAttributeOptions,
   getProductImages,
   getProductSku,
-  getProductsDetails,
   getProductsDetailsById,
 } from '@web/pages/products/api';
 import { ProductCartType, useCartStore } from '@web/store/cartStore';
