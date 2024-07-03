@@ -46,8 +46,8 @@ const orderProducts = z.object({
 });
 
 export const formSchemaCheckout = z.object({
-  FirstName: z.string().min(1).max(50),
-  LastName: z.string().min(1).max(50),
+  FullName: z.string().min(1).max(50),
+
   Address: z.string().min(2).max(100),
   Email: z.string().email().min(2).max(100),
   Phone: z.string().min(2).max(100),
@@ -137,7 +137,7 @@ const Checkout = () => {
               return {
                 ProductId: cartItem.ProductId,
                 Quantity: cartItem.Quantity,
-                AttributeOptionsId: attr?.Id,
+                AttributeOptionsId: attr?.Id as number,
               };
             }
           } else {
@@ -147,13 +147,12 @@ const Checkout = () => {
             };
           }
         });
-
-        console.log('formated cart', await Promise.all(formatedCart));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        form.setValue('Products', (await Promise.all(formatedCart)) as any);
+        // console.log('formated cart', await Promise.all(formatedCart));
       };
 
       cartFormatter();
-
-      // form.setValue('Products', d);
     }
   }, [cart]);
 
@@ -190,7 +189,7 @@ const Checkout = () => {
       if (!tRes) return;
 
       localStorage.setItem('cf-turnstile-in-storage', tRes);
-
+      console.log('Hi', form.getValues('Products'));
       form.handleSubmit(onSubmit)(e);
     } catch (error) {
       forceUpdate();
@@ -233,46 +232,25 @@ const Checkout = () => {
 
           <Form {...form}>
             <form onSubmit={handleFormWrapper} className="space-y-8">
-              <div className="flex w-full gap-[10px]">
-                <FormField
-                  control={form.control}
-                  name="FirstName"
-                  render={({ field }) => (
-                    <FormItem className="!my-[10px] w-full">
-                      <FormLabel>First Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          className="py-6"
-                          FormError={!!form.formState.errors.FirstName}
-                          placeholder="First name"
-                          {...field}
-                        />
-                      </FormControl>
+              <FormField
+                control={form.control}
+                name="FullName"
+                render={({ field }) => (
+                  <FormItem className="!my-[10px] w-full">
+                    <FormLabel>Full Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="py-6"
+                        FormError={!!form.formState.errors.FullName}
+                        placeholder="Full name"
+                        {...field}
+                      />
+                    </FormControl>
 
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="LastName"
-                  render={({ field }) => (
-                    <FormItem className="!my-[10px] w-full">
-                      <FormLabel>Last Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          className="py-6"
-                          FormError={!!form.formState.errors.LastName}
-                          placeholder="Last name"
-                          {...field}
-                        />
-                      </FormControl>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 control={form.control}

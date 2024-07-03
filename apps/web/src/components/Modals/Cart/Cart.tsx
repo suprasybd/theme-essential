@@ -126,11 +126,12 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
     (state) => state
   );
 
-  const { data: productsDetailsResponse } = useQuery({
-    queryKey: ['getProductsDetailsByIdCart', Cart.ProductId],
-    queryFn: () => getProductsDetailsById(Cart.ProductId.toString() || '0'),
-    enabled: !!Cart.ProductId,
-  });
+  const { data: productsDetailsResponse, isSuccess: productGetSuccess } =
+    useQuery({
+      queryKey: ['getProductsDetailsByIdCart', Cart.ProductId],
+      queryFn: () => getProductsDetailsById(Cart.ProductId.toString() || '0'),
+      enabled: !!Cart.ProductId,
+    });
 
   const productDetails = productsDetailsResponse?.Data;
 
@@ -169,6 +170,10 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
       setPriceMap(Cart.Id || '', productSku[0].Price * Cart.Quantity);
     }
 
+    if (!productDetails && productGetSuccess && Cart.Id) {
+      removeFromCart(Cart.Id);
+    }
+
     if (HasVariant && productDetails && productSku) {
       productSku.map((sku) => {
         const attr = productAttributeOptions?.find(
@@ -179,7 +184,18 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
         }
       });
     }
-  }, [HasVariant, productDetails, productSku, Cart, setPriceMap]);
+
+    if (HasVariant && !Cart.ProductAttribute && Cart.Id) {
+      removeFromCart(Cart.Id);
+    }
+  }, [
+    HasVariant,
+    productDetails,
+    productSku,
+    Cart,
+    setPriceMap,
+    productGetSuccess,
+  ]);
   console.log('options', productAttributeOptions);
   return (
     <div className="flex p-2">
