@@ -39,6 +39,7 @@ import { Lock } from 'lucide-react';
 import { Route as CheckoutRoute } from '@web/routes/checkout';
 import { encode, decode } from 'js-base64';
 import { getProductAttributeOptions } from '../products/api';
+import ProductDescription from '../products/details/components/ProductDescription';
 const orderProducts = z.object({
   ProductId: z.number(),
   Quantity: z.number(),
@@ -61,7 +62,9 @@ const Checkout = () => {
   const { products } = useSearch({
     from: CheckoutRoute.fullPath,
   });
-  const { cart, priceMap, clearCart } = useCartStore((state) => state);
+  const { cart, priceMap, clearCart, addToCart } = useCartStore(
+    (state) => state
+  );
 
   const [selectedShippingMethod, setSelectedShippingMethod] =
     useState<number>(0);
@@ -85,7 +88,42 @@ const Checkout = () => {
     },
   });
 
-  console.log('products', products);
+  useEffect(() => {
+    if (!products) return;
+
+    const dCoded = JSON.parse(decode(products));
+
+    if (products && dCoded) {
+      clearCart();
+      dCoded.forEach((prod: { [x: string]: any }) => {
+        if (
+          Object.keys(prod).includes('ProductId') &&
+          Object.keys(prod).includes('Variant')
+        ) {
+          if (
+            typeof prod['ProductId'] === 'number' &&
+            typeof prod['Variant'] === 'string'
+          ) {
+            addToCart({
+              ProductId: prod['ProductId'],
+              ProductAttribute: prod['Variant'],
+              Quantity: 1,
+            });
+          }
+        } else if (Object.keys(prod).includes('ProductId')) {
+          if (typeof prod['ProductId'] === 'number') {
+            addToCart({
+              ProductId: prod['ProductId'],
+              Quantity: 1,
+            });
+          }
+        }
+      });
+      console.log('dcoded', dCoded);
+    }
+  }, [products]);
+
+  // console.log('products url', products);
 
   const { data: shippingMethodsResponse } = useQuery({
     queryKey: ['getShippingMethods'],
@@ -189,7 +227,7 @@ const Checkout = () => {
       if (!tRes) return;
 
       localStorage.setItem('cf-turnstile-in-storage', tRes);
-      console.log('Hi', form.getValues('Products'));
+
       form.handleSubmit(onSubmit)(e);
     } catch (error) {
       forceUpdate();
@@ -461,6 +499,16 @@ const Checkout = () => {
           </CardFooter>
         </Card>
       </div>
+
+      {products && (
+        <div className="my-10">
+          <h1 className="font-bold text-3xl">Description</h1>
+
+          {cart.map((c) => (
+            <ProductDescription ProductId={c.ProductId} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
