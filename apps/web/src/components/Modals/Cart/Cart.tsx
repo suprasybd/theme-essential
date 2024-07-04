@@ -5,6 +5,7 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
+  useToast,
 } from '@frontend.suprasy.com/ui';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
@@ -126,6 +127,8 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
     (state) => state
   );
 
+  const { toast } = useToast();
+
   const { data: productsDetailsResponse, isSuccess: productGetSuccess } =
     useQuery({
       queryKey: ['getProductsDetailsByIdCart', Cart.ProductId],
@@ -196,7 +199,23 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
     setPriceMap,
     productGetSuccess,
   ]);
-  console.log('options', productAttributeOptions);
+
+  const totalInStock = useMemo(() => {
+    return (
+      productSku?.reduce((acc, sk) => {
+        const attr = productAttributeOptions?.find(
+          (o) => o.Id === sk.AttributeOptionId
+        );
+        if (attr?.Value === Cart.ProductAttribute) {
+          return acc + sk.Inventory;
+        }
+        return acc;
+      }, 0) || 0
+    ); // Default to 0 if productSku is nullish
+  }, [productSku, productAttributeOptions]);
+
+  console.log('aty', quantity, 'tota', totalInStock);
+
   return (
     <div className="flex p-2">
       <div className="mr-3">
@@ -286,6 +305,14 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
             </button>
             <input
               onChange={(e) => {
+                if (parseInt(e.target.value) > totalInStock) {
+                  toast({
+                    variant: 'destructive',
+                    title: 'Stock Alert',
+                    description: 'Not enough items in stock.',
+                  });
+                  return;
+                }
                 setQuantity(Cart.Id || '0', parseInt(e.target.value) || 1);
               }}
               type="text"
@@ -297,7 +324,14 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
               className="border border-l-0 border-gray-400 py-1 px-5 font-bold rounded-r-full hover:!bg-slate-200"
               onClick={(e) => {
                 e.preventDefault();
-
+                if (quantity + 1 > totalInStock) {
+                  toast({
+                    variant: 'destructive',
+                    title: 'Stock Alert',
+                    description: 'Not enough items in stock.',
+                  });
+                  return;
+                }
                 setQuantity(Cart.Id || '0', quantity + 1);
               }}
             >
