@@ -1,17 +1,21 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { routeTree } from './routeTree.gen';
 
 import { Toaster } from '@frontend.suprasy.com/ui';
 import PendingComponent from './components/PendingComponent/PendingComponent';
 import FullScreenLoader from './components/Loader/Loader';
+import loadCurrentUser from './config/profile/loadUser';
+import { useAuthStore } from './store/authStore';
+import { hasCookie } from './config/profile/hasCookie';
 
 const queryClient = new QueryClient();
 
 export const router = createRouter({
   routeTree,
   context: {
+    auth: undefined,
     hasCookie: false,
     queryClient,
   },
@@ -28,6 +32,14 @@ declare module '@tanstack/react-router' {
 }
 
 const App: React.FC = () => {
+  const auth = useAuthStore((state) => state);
+
+  useEffect(() => {
+    loadCurrentUser();
+  }, []);
+
+  const hasCookie_ = hasCookie();
+
   return (
     <>
       <Toaster />
@@ -35,7 +47,7 @@ const App: React.FC = () => {
         <Suspense fallback={<FullScreenLoader className="bg-white" />}>
           <RouterProvider
             router={router}
-            context={{ hasCookie: false }}
+            context={{ auth, hasCookie: hasCookie_ }}
           ></RouterProvider>
         </Suspense>
       </QueryClientProvider>

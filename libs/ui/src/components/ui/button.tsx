@@ -23,6 +23,7 @@ const buttonVariants = cva(
           'bg-gradient-to-r from-blue-600 to-violet-600 text-white',
         gradiantT:
           'bg-gradient-to-tr from-blue-600 via-violet-600 to-violet-600 hover:bg-gradient-to-r hover:from-blue-600 hover:to-violet-600 hover:text-white text-white',
+        green: 'bg-green-600 hover:bg-green-800 text-white',
         clean: '',
         dropdown:
           'hover:bg-gradient-to-r hover:from-blue-800 hover:to-indigo-900 hover:text-white',

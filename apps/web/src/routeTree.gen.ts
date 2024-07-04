@@ -11,15 +11,33 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as RegisterImport } from './routes/register'
+import { Route as LoginImport } from './routes/login'
 import { Route as CheckoutImport } from './routes/checkout'
+import { Route as AccountImport } from './routes/account'
 import { Route as IndexImport } from './routes/index'
 import { Route as ProductsSlugIndexImport } from './routes/products/$slug/index'
 import { Route as CategoryNameIndexImport } from './routes/category/$name/index'
 
 // Create/Update Routes
 
+const RegisterRoute = RegisterImport.update({
+  path: '/register',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const LoginRoute = LoginImport.update({
+  path: '/login',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const CheckoutRoute = CheckoutImport.update({
   path: '/checkout',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AccountRoute = AccountImport.update({
+  path: '/account',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -46,8 +64,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/account': {
+      preLoaderRoute: typeof AccountImport
+      parentRoute: typeof rootRoute
+    }
     '/checkout': {
       preLoaderRoute: typeof CheckoutImport
+      parentRoute: typeof rootRoute
+    }
+    '/login': {
+      preLoaderRoute: typeof LoginImport
+      parentRoute: typeof rootRoute
+    }
+    '/register': {
+      preLoaderRoute: typeof RegisterImport
       parentRoute: typeof rootRoute
     }
     '/category/$name/': {
@@ -65,7 +95,10 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   IndexRoute,
+  AccountRoute,
   CheckoutRoute,
+  LoginRoute,
+  RegisterRoute,
   CategoryNameIndexRoute,
   ProductsSlugIndexRoute,
 ])

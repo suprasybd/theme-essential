@@ -9,6 +9,7 @@ import Cart from '@web/components/Cart/Cart';
 import { QueryClient, useQuery } from '@tanstack/react-query';
 import { getTurnstile } from '@web/api/turnstile';
 import { useEffect } from 'react';
+import { AuthStoreType } from '@web/store/authStore';
 
 const RootComponent: React.FC = () => {
   const { data: turnstileResponse } = useQuery({
@@ -39,6 +40,7 @@ const RootComponent: React.FC = () => {
 };
 interface MyRouterContext {
   hasCookie: boolean;
+  auth: AuthStoreType | undefined;
   queryClient: QueryClient;
 }
 export const Route = createRootRouteWithContext<MyRouterContext>()({

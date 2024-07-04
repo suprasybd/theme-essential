@@ -450,7 +450,9 @@ const Checkout = () => {
                 </RadioGroup>
               )}
 
-              {siteKey && <Turnstile siteKey={siteKey} />}
+              {siteKey && (
+                <Turnstile options={{ size: 'auto' }} siteKey={siteKey} />
+              )}
 
               <Button
                 type="submit"
