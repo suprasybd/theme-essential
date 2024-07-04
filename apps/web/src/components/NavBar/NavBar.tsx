@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { useCartStore } from '@web/store/cartStore';
 import { useModalStore } from '@web/store/modalStore';
 import { Search, ShoppingBag, User } from 'lucide-react';
@@ -10,6 +10,8 @@ const NavBar: React.FC = () => {
   const { cart } = useCartStore((state) => state);
 
   const { setModalPath } = useModalStore((state) => state);
+
+  const navigate = useNavigate();
 
   const { data: catagoriesResponse } = useSuspenseQuery(getCategoriesOptions());
   const categories = catagoriesResponse?.Data;
@@ -44,7 +46,11 @@ const NavBar: React.FC = () => {
           </Link>
         </div>
         <div className="flex gap-[20px]">
-          <button>
+          <button
+            onClick={() => {
+              navigate({ to: '/login' });
+            }}
+          >
             <User strokeWidth={'1px'} />
           </button>
 

@@ -229,9 +229,10 @@ const Register: React.FC = () => {
                 </span>
                 .
               </p>
+
               <a
                 href="/login"
-                className="mt-3 inline-block w-96 rounded bg-indigo-600 px-5 py-3 font-medium text-white shadow-md shadow-indigo-500/20 hover:bg-indigo-700"
+                className="mt-3 inline-block w-96 rounded bg-green-600 px-5 py-3 font-medium text-white shadow-md shadow-green-500/20 hover:bg-green-700"
               >
                 Continue →
               </a>
