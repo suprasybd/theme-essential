@@ -81,7 +81,7 @@ const CartModal: React.FC = () => {
         }
       }}
     >
-      <SheetContent className="p-3 overflow-auto">
+      <SheetContent className="p-3 overflow-auto w-full md:w-[75%]">
         <SheetHeader>
           <SheetTitle>Cart</SheetTitle>
           <SheetDescription>Add items to cart</SheetDescription>
