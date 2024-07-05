@@ -7,7 +7,7 @@ import NavBar from '../components/NavBar/NavBar';
 import Modals from '@web/components/Modals/Modals';
 import Cart from '@web/components/Cart/Cart';
 import { QueryClient, useQuery } from '@tanstack/react-query';
-import { getLogo, getTurnstile } from '@web/api/turnstile';
+import { getLogo, getStore, getTurnstile } from '@web/api/turnstile';
 import { useEffect } from 'react';
 import { AuthStoreType } from '@web/store/authStore';
 import Footer from '@web/components/Footer/Footer';
@@ -23,7 +23,19 @@ const RootComponent: React.FC = () => {
     queryFn: getLogo,
   });
 
+  const { data: storeResposne } = useQuery({
+    queryKey: ['getStore'],
+    queryFn: getStore,
+  });
+
+  const store = storeResposne?.Data;
   const logo = logoResposne?.Data;
+
+  useEffect(() => {
+    if (store?.StoreName) {
+      document.title = store.StoreName;
+    }
+  }, [store]);
 
   const injectFavicon = (url: string) => {
     const favicon = document.createElement('link');
