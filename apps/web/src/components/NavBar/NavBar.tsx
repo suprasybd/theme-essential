@@ -2,7 +2,13 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useCartStore } from '@web/store/cartStore';
 import { useModalStore } from '@web/store/modalStore';
-import { Search, ShoppingBag, User } from 'lucide-react';
+import {
+  Search,
+  ShoppingBag,
+  ShoppingCart,
+  User,
+  UserRound,
+} from 'lucide-react';
 import React, { useMemo } from 'react';
 import { getCategoriesOptions } from './api';
 
@@ -51,7 +57,10 @@ const NavBar: React.FC = () => {
               navigate({ to: '/login' });
             }}
           >
-            <User strokeWidth={'1px'} />
+            <UserRound
+              className="text-black hover:scale-110"
+              strokeWidth={'1px'}
+            />
           </button>
 
           <button
@@ -60,7 +69,10 @@ const NavBar: React.FC = () => {
               setModalPath({ modal: 'cart' });
             }}
           >
-            <ShoppingBag strokeWidth={'1px'} />
+            <ShoppingCart
+              className="text-black hover:scale-110"
+              strokeWidth={'1px'}
+            />
 
             {cart && cart.length > 0 && (
               <div className="absolute top-[-5px] right-[-8px] bg-green-500 text-white rounded-full text-sm px-[5px]">

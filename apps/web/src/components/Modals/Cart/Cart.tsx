@@ -68,6 +68,10 @@ const CartModal: React.FC = () => {
     }
   }, [priceMap]);
 
+  const isCartEmpty = useMemo(() => {
+    return cart.length === 0;
+  }, [cart]);
+
   return (
     <Sheet
       open={modalOpen}
@@ -82,36 +86,49 @@ const CartModal: React.FC = () => {
           <SheetTitle>Cart</SheetTitle>
           <SheetDescription>Add items to cart</SheetDescription>
         </SheetHeader>
-        <div className="grid gap-4 py-4">
-          {cart && (
-            <div>
-              {cart.map((cartEach) => (
-                <CartItem Cart={cartEach} />
-              ))}
+        {isCartEmpty && (
+          <div className="h-full w-full flex justify-center items-center">
+            <div className="text-center">
+              <h1 className="font-bold txt-xl">Cart is empty!</h1>
+              <h1>Please add item to cart</h1>
             </div>
-          )}
-        </div>
-        <div>
-          <div className="flex justify-between mt-3">
-            <h1>Estimated Total</h1>
-            <h1>{formatPrice(estimatedTotal)}</h1>
           </div>
+        )}
 
-          <Link to="/checkout">
-            <Button
-              onClick={() => {
-                closeModal();
-              }}
-              className="w-full my-1 bg-green-500 hover:bg-green-500 hover:shadow-lg"
-            >
-              Check Out{' '}
-            </Button>
-          </Link>
+        {!isCartEmpty && (
+          <>
+            <div className="grid gap-4 py-4">
+              {cart && (
+                <div>
+                  {cart.map((cartEach) => (
+                    <CartItem Cart={cartEach} />
+                  ))}
+                </div>
+              )}
+            </div>
+            <div>
+              <div className="flex justify-between mt-3">
+                <h1>Estimated Total</h1>
+                <h1>{formatPrice(estimatedTotal)}</h1>
+              </div>
 
-          {/* <SheetClose asChild>
+              <Link to="/checkout">
+                <Button
+                  onClick={() => {
+                    closeModal();
+                  }}
+                  className="w-full my-1 bg-green-500 hover:bg-green-500 hover:shadow-lg"
+                >
+                  Check Out{' '}
+                </Button>
+              </Link>
+            </div>
+          </>
+        )}
+
+        {/* <SheetClose asChild>
             <Button type="submit">Save changes</Button>
           </SheetClose> */}
-        </div>
       </SheetContent>
     </Sheet>
   );
@@ -213,8 +230,6 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
       }, 0) || 0
     ); // Default to 0 if productSku is nullish
   }, [productSku, productAttributeOptions]);
-
-  console.log('aty', quantity, 'tota', totalInStock);
 
   return (
     <div className="flex p-2">
