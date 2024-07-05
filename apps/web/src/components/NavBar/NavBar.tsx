@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useCartStore } from '@web/store/cartStore';
 import { useModalStore } from '@web/store/modalStore';
@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import React, { useMemo } from 'react';
 import { getCategoriesOptions } from './api';
+import { getLogo } from '@web/api/turnstile';
 
 const NavBar: React.FC = () => {
   const { cart } = useCartStore((state) => state);
@@ -19,8 +20,15 @@ const NavBar: React.FC = () => {
 
   const navigate = useNavigate();
 
+  const { data: logoResponse } = useQuery({
+    queryKey: ['getLogo'],
+    queryFn: getLogo,
+  });
+
   const { data: catagoriesResponse } = useSuspenseQuery(getCategoriesOptions());
+
   const categories = catagoriesResponse?.Data;
+  const logo = logoResponse?.Data;
 
   const totalCartQuantity = useMemo(() => {
     if (cart) {
@@ -48,7 +56,12 @@ const NavBar: React.FC = () => {
         </div>
         <div>
           <Link to="/">
-            <h1 className="font-bold">Suprasy</h1>
+            <img
+              src={logo?.LogoLink}
+              width={'70px'}
+              height={'auto'}
+              alt="logo"
+            />
           </Link>
         </div>
         <div className="flex gap-[20px]">
@@ -82,14 +95,14 @@ const NavBar: React.FC = () => {
           </button>
         </div>
       </div>
-      <div className="flex mt-10 w-full gap-[30px] justify-center font-light ">
+      <div className="flex mt-10 w-full flex-wrap gap-[30px] justify-center ">
         {categories &&
-          categories.length &&
+          categories.length > 0 &&
           categories.map((category) => (
             <Link
               key={category.Id.toString()}
               to={'/category/' + category.Name}
-              className="hover:underline hover:font-normal"
+              className="hover:underline hover:scale-105 transition-all duration-150"
             >
               {category.Name}
             </Link>

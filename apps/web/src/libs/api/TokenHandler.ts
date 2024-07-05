@@ -3,7 +3,7 @@ import { AxiosRequestConfig, AxiosRequestHeaders } from 'axios';
 
 export const accessTokenHandler = (request: AxiosRequestConfig): void => {
   const accessToken = Cookies.get('accessToken') as string;
-  const storeKey = 'CC51B7ED2B14489592498BC654708303';
+  const storeKey = 'D15AF200583C4FA88DE7D886440AB1B0';
   (request.headers as AxiosRequestHeaders).Authorization = accessToken
     ? `Bearer ${accessToken}`
     : '';
