@@ -10,6 +10,7 @@ import { QueryClient, useQuery } from '@tanstack/react-query';
 import { getTurnstile } from '@web/api/turnstile';
 import { useEffect } from 'react';
 import { AuthStoreType } from '@web/store/authStore';
+import Footer from '@web/components/Footer/Footer';
 
 const RootComponent: React.FC = () => {
   const { data: turnstileResponse } = useQuery({
@@ -34,6 +35,10 @@ const RootComponent: React.FC = () => {
       <Modals />
       <ScrollRestoration />
       <Outlet />
+      {/* footer */}
+
+      <Footer />
+
       {/* <TanStackRouterDevtools /> */}
     </>
   );

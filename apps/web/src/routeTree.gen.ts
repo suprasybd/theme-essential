@@ -18,6 +18,7 @@ import { Route as AccountImport } from './routes/account'
 import { Route as IndexImport } from './routes/index'
 import { Route as VerifyCodeIndexImport } from './routes/verify/$code/index'
 import { Route as ProductsSlugIndexImport } from './routes/products/$slug/index'
+import { Route as PageUrlIndexImport } from './routes/page/$url/index'
 import { Route as CategoryNameIndexImport } from './routes/category/$name/index'
 
 // Create/Update Routes
@@ -57,6 +58,11 @@ const ProductsSlugIndexRoute = ProductsSlugIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const PageUrlIndexRoute = PageUrlIndexImport.update({
+  path: '/page/$url/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const CategoryNameIndexRoute = CategoryNameIndexImport.update({
   path: '/category/$name/',
   getParentRoute: () => rootRoute,
@@ -90,6 +96,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoryNameIndexImport
       parentRoute: typeof rootRoute
     }
+    '/page/$url/': {
+      preLoaderRoute: typeof PageUrlIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/products/$slug/': {
       preLoaderRoute: typeof ProductsSlugIndexImport
       parentRoute: typeof rootRoute
@@ -110,6 +120,7 @@ export const routeTree = rootRoute.addChildren([
   LoginRoute,
   RegisterRoute,
   CategoryNameIndexRoute,
+  PageUrlIndexRoute,
   ProductsSlugIndexRoute,
   VerifyCodeIndexRoute,
 ])
