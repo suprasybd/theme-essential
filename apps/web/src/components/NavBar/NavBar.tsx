@@ -66,6 +66,7 @@ const NavBar: React.FC = () => {
         </div>
         <div className="flex gap-[20px]">
           <button
+            className="h-fit"
             onClick={() => {
               navigate({ to: '/login' });
             }}
@@ -77,7 +78,7 @@ const NavBar: React.FC = () => {
           </button>
 
           <button
-            className="relative"
+            className="relative h-fit"
             onClick={() => {
               setModalPath({ modal: 'cart' });
             }}

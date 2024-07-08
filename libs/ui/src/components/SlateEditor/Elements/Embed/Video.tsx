@@ -5,6 +5,7 @@ import {
   ReactEditor,
   useSlateStatic,
 } from 'slate-react';
+import ReactPlayer from 'react-player';
 
 import useResize from '../../utils/customHooks/useResize.ts';
 import { Transforms } from 'slate';
@@ -65,15 +66,7 @@ const Video = ({ attributes, element, children }) => {
               video player icon
             </div>
           ) : (
-            <iframe
-              style={{
-                width: '100%',
-                height: '100%',
-              }}
-              src={url}
-              frameBorder="0"
-              title={alt}
-            />
+            <ReactPlayer width={'100%'} height={'100%'} url={url} />
           )
         }
       </div>
