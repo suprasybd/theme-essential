@@ -133,7 +133,7 @@ const CategoryComponent: React.FC<{ category: CategoryType }> = ({
               <Link
                 key={category.Id.toString()}
                 to={'/category/' + category.Name}
-                className=" hover:scale-105 transition-all duration-150 flex gap-[3px] justify-center items-center"
+                className="hover:underline hover:scale-105 transition-all duration-150 flex gap-[3px] justify-center items-center"
               >
                 <span>{category.Name}</span>
 
@@ -160,7 +160,7 @@ const CategoryComponent: React.FC<{ category: CategoryType }> = ({
         <Link
           key={category.Id.toString()}
           to={'/category/' + category.Name}
-          className="hover:underline hover:scale-110 transition-all duration-150"
+          className="hover:scale-125 hover:font-medium hover:underline transition-all duration-150"
         >
           {category.Name}d
         </Link>

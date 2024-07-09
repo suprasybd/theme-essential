@@ -46,7 +46,7 @@ const CategoryProducts: React.FC = () => {
   return (
     <section className="w-full max-w-[1220px] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
       <h1 className="text-4xl font-medium">{name}</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 my-10 ">
+      <div className="flex justify-center items-center flex-wrap md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 my-10 ">
         {products &&
           products.length > 0 &&
           products.map((product) => <ProductCard ProductId={product.Id} />)}
