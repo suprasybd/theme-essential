@@ -29,3 +29,4 @@ export * from './components/ui/use-toast';
 export * from './components/SlateEditor/RichText';
 export * from './components/ui/sheet';
 export * from './components/ui/radio-group';
+export * from './components/ui/hover-card';

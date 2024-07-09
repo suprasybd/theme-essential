@@ -20,6 +20,16 @@ export const getCategories = async (): Promise<
   return response.data;
 };
 
+export const getSubCategories = async (
+  parentId: number
+): Promise<ListResponseType<CategoryType>> => {
+  const response = await ApiClient.get(
+    `/storefront-categories/all/${parentId}`
+  );
+
+  return response.data;
+};
+
 // options
 export const getCategoriesOptions = () =>
   queryOptions({
