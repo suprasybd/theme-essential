@@ -157,15 +157,13 @@ const CategoryComponent: React.FC<{ category: CategoryType }> = ({
         </div>
       )}
       {subCategories?.length === 0 && (
-        <div>
-          <Link
-            key={category.Id.toString()}
-            to={'/category/' + category.Name}
-            className="hover:underline hover:scale-105 transition-all duration-150"
-          >
-            {category.Name}
-          </Link>
-        </div>
+        <Link
+          key={category.Id.toString()}
+          to={'/category/' + category.Name}
+          className="hover:underline hover:scale-110 transition-all duration-150"
+        >
+          {category.Name}d
+        </Link>
       )}
     </div>
   );

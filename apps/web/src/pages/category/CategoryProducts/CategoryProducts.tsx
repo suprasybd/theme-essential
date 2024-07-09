@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
-import { getCategories } from '@web/components/NavBar/api';
+import { getCategories, getCategoryId } from '@web/components/NavBar/api';
 import ProductCard from '@web/components/ProductCard/ProductCard';
 import { activeFilters } from '@web/libs/helpers/filters';
 import { getProductsList } from '@web/pages/products/api';
@@ -13,17 +13,11 @@ const CategoryProducts: React.FC = () => {
   // get all products for that category
 
   const { data: catagoriesResponse } = useQuery({
-    queryFn: () => getCategories(),
-    queryKey: ['getCategoriesResponse'],
+    queryFn: () => getCategoryId(name),
+    queryKey: ['getCategoriesResponseIdpage', name],
+    enabled: !!name,
   });
-  const categories = catagoriesResponse?.Data;
-
-  const categoryId = useMemo(() => {
-    if (categories && categories?.length > 0 && name) {
-      const found = categories.find((category) => category.Name === name);
-      return found?.Id;
-    }
-  }, [categories, name]);
+  const category = catagoriesResponse?.Data;
 
   const { data: categoryProductsResponse } = useQuery({
     queryFn: () =>
@@ -33,8 +27,8 @@ const CategoryProducts: React.FC = () => {
         ...activeFilters([
           {
             key: 'CategoryId',
-            value: categoryId?.toString() || '0',
-            isActive: !!categoryId,
+            value: category?.Id?.toString() || '0',
+            isActive: !!category?.Id,
           },
           {
             key: 'Status',
@@ -43,7 +37,8 @@ const CategoryProducts: React.FC = () => {
           },
         ]),
       }),
-    queryKey: ['getAllProdcutsForCategory', categoryId, name],
+    queryKey: ['getAllProdcutsForCategory', category?.Id, name],
+    enabled: !!category?.Id,
   });
 
   const products = categoryProductsResponse?.Data;

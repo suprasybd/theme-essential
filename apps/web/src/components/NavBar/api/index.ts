@@ -1,6 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
 import ApiClient from '@web/libs/ApiClient';
-import { ListResponseType } from '@web/libs/types/responseTypes';
+import { ListResponseType, ResponseType } from '@web/libs/types/responseTypes';
 
 export interface CategoryType {
   Id: number;
@@ -25,6 +25,16 @@ export const getSubCategories = async (
 ): Promise<ListResponseType<CategoryType>> => {
   const response = await ApiClient.get(
     `/storefront-categories/all/${parentId}`
+  );
+
+  return response.data;
+};
+
+export const getCategoryId = async (
+  categoryName: string
+): Promise<ResponseType<CategoryType>> => {
+  const response = await ApiClient.get(
+    `/storefront-categories/getid/${categoryName}`
   );
 
   return response.data;
