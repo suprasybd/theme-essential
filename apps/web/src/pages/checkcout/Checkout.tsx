@@ -206,11 +206,20 @@ const Checkout = () => {
       Object.keys(priceMap).forEach((key) => {
         estimateTotal += priceMap[key];
       });
+      const deliveryCost =
+        deliveryMethods?.find((d) => d.Id === selectedDeliveryMethod)?.Cost ||
+        0;
+      const shippingCost =
+        shippingMethods?.find((d) => d.Id === selectedShippingMethod)?.Cost ||
+        0;
+
+      estimateTotal += deliveryCost;
+      estimateTotal += shippingCost;
       return estimateTotal;
     } else {
       return 0;
     }
-  }, [priceMap]);
+  }, [priceMap, selectedDeliveryMethod, selectedShippingMethod]);
 
   const [siteKey, turnstileLoaded] = useTurnStileHook();
 
@@ -350,7 +359,7 @@ const Checkout = () => {
                   </FormItem>
                 )}
               />
-              <h1 className="text-2xl font-medium mb-3">Shipping Method</h1>
+              <h1 className="text-2xl font-medium mb-3">Shipping Charge</h1>
               {shippingMethods && shippingMethods.length && (
                 <RadioGroup
                   onValueChange={(val) => {
@@ -486,7 +495,7 @@ const Checkout = () => {
                 <h2>{formatPrice(estimatedTotal)}</h2>
               </div>
             </CardTitle>
-            <CardDescription>Card Description</CardDescription>
+            <CardDescription>Check the order summary bellow</CardDescription>
           </CardHeader>
           <CardContent>
             <div>
@@ -497,7 +506,49 @@ const Checkout = () => {
             </div>
           </CardContent>
           <CardFooter>
-            <p>Card Footer</p>
+            <div className="w-full">
+              <h1 className="text-xl my-3">Order Summary</h1>
+              <p className="flex w-full justify-between">
+                <span className="block"> Shipping Charge: </span>
+
+                {shippingMethods?.find((s) => s.Id === selectedShippingMethod)
+                  ?.Cost !== 0 && (
+                  <span className="font-bold">
+                    {formatPrice(
+                      shippingMethods?.find(
+                        (s) => s.Id === selectedShippingMethod
+                      )?.Cost || 0
+                    )}
+                  </span>
+                )}
+                {shippingMethods?.find((s) => s.Id === selectedShippingMethod)
+                  ?.Cost === 0 && <span className="font-bold">Free</span>}
+              </p>
+
+              <p className="my-2 flex w-full justify-between">
+                <span className="block">Delivery Charge: </span>
+
+                {deliveryMethods?.find((s) => s.Id === selectedDeliveryMethod)
+                  ?.Cost !== 0 && (
+                  <span className="font-bold">
+                    {formatPrice(
+                      deliveryMethods?.find(
+                        (s) => s.Id === selectedDeliveryMethod
+                      )?.Cost || 0
+                    )}
+                  </span>
+                )}
+                {deliveryMethods?.find((s) => s.Id === selectedDeliveryMethod)
+                  ?.Cost === 0 && <span className="font-bold">Free</span>}
+              </p>
+              <p className="flex w-full justify-between">
+                <span className="block">Total Cost: </span>
+
+                <span className="font-bold block">
+                  {formatPrice(estimatedTotal)}
+                </span>
+              </p>
+            </div>
           </CardFooter>
         </Card>
       </div>

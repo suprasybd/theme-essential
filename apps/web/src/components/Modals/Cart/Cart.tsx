@@ -305,7 +305,7 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
         )}
 
         <span className="block mb-2 font-light text-sm">Quantity</span>
-        <div className="flex justify-between">
+        <div className="flex flex-col gap-[6px] md:gap-[0px] md:flex-row items-end justify-between">
           <div className="flex">
             <button
               className="border border-r-0 border-gray-400 py-1 px-5 font-bold rounded-l-full hover:!bg-slate-200"
@@ -355,7 +355,7 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
           </div>
 
           <button
-            className="ml-3"
+            className="md:ml-3"
             onClick={() => {
               if (Cart.Id) {
                 setPriceMap(Cart.Id, 0);
