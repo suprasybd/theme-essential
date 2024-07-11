@@ -194,9 +194,10 @@ const Checkout = () => {
     }
   }, [cart]);
 
-  function onSubmit(values: z.infer<typeof formSchemaCheckout>) {
-    const turnstileResponse = localStorage.getItem('cf-turnstile-in-storage');
-
+  function onSubmit(
+    values: z.infer<typeof formSchemaCheckout>,
+    turnstileResponse: string | null
+  ) {
     handlePlaceOrder({ ...values, 'cf-turnstile-response': turnstileResponse });
   }
 
@@ -235,9 +236,9 @@ const Checkout = () => {
 
       if (!tRes) return;
 
-      localStorage.setItem('cf-turnstile-in-storage', tRes);
-
-      form.handleSubmit(onSubmit)(e);
+      form.handleSubmit((values: z.infer<typeof formSchemaCheckout>) =>
+        onSubmit(values, tRes)
+      )(e);
     } catch (error) {
       forceUpdate();
     }
