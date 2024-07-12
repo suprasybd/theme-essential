@@ -33,8 +33,8 @@ const Image = ({ attributes, element, children }) => {
 
   return (
     <div
+      className=" w-full flex justify-center items-center"
       {...attributes}
-      className="embed"
       style={{
         display: 'flex',
         boxShadow: selected && focused && '0 0 3px 3px lightgray',
@@ -48,7 +48,6 @@ const Image = ({ attributes, element, children }) => {
           // maxHeight: '100%',
           maxWidth: `${size.width}px`,
           maxHeight: `${size.height}px`,
-          overflow: 'hidden',
         }}
       >
         <img

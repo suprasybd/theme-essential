@@ -32,7 +32,7 @@ const Video = ({ attributes, element, children }) => {
   return (
     <div
       {...attributes}
-      className="embed !w-full h-full"
+      className="w-full h-full flex justify-center items-center"
       style={{
         display: 'flex',
         boxShadow: selected && focused && '0 0 3px 3px lightgray',
