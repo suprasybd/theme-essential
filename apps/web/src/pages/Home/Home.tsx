@@ -26,11 +26,11 @@ const Home = () => {
   const homeHero = homeHeroResposne.Data;
 
   return (
-    <div className="w-full max-w-[1220px] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
+    <div className="w-full max-w-[1220px]  mx-auto gap-6 py-6 px-4 sm:px-8">
       {homeHero?.length > 0 && (
         <div className="mb-10">
           <Carousel className="rounded-md">
-            <CarouselContent className="rounded-md">
+            <CarouselContent className="rounded-md h-[400px]">
               {homeHero.map((hero) => (
                 <CarouselItem>
                   <img
