@@ -6,3 +6,5 @@ export const SUPRASY_API_URL = 'http://localhost:3000';
 
 export const SITE_URL = window.location.hostname;
 export const SUPRASY_CF_API = 'https://app-develop.suprasy.com';
+
+export const RENDER_URL = 'http://localhost:4200';

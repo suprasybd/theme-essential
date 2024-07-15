@@ -1,9 +1,10 @@
 import Cookies from 'js-cookie';
 import { AxiosRequestConfig, AxiosRequestHeaders } from 'axios';
+import { STORE_KEY } from '@web/config/storeKey';
 
 export const accessTokenHandler = (request: AxiosRequestConfig): void => {
   const accessToken = Cookies.get('accessToken') as string;
-  const storeKey = 'FD93A6AF0E704F5BAD7F0DBF06611110';
+  const storeKey = STORE_KEY;
   (request.headers as AxiosRequestHeaders).Authorization = accessToken
     ? `Bearer ${accessToken}`
     : '';
