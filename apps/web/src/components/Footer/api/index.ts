@@ -4,7 +4,7 @@ import { ListResponseType, ResponseType } from '@web/libs/types/responseTypes';
 
 export interface FooterType {
   Id: number;
-  StoreKey: string;
+
   Description: string;
   CreatedAt: string;
   UpdatedAt: string;
@@ -12,7 +12,7 @@ export interface FooterType {
 
 export interface PageType {
   Id: number;
-  StoreKey: string;
+
   Description: string;
   Url: string;
   CreatedAt: string;

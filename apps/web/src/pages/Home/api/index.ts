@@ -4,7 +4,7 @@ import { ListResponseType } from '@web/libs/types/responseTypes';
 
 export interface AreaType {
   Id: number;
-  StoreKey: string;
+
   Area: string;
   Cost: number;
   CreatedAt: string;
@@ -12,7 +12,7 @@ export interface AreaType {
 }
 export interface HomeSectionsTypes {
   Id: number;
-  StoreKey: string;
+
   Title: string;
   Description: string;
   ViewAllLink: any;
@@ -22,7 +22,7 @@ export interface HomeSectionsTypes {
 
 export interface SectionProductsType {
   Id: number;
-  StoreKey: string;
+
   ProductId: number;
   SectionId: number;
   CreatedAt: string;

@@ -1,6 +1,6 @@
 export interface ProductType {
   Id: number;
-  StoreKey: string;
+
   HasVariant: boolean;
   CategoryId: number;
   Slug: string;
@@ -14,7 +14,7 @@ export interface ProductType {
 
 export interface ProductsVairantsTypes {
   Id: number;
-  StoreKey: string;
+
   ProductId: number;
   Price: number;
   Inventory: number;
@@ -24,7 +24,7 @@ export interface ProductsVairantsTypes {
 
 export interface ProductImagesTypes {
   Id: number;
-  StoreKey: string;
+
   ProductId: number;
   Order: number;
   ImageUrl: string;
@@ -40,7 +40,7 @@ export interface Options {
 
 export interface StorefrontOptions {
   Id: number;
-  StoreKey: string;
+
   ProductId: number;
   Name: string;
   CreatedAt: string;
@@ -49,7 +49,7 @@ export interface StorefrontOptions {
 
 export interface StorefrontOptionsValue {
   Id: number;
-  StoreKey: string;
+
   OptionId: number;
   Value: string;
   CreatedAt: string;
@@ -67,7 +67,7 @@ export interface MultipleVariantsTypes {
 
 export interface StorefrontVariants {
   Id: number;
-  StoreKey: string;
+
   ProductId: number;
   Price: number;
   Inventory: number;
@@ -77,7 +77,7 @@ export interface StorefrontVariants {
 
 export interface StorefrontVariantsOptions {
   Id: number;
-  StoreKey: string;
+
   VariantId: number;
   OptionId: number;
   ValueId: number;
@@ -87,7 +87,7 @@ export interface StorefrontVariantsOptions {
 
 export interface StorefrontOptions {
   Id: number;
-  StoreKey: string;
+
   ProductId: number;
   Name: string;
   CreatedAt: string;
@@ -96,7 +96,7 @@ export interface StorefrontOptions {
 
 export interface StorefrontOptionsValue {
   Id: number;
-  StoreKey: string;
+
   OptionId: number;
   Value: string;
   CreatedAt: string;
@@ -105,7 +105,7 @@ export interface StorefrontOptionsValue {
 
 export interface ProductSku {
   Id: number;
-  StoreKey: string;
+
   ProductId: number;
   AttributeOptionId: number;
   Price: number;
@@ -119,7 +119,7 @@ export interface ProductSku {
 
 export interface AttributeName {
   Id: number;
-  StoreKey: string;
+
   ProductId: number;
   Name: string;
   CreatedAt: string;
@@ -128,7 +128,7 @@ export interface AttributeName {
 
 export interface AttributeValue {
   Id: number;
-  StoreKey: string;
+
   AttributeId: number;
   ProductId: number;
   Value: string;

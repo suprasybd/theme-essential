@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 
 const RenderProductRichText: React.FC<{
   productId: number;
-  storeKey: string;
+
   summary?: boolean;
 }> = ({ productId, storeKey, summary }) => {
   return (

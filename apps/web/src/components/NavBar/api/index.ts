@@ -4,7 +4,7 @@ import { ListResponseType, ResponseType } from '@web/libs/types/responseTypes';
 
 export interface CategoryType {
   Id: number;
-  StoreKey: string;
+
   ParentCategoryId?: number;
   Name: string;
   Icon?: string;

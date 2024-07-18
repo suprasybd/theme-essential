@@ -10,7 +10,7 @@ export interface TurnstileType {
 
 export interface LogoType {
   Id: number;
-  StoreKey: string;
+
   LogoLink: string;
   FaviconLink: string;
   CreatedAt: string;
@@ -19,7 +19,7 @@ export interface LogoType {
 
 export interface StoreType {
   Id: number;
-  StoreKey: string;
+
   StoreName: string;
   StoreCloudName: string;
   IsActive: boolean;

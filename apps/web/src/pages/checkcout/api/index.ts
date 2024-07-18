@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { formSchemaCheckout } from '../Checkout';
 export interface AreaType {
   Id: number;
-  StoreKey: string;
+
   Area: string;
   Cost: number;
   CreatedAt: string;
@@ -13,7 +13,7 @@ export interface AreaType {
 
 export interface DeliveryType {
   Id: number;
-  StoreKey: string;
+
   DeliveryMethod: string;
   Cost: number;
   CreatedAt: string;

@@ -11,7 +11,7 @@ import { queryOptions } from '@tanstack/react-query';
 
 export interface AreaType {
   Id: number;
-  StoreKey: string;
+
   Area: string;
   Cost: number;
   CreatedAt: string;
