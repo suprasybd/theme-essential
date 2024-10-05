@@ -138,13 +138,6 @@ const ProductDetails: React.FC = () => {
 
               {/* has variant? */}
 
-              {!inStock && (
-                <div className="flex items-center my-2 bg-slate-200 rounded-lg p-3 w-fit">
-                  <p className="mr-1">Status: </p>
-                  <p className="text-sm font-bold">Out of Stock</p>
-                </div>
-              )}
-
               {inStock && (
                 <>
                   <div className="flex items-center my-2 bg-slate-200 rounded-lg p-3 w-fit">
@@ -153,7 +146,7 @@ const ProductDetails: React.FC = () => {
                   </div>
 
                   <div className="flex flex-wrap gap-[5px]">
-                    {productVariationsResponse?.Data.map((variation) => (
+                    {productVariationsResponse?.Data?.map((variation) => (
                       <Button
                         onClick={(e) => {
                           e.preventDefault();
@@ -169,6 +162,25 @@ const ProductDetails: React.FC = () => {
                       </Button>
                     ))}
                   </div>
+
+                  {productVariationsResponse?.Data?.find(
+                    (v) => v.Id === selectedVariation
+                  )?.Inventory || 0 >= 1 ? (
+                    <div className="text-green-600 text-sm">
+                      <span>
+                        {
+                          productVariationsResponse?.Data?.find(
+                            (v) => v.Id === selectedVariation
+                          )?.Inventory
+                        }{' '}
+                        avaliable
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="text-red-400 text-sm">
+                      <span>out of stock</span>
+                    </div>
+                  )}
 
                   <span className="block mb-2 ">Quantity</span>
                   <div className="flex">
