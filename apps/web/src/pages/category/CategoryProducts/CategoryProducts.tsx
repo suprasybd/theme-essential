@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
 import { getCategories, getCategoryId } from '@web/components/NavBar/api';
+import PaginationMain from '@web/components/Pagination/Pagination';
 import ProductCard from '@web/components/ProductCard/ProductCard';
 import { activeFilters } from '@web/libs/helpers/filters';
 import { getProductsList } from '@web/pages/products/api';
@@ -19,7 +20,7 @@ const CategoryProducts: React.FC = () => {
   });
   const category = catagoriesResponse?.Data;
 
-  const { data: categoryProductsResponse } = useQuery({
+  const { data: productsListResponse } = useQuery({
     queryFn: () =>
       getProductsList({
         Limit: limit,
@@ -41,7 +42,7 @@ const CategoryProducts: React.FC = () => {
     enabled: !!category?.Id,
   });
 
-  const products = categoryProductsResponse?.Data;
+  const products = productsListResponse?.Data;
 
   return (
     <section className="w-full max-w-[1220px] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
@@ -51,6 +52,12 @@ const CategoryProducts: React.FC = () => {
           products.length > 0 &&
           products.map((product) => <ProductCard ProductId={product.Id} />)}
       </div>
+      {productsListResponse?.Pagination && (
+        <PaginationMain
+          PaginationDetails={productsListResponse?.Pagination}
+          setPage={setPage}
+        />
+      )}
     </section>
   );
 };

@@ -1,17 +1,17 @@
+import { Button, RichTextRender, useToast } from '@frontend.suprasy.com/ui';
 import {
   queryOptions,
   useQuery,
   useSuspenseQuery,
 } from '@tanstack/react-query';
 import { useNavigate, useParams } from '@tanstack/react-router';
+import cn from 'classnames';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   getProductImagesOption,
   getProductVariations,
   getProductsDetails,
 } from '../api';
-import { RichTextRender, Button, useToast } from '@frontend.suprasy.com/ui';
-import cn from 'classnames';
 import ProductImages from './components/ProductImages';
 
 import {
@@ -101,7 +101,7 @@ const ProductDetails: React.FC = () => {
     calculateDiscountPercentage(
       productVariation?.SalesPrice,
       productVariation?.Price
-    ) !== 0;
+    ) < 0;
 
   return (
     <section className="w-full max-w-[1220px] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
@@ -153,13 +153,6 @@ const ProductDetails: React.FC = () => {
                 </div>
               )}
 
-              {/* has variant? */}
-
-              <div className="flex items-center my-2 bg-slate-200 rounded-lg p-3 w-fit">
-                <p className="mr-1">Status: </p>
-                <p className="text-sm font-bold">In Stock</p>
-              </div>
-
               <div className="flex flex-wrap gap-[5px]">
                 {productVariationsResponse?.Data?.map((variation) => (
                   <Button
@@ -178,24 +171,26 @@ const ProductDetails: React.FC = () => {
                 ))}
               </div>
 
-              {productVariationsResponse?.Data?.find(
-                (v) => v.Id === selectedVariation
-              )?.Inventory || 0 >= 1 ? (
-                <div className="text-green-600 text-sm">
-                  <span>
-                    {
-                      productVariationsResponse?.Data?.find(
-                        (v) => v.Id === selectedVariation
-                      )?.Inventory
-                    }{' '}
-                    avaliable
-                  </span>
-                </div>
-              ) : (
-                <div className="text-red-400 text-sm">
-                  <span>out of stock</span>
-                </div>
-              )}
+              <div className="my-[2px]">
+                {productVariationsResponse?.Data?.find(
+                  (v) => v.Id === selectedVariation
+                )?.Inventory || 0 >= 1 ? (
+                  <div className="text-black text-sm font-semibold">
+                    <span>
+                      {
+                        productVariationsResponse?.Data?.find(
+                          (v) => v.Id === selectedVariation
+                        )?.Inventory
+                      }{' '}
+                      Avaliable
+                    </span>
+                  </div>
+                ) : (
+                  <div className="text-red-400 text-sm font-semibold">
+                    <span>Out Of Stock</span>
+                  </div>
+                )}
+              </div>
 
               <span className="block mb-2 ">Quantity</span>
               <div className="flex">
