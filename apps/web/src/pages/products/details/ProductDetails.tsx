@@ -48,6 +48,8 @@ const ProductDetails: React.FC = () => {
 
   const productDetails = productsDetailsResponse?.Data;
 
+  const ProductID = productDetails?.Id;
+
   const { data: productImagesResponse } = useSuspenseQuery(
     getProductImagesOption(selectedVariation)
   );
@@ -63,7 +65,9 @@ const ProductDetails: React.FC = () => {
     productImagesResponse?.Data?.length > 0 &&
     productImagesResponse?.Data;
 
-  const inStock = true;
+  const productVariation = productVariationsResponse?.Data?.find(
+    (v) => v.Id === selectedVariation
+  );
 
   useEffect(() => {
     if (
@@ -75,6 +79,29 @@ const ProductDetails: React.FC = () => {
   }, [productVariationsResponse?.Data]);
 
   const navigate = useNavigate();
+
+  const isVariationUnderQty = useMemo(() => {
+    const cartVariation = cart?.find(
+      (c) => c.VariationId === selectedVariation
+    );
+
+    const variation = productVariationsResponse?.Data?.find(
+      (v) => v.Id === selectedVariation
+    );
+
+    if ((variation?.Inventory || 0) > (cartVariation?.Quantity || 0)) {
+      return true;
+    }
+
+    return false;
+  }, [cart, productVariationsResponse?.Data, selectedVariation]);
+
+  const isOnSale =
+    productVariation?.SalesPrice &&
+    calculateDiscountPercentage(
+      productVariation?.SalesPrice,
+      productVariation?.Price
+    ) !== 0;
 
   return (
     <section className="w-full max-w-[1220px] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
@@ -97,35 +124,25 @@ const ProductDetails: React.FC = () => {
                     {productDetails.Title}
                   </h1>
 
-                  {/* {productSku && (
-                    <p className="text-xl font-normal my-3 tracking-wider">
-                      {productSku.map((sku) => {
-                        if (sku.Id === selectedSku) {
-                          return (
-                            <div>
-                              {sku.ShowCompareAtPrice && (
-                                <span className="inline-block mr-3 line-through">
-                                  {formatPrice(sku.CompareAtPrice)}
-                                </span>
-                              )}
-                              {formatPrice(sku.Price)}
-                              {sku.ShowCompareAtPrice && (
-                                <span className="inline-block ml-3 bg-green-500 text-white p-1 text-sm rounded-sm">
-                                  {calculateDiscountPercentage(
-                                    sku.CompareAtPrice,
-                                    sku.Price
-                                  ).toFixed(2)}
-                                  % off
-                                </span>
-                              )}
-                            </div>
-                          );
-                        } else {
-                          return <></>;
-                        }
-                      })}
-                    </p>
-                  )} */}
+                  <p className="text-xl font-normal my-3 tracking-wider">
+                    <div>
+                      {productVariation?.SalesPrice && isOnSale && (
+                        <span className="inline-block mr-3 line-through">
+                          {formatPrice(productVariation?.SalesPrice)}
+                        </span>
+                      )}
+                      {formatPrice(productVariation?.Price || 0)}
+                      {productVariation?.SalesPrice && isOnSale && (
+                        <span className="inline-block ml-3 bg-green-500 text-white p-1 text-sm rounded-sm">
+                          {calculateDiscountPercentage(
+                            productVariation?.SalesPrice,
+                            productVariation?.Price
+                          ).toFixed(2)}
+                          % off
+                        </span>
+                      )}
+                    </div>
+                  </p>
 
                   <div className="my-3">
                     <RichTextRender
@@ -138,246 +155,128 @@ const ProductDetails: React.FC = () => {
 
               {/* has variant? */}
 
-              {inStock && (
-                <>
-                  <div className="flex items-center my-2 bg-slate-200 rounded-lg p-3 w-fit">
-                    <p className="mr-1">Status: </p>
-                    <p className="text-sm font-bold">In Stock</p>
-                  </div>
+              <div className="flex items-center my-2 bg-slate-200 rounded-lg p-3 w-fit">
+                <p className="mr-1">Status: </p>
+                <p className="text-sm font-bold">In Stock</p>
+              </div>
 
-                  <div className="flex flex-wrap gap-[5px]">
-                    {productVariationsResponse?.Data?.map((variation) => (
-                      <Button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setSelectedVariation(variation.Id);
-                        }}
-                        className={cn(
-                          variation.Id === selectedVariation
-                            ? 'bg-black'
-                            : 'bg-slate-400'
-                        )}
-                      >
-                        {variation.ChoiceName}
-                      </Button>
-                    ))}
-                  </div>
+              <div className="flex flex-wrap gap-[5px]">
+                {productVariationsResponse?.Data?.map((variation) => (
+                  <Button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setSelectedVariation(variation.Id);
+                    }}
+                    className={cn(
+                      variation.Id === selectedVariation
+                        ? 'bg-black'
+                        : 'bg-slate-400'
+                    )}
+                  >
+                    {variation.ChoiceName}
+                  </Button>
+                ))}
+              </div>
 
-                  {productVariationsResponse?.Data?.find(
-                    (v) => v.Id === selectedVariation
-                  )?.Inventory || 0 >= 1 ? (
-                    <div className="text-green-600 text-sm">
-                      <span>
-                        {
-                          productVariationsResponse?.Data?.find(
-                            (v) => v.Id === selectedVariation
-                          )?.Inventory
-                        }{' '}
-                        avaliable
-                      </span>
-                    </div>
-                  ) : (
-                    <div className="text-red-400 text-sm">
-                      <span>out of stock</span>
-                    </div>
-                  )}
-
-                  <span className="block mb-2 ">Quantity</span>
-                  <div className="flex">
-                    <button
-                      className="border border-r-0 border-gray-400 py-1 px-5 font-bold rounded-l-full hover:!bg-slate-200"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        if (quantity - 1 >= 1) {
-                          setQuantity(quantity - 1);
-                        }
-                      }}
-                    >
-                      -
-                    </button>
-                    <input
-                      onChange={(e) => {
-                        setQuantity(parseInt(e.target.value) || 1);
-                      }}
-                      type="text"
-                      className="border w-[50px] border-gray-400 text-center"
-                      value={quantity}
-                      step={'any'}
-                    />
-                    <button
-                      className="border border-l-0 border-gray-400 py-1 px-5 font-bold rounded-r-full hover:!bg-slate-200"
-                      onClick={(e) => {
-                        e.preventDefault();
-
-                        setQuantity(quantity + 1);
-                      }}
-                    >
-                      +
-                    </button>
-                  </div>
-                  <div className="my-3">
-                    <Button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        if (productDetails && productDetails?.HasVariant) {
-                          // productSku?.forEach((sku) => {
-                          //   if (sku.Id === selectedSku) {
-                          //     const attr = productAttributeOptions?.find(
-                          //       (o) => o.Id === sku.AttributeOptionId
-                          //     );
-                          //     if (!attr) {
-                          //       return;
-                          //     }
-                          //     // if already have increase qty
-                          //     if (
-                          //       cart.find(
-                          //         (c) =>
-                          //           c.ProductId === sku.ProductId &&
-                          //           c.ProductAttribute === attr.Value
-                          //       )
-                          //     ) {
-                          //       const theCartItem = cart.find(
-                          //         (c) =>
-                          //           c.ProductId === sku.ProductId &&
-                          //           c.ProductAttribute === attr.Value
-                          //       );
-                          //       // check if enough stock
-                          //       if (
-                          //         sku.Inventory <
-                          //         (theCartItem?.Quantity || 0) + 1
-                          //       ) {
-                          //         toast({
-                          //           variant: 'destructive',
-                          //           title: 'Stock Alert',
-                          //           description: 'Not enough items in stock.',
-                          //         });
-                          //         return;
-                          //       }
-                          //       setQtyCart(
-                          //         theCartItem?.Id || '0',
-                          //         (theCartItem?.Quantity || 0) + 1
-                          //       );
-                          //       return;
-                          //     }
-                          //     // check if enough stock
-                          //     if (sku.Inventory < quantity) {
-                          //       toast({
-                          //         variant: 'destructive',
-                          //         title: 'Stock Alert',
-                          //         description: 'Not enough items in stock.',
-                          //       });
-                          //       return;
-                          //     }
-                          //     // if not already in cart add it
-                          //     addToCart({
-                          //       ProductId: productDetails?.Id,
-                          //       Quantity: quantity,
-                          //       ProductAttribute: attr.Value,
-                          //     });
-                          //   }
-                          // });
-                        }
-
-                        // if (productDetails && !productDetails.HasVariant) {
-                        //   // if already have increase qty
-                        //   if (
-                        //     cart.find((c) => c.ProductId === productDetails.Id)
-                        //   ) {
-                        //     const theCartItem = cart.find(
-                        //       (c) => c.ProductId === productDetails.Id
-                        //     );
-                        //     if (
-                        //       productSku &&
-                        //       productSku[0].Inventory <
-                        //         (theCartItem?.Quantity || 0) + quantity
-                        //     ) {
-                        //       toast({
-                        //         variant: 'destructive',
-                        //         title: 'Stock Alert',
-                        //         description: 'Not enough items in stock.',
-                        //       });
-                        //       return;
-                        //     }
-                        //     setQtyCart(
-                        //       theCartItem?.Id || '0',
-                        //       (theCartItem?.Quantity || 0) + quantity
-                        //     );
-                        //     return;
-                        //   }
-
-                        //   if (
-                        //     productSku &&
-                        //     productSku[0].Inventory < quantity
-                        //   ) {
-                        //     toast({
-                        //       variant: 'destructive',
-                        //       title: 'Stock Alert',
-                        //       description: 'Not enough items in stock.',
-                        //     });
-                        //     return;
-                        //   }
-
-                        //   // if not already in cart add it
-                        //   addToCart({
-                        //     ProductId: productDetails?.Id,
-                        //     Quantity: quantity,
-                        //   });
-                        // }
-                      }}
-                      className="w-full my-1 bg-white border-2 border-gray-700 text-black hover:bg-white hover:shadow-lg"
-                    >
-                      Add to cart
-                    </Button>
-                    <Button
-                      onClick={(e) => {
-                        // e.preventDefault();
-                        // if (productDetails && productDetails?.HasVariant) {
-                        //   clearCart();
-                        //   if (productSku && productSku.length > 0) {
-                        //     const sk = productSku.find(
-                        //       (s) => s.Id === selectedSku
-                        //     );
-                        //     if (!sk) {
-                        //       return;
-                        //     }
-                        //     if (sk.Inventory < quantity) {
-                        //       toast({
-                        //         variant: 'destructive',
-                        //         title: 'Stock Alert',
-                        //         description: 'Not enough items in stock.',
-                        //       });
-                        //       return;
-                        //     }
-                        //     const attr = productAttributeOptions?.find(
-                        //       (o) => o.Id === sk.AttributeOptionId
-                        //     );
-                        //     if (attr) {
-                        //       addToCart({
-                        //         ProductId: productDetails?.Id,
-                        //         Quantity: quantity,
-                        //         ProductAttribute: attr.Value,
-                        //       });
-                        //     }
-                        //   }
-                        // }
-                        // if (productDetails && !productDetails.HasVariant) {
-                        //   clearCart();
-                        //   // if not already in cart add it
-                        //   addToCart({
-                        //     ProductId: productDetails?.Id,
-                        //     Quantity: 1,
-                        //   });
-                        // }
-                        // // redirect to checkout
-                        // navigate({ to: '/checkout' });
-                      }}
-                      className="w-full my-1 bg-green-500 hover:bg-green-500 hover:shadow-lg"
-                    >
-                      Buy it now
-                    </Button>
-                  </div>
-                </>
+              {productVariationsResponse?.Data?.find(
+                (v) => v.Id === selectedVariation
+              )?.Inventory || 0 >= 1 ? (
+                <div className="text-green-600 text-sm">
+                  <span>
+                    {
+                      productVariationsResponse?.Data?.find(
+                        (v) => v.Id === selectedVariation
+                      )?.Inventory
+                    }{' '}
+                    avaliable
+                  </span>
+                </div>
+              ) : (
+                <div className="text-red-400 text-sm">
+                  <span>out of stock</span>
+                </div>
               )}
+
+              <span className="block mb-2 ">Quantity</span>
+              <div className="flex">
+                <button
+                  className="border border-r-0 border-gray-400 py-1 px-5 font-bold rounded-l-full hover:!bg-slate-200"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (quantity - 1 >= 1) {
+                      setQuantity(quantity - 1);
+                    }
+                  }}
+                >
+                  -
+                </button>
+                <input
+                  onChange={(e) => {
+                    setQuantity(parseInt(e.target.value) || 1);
+                  }}
+                  type="text"
+                  className="border w-[50px] border-gray-400 text-center"
+                  value={quantity}
+                  step={'any'}
+                />
+                <button
+                  className="border border-l-0 border-gray-400 py-1 px-5 font-bold rounded-r-full hover:!bg-slate-200"
+                  onClick={(e) => {
+                    e.preventDefault();
+
+                    setQuantity(quantity + 1);
+                  }}
+                >
+                  +
+                </button>
+              </div>
+              <div className="my-3">
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (selectedVariation && ProductID && isVariationUnderQty) {
+                      addToCart({
+                        ProductId: ProductID,
+                        VariationId: selectedVariation,
+                        Quantity: quantity,
+                      });
+                    } else {
+                      toast({
+                        variant: 'destructive',
+                        title: 'Stock alert',
+                        description: 'Not enought item in stock',
+                      });
+                    }
+                  }}
+                  className="w-full my-1 bg-white border-2 border-gray-700 text-black hover:bg-white hover:shadow-lg"
+                >
+                  Add to cart
+                </Button>
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (selectedVariation && ProductID && isVariationUnderQty) {
+                      addToCart({
+                        ProductId: ProductID,
+                        VariationId: selectedVariation,
+                        Quantity: quantity,
+                      });
+
+                      // redirect to checkout
+                      navigate({ to: '/checkout' });
+                    } else {
+                      toast({
+                        variant: 'destructive',
+                        title: 'Stock alert',
+                        description: 'Not enought item in stock',
+                      });
+                    }
+                  }}
+                  className="w-full my-1 bg-green-500 hover:bg-green-500 hover:shadow-lg"
+                >
+                  Buy it now
+                </Button>
+              </div>
             </div>
           </div>
           <div>

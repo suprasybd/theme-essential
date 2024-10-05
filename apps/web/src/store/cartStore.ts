@@ -5,7 +5,7 @@ import { v4 as uuid } from 'uuid';
 export interface ProductCartType {
   Id?: string;
   ProductId: number;
-  ProductAttribute?: string;
+  VariationId: number;
   Quantity: number;
 }
 
@@ -25,7 +25,26 @@ export const useCartStore = create<CartStoreTypes>()(
     cart: [],
     priceMap: {},
     addToCart(product) {
-      set((state) => ({ cart: [...state.cart, { ...product, Id: uuid() }] }));
+      set((state) => {
+        // Check if the item with the same VariationId already exists in the cart
+        const existingProduct = state.cart.find(
+          (item) => item.VariationId === product.VariationId
+        );
+
+        // If it exists, increment the quantity
+        if (existingProduct) {
+          return {
+            cart: state.cart.map((item) =>
+              item.VariationId === product.VariationId
+                ? { ...item, Quantity: item.Quantity + product.Quantity }
+                : item
+            ),
+          };
+        }
+
+        // If it doesn't exist, add the new product to the cart
+        return { cart: [...state.cart, { ...product, Id: uuid() }] };
+      });
     },
     setPriceMap(id, price) {
       set((state) => ({
