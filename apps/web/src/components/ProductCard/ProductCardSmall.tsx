@@ -2,7 +2,6 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { formatPrice } from '@web/libs/helpers/formatPrice';
 import {
   getProductImagesOption,
-  getProductSkuOption,
   getProductsDetailsByIdOption,
 } from '@web/pages/products/api';
 import React from 'react';
@@ -24,12 +23,12 @@ const ProductCardSmall: React.FC<{
     getProductImagesOption(ProductId)
   );
 
-  const { data: productSkuResponse } = useSuspenseQuery(
-    getProductSkuOption(ProductId)
-  );
+  // const { data: productSkuResponse } = useSuspenseQuery(
+  //   getProductSkuOption(ProductId)
+  // );
 
   const productImages = productImagesResponse?.Data;
-  const productSku = productSkuResponse?.Data;
+  // const productSku = productSkuResponse?.Data;
 
   return (
     <div className="w-full h-fit hover:cursor-pointer">
@@ -60,7 +59,7 @@ const ProductCardSmall: React.FC<{
                 {productDetails?.Title}
               </div>
 
-              {productSku && productSku.length > 0 && (
+              {/* {productSku && productSku.length > 0 && (
                 <p className=" text-base">
                   {productSku[0].ShowCompareAtPrice && (
                     <span className="font-light line-through mr-3">
@@ -72,7 +71,7 @@ const ProductCardSmall: React.FC<{
                     {formatPrice(productSku[0].Price)}
                   </span>
                 </p>
-              )}
+              )} */}
             </div>
           </div>
         </a>

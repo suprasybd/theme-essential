@@ -6,6 +6,7 @@ import {
   ProductImagesTypes,
   ProductSku,
   ProductType,
+  VariationType,
 } from './types';
 import { queryOptions } from '@tanstack/react-query';
 
@@ -56,29 +57,11 @@ export const getProductImages = async (
   return response.data;
 };
 
-export const getProductSku = async (
+export const getProductVariations = async (
   productId: number
-): Promise<ListResponseType<ProductSku>> => {
-  const response = await ApiClient.get(`/storefront-products/sku/${productId}`);
-
-  return response.data;
-};
-
-export const getProductAttributeOptions = async (
-  productId: number
-): Promise<ListResponseType<AttributeValue>> => {
+): Promise<ListResponseType<VariationType>> => {
   const response = await ApiClient.get(
-    `/storefront-products/attribute/${productId}`
-  );
-
-  return response.data;
-};
-
-export const getProductAttributeName = async (
-  productId: number
-): Promise<ResponseType<AttributeName>> => {
-  const response = await ApiClient.get(
-    `/storefront-products/attributeName/${productId}`
+    `/storefront-products/variations/${productId}`
   );
 
   return response.data;
@@ -93,24 +76,9 @@ export const getProductsDetailsByIdOption = (ProductId: number) =>
     enabled: !!ProductId,
   });
 
-export const getProductImagesOption = (ProductId: number) =>
+export const getProductImagesOption = (VariationId: number) =>
   queryOptions({
-    queryKey: ['getProductImages', ProductId],
-    queryFn: () => getProductImages(ProductId || 0),
-    enabled: !!ProductId,
-  });
-
-export const getProductSkuOption = (ProductId: number) =>
-  queryOptions({
-    queryKey: ['getProductSku', ProductId],
-    queryFn: () => getProductSku(ProductId || 0),
-    enabled: !!ProductId,
-  });
-
-// bellow - only run on HasVariant
-export const getProductAttributeNameOption = (ProductId: number) =>
-  queryOptions({
-    queryKey: ['getProductAttributeName', ProductId],
-    queryFn: () => getProductAttributeName(ProductId || 0),
-    enabled: !!ProductId,
+    queryKey: ['getProductImages', VariationId],
+    queryFn: () => getProductImages(VariationId || 0),
+    enabled: !!VariationId,
   });

@@ -11,10 +11,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { formatPrice } from '@web/libs/helpers/formatPrice';
 import {
-  getProductAttributeName,
-  getProductAttributeOptions,
   getProductImages,
-  getProductSku,
   getProductsDetailsById,
 } from '@web/pages/products/api';
 import { ProductCartType, useCartStore } from '@web/store/cartStore';
@@ -161,75 +158,41 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
     enabled: !!productDetails?.Id,
   });
 
-  const { data: productSkuResponse } = useQuery({
-    queryKey: ['getProductSku', productDetails?.Id],
-    queryFn: () => getProductSku(productDetails?.Id || 0),
-    enabled: !!productDetails?.Id,
-  });
-
-  const { data: attributeNameResponse } = useQuery({
-    queryKey: ['getProductAttributeName', productDetails?.Id],
-    queryFn: () => getProductAttributeName(productDetails?.Id || 0),
-    enabled: productDetails?.HasVariant && !!productDetails?.Id,
-  });
-
-  const { data: attributeOptionsResponse } = useQuery({
-    queryKey: ['getProductAttributeOptions', productDetails?.Id],
-    queryFn: () => getProductAttributeOptions(productDetails?.Id || 0),
-    enabled: productDetails?.HasVariant && !!productDetails?.Id,
-  });
-
   const productImages = productImagesResponse?.Data;
-  const productSku = productSkuResponse?.Data;
-  const HasVariant = productDetails?.HasVariant;
-  const productAttributeName = attributeNameResponse?.Data;
-  const productAttributeOptions = attributeOptionsResponse?.Data;
 
-  useEffect(() => {
-    if (!HasVariant && productDetails && productSku) {
-      setPriceMap(Cart.Id || '', productSku[0].Price * Cart.Quantity);
-    }
+  // useEffect(() => {
+  //   if (!HasVariant && productDetails && productSku) {
+  //     setPriceMap(Cart.Id || '', productSku[0].Price * Cart.Quantity);
+  //   }
 
-    if (!productDetails && productGetSuccess && Cart.Id) {
-      removeFromCart(Cart.Id);
-    }
+  //   if (!productDetails && productGetSuccess && Cart.Id) {
+  //     removeFromCart(Cart.Id);
+  //   }
 
-    if (HasVariant && productDetails && productSku) {
-      productSku.map((sku) => {
-        const attr = productAttributeOptions?.find(
-          (o) => o.Id === sku.AttributeOptionId
-        );
-        if (attr?.Value === Cart.ProductAttribute) {
-          setPriceMap(Cart.Id || '', sku.Price * Cart.Quantity);
-        }
-      });
-    }
+  //   if (HasVariant && productDetails && productSku) {
+  //     productSku.map((sku) => {
+  //       const attr = productAttributeOptions?.find(
+  //         (o) => o.Id === sku.AttributeOptionId
+  //       );
+  //       if (attr?.Value === Cart.ProductAttribute) {
+  //         setPriceMap(Cart.Id || '', sku.Price * Cart.Quantity);
+  //       }
+  //     });
+  //   }
 
-    if (HasVariant && !Cart.ProductAttribute && Cart.Id) {
-      removeFromCart(Cart.Id);
-    }
-  }, [
-    HasVariant,
-    productDetails,
-    productSku,
-    Cart,
-    setPriceMap,
-    productGetSuccess,
-  ]);
+  //   if (HasVariant && !Cart.ProductAttribute && Cart.Id) {
+  //     removeFromCart(Cart.Id);
+  //   }
+  // }, [
+  //   HasVariant,
+  //   productDetails,
+  //   productSku,
+  //   Cart,
+  //   setPriceMap,
+  //   productGetSuccess,
+  // ]);
 
-  const totalInStock = useMemo(() => {
-    return (
-      productSku?.reduce((acc, sk) => {
-        const attr = productAttributeOptions?.find(
-          (o) => o.Id === sk.AttributeOptionId
-        );
-        if (attr?.Value === Cart.ProductAttribute) {
-          return acc + sk.Inventory;
-        }
-        return acc;
-      }, 0) || 0
-    ); // Default to 0 if productSku is nullish
-  }, [productSku, productAttributeOptions]);
+  const totalInStock = 234;
 
   return (
     <div className="flex p-2">
@@ -249,7 +212,7 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
       <div>
         <h1 className="text-sm font-bold">{productDetails?.Title}</h1>
 
-        {productSku && !productDetails?.HasVariant && (
+        {/* {productSku && !productDetails?.HasVariant && (
           <div>
             <h3 className="text-sm">
               Price: {formatPrice(productSku[0].Price)}
@@ -278,8 +241,8 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
               }
             })}
           </div>
-        )}
-
+        )} */}
+        {/* 
         {productDetails?.HasVariant && (
           <div>
             <span className="block mb-2 font-light text-sm">
@@ -302,7 +265,7 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
                 })}
             </span>
           </div>
-        )}
+        )} */}
 
         <span className="block mb-2 font-light text-sm">Quantity</span>
         <div className="flex flex-col gap-[6px] md:gap-[0px] md:flex-row items-end justify-between">

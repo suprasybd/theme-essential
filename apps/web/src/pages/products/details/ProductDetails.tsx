@@ -6,10 +6,8 @@ import {
 import { useNavigate, useParams } from '@tanstack/react-router';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-  getProductAttributeName,
-  getProductAttributeOptions,
   getProductImagesOption,
-  getProductSku,
+  getProductVariations,
   getProductsDetails,
 } from '../api';
 import { RichTextRender, Button, useToast } from '@frontend.suprasy.com/ui';
@@ -33,8 +31,7 @@ const ProductDetails: React.FC = () => {
   const { slug } = useParams({ strict: false }) as { slug: string };
 
   const [quantity, setQuantity] = useState<number>(1);
-  const [selectedSku, setSelectedSku] = useState<number>(1);
-  const [selectedAttribute, setSelectedAttribute] = useState<number>(0);
+  const [selectedVariation, setSelectedVariation] = useState<number>(0);
 
   const { toast } = useToast();
 
@@ -52,43 +49,30 @@ const ProductDetails: React.FC = () => {
   const productDetails = productsDetailsResponse?.Data;
 
   const { data: productImagesResponse } = useSuspenseQuery(
-    getProductImagesOption(productDetails.Id)
+    getProductImagesOption(selectedVariation)
   );
 
-  const { data: productSkuResponse } = useQuery({
-    queryKey: ['getProductSku', productDetails?.Id],
-    queryFn: () => getProductSku(productDetails?.Id || 0),
+  const { data: productVariationsResponse } = useQuery({
+    queryKey: ['getProductVariations', productDetails?.Id],
+    queryFn: () => getProductVariations(productDetails?.Id || 0),
     enabled: !!productDetails?.Id,
   });
 
-  const { data: attributeNameResponse } = useQuery({
-    queryKey: ['getProductAttributeName', productDetails?.Id],
-    queryFn: () => getProductAttributeName(productDetails?.Id || 0),
-    enabled: productDetails?.HasVariant && !!productDetails?.Id,
-  });
+  const productImages =
+    productImagesResponse?.Data &&
+    productImagesResponse?.Data?.length > 0 &&
+    productImagesResponse?.Data;
 
-  const { data: attributeOptionsResponse } = useQuery({
-    queryKey: ['getProductAttributeOptions', productDetails?.Id],
-    queryFn: () => getProductAttributeOptions(productDetails?.Id || 0),
-    enabled: productDetails?.HasVariant && !!productDetails?.Id,
-  });
-
-  const productImages = productImagesResponse?.Data;
-  const productSku = productSkuResponse?.Data;
-  const HasVariant = productDetails?.HasVariant;
-  const productAttributeName = attributeNameResponse?.Data;
-  const productAttributeOptions = attributeOptionsResponse?.Data;
+  const inStock = true;
 
   useEffect(() => {
-    if (productSku) {
-      setSelectedAttribute(productSku[0].AttributeOptionId);
-      setSelectedSku(productSku[0].Id);
+    if (
+      productVariationsResponse?.Data &&
+      productVariationsResponse?.Data?.length > 0
+    ) {
+      setSelectedVariation(productVariationsResponse?.Data[0].Id);
     }
-  }, [productSku]);
-
-  const inStock = useMemo(() => {
-    return productSku?.some((sk) => sk.Inventory > 0);
-  }, [productSku]);
+  }, [productVariationsResponse?.Data]);
 
   const navigate = useNavigate();
 
@@ -98,7 +82,12 @@ const ProductDetails: React.FC = () => {
         <div className="container mx-auto px-4">
           <div className="lg:col-gap-12 xl:col-gap-16 mt-8 grid grid-cols-1 gap-12 lg:mt-12 lg:grid-cols-5 lg:gap-16">
             <div className="lg:col-span-3 lg:row-end-1">
-              {productImages && <ProductImages Images={productImages} />}
+              {productImages && (
+                <ProductImages
+                  key={selectedVariation.toString()}
+                  Images={productImages}
+                />
+              )}
             </div>
 
             <div className="lg:col-span-2 lg:row-span-2 lg:row-end-2">
@@ -108,7 +97,7 @@ const ProductDetails: React.FC = () => {
                     {productDetails.Title}
                   </h1>
 
-                  {productSku && (
+                  {/* {productSku && (
                     <p className="text-xl font-normal my-3 tracking-wider">
                       {productSku.map((sku) => {
                         if (sku.Id === selectedSku) {
@@ -136,7 +125,7 @@ const ProductDetails: React.FC = () => {
                         }
                       })}
                     </p>
-                  )}
+                  )} */}
 
                   <div className="my-3">
                     <RichTextRender
@@ -162,53 +151,24 @@ const ProductDetails: React.FC = () => {
                     <p className="mr-1">Status: </p>
                     <p className="text-sm font-bold">In Stock</p>
                   </div>
-                  {HasVariant &&
-                    productAttributeName &&
-                    productAttributeOptions && (
-                      <div className="my-3">
-                        <span className="block font-light">
-                          {productAttributeName?.Name}
-                        </span>
-                        <div className="my-3">
-                          {productAttributeOptions.map((attribute) => {
-                            const found = productSku?.find(
-                              (sk) =>
-                                sk.AttributeOptionId === attribute.Id &&
-                                sk.Inventory > 0
-                            );
 
-                            if (found) {
-                              return (
-                                <button
-                                  className={cn(
-                                    'bg-white text-gray-800 border border-gray-600 rounded-sm mr-2 p-2 hover:bg-gray-800 hover:text-white ',
-                                    attribute.Id === selectedAttribute &&
-                                      '!bg-gray-800 !text-white'
-                                  )}
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    setSelectedAttribute(attribute.Id);
-                                    productSku?.forEach((sku) => {
-                                      if (
-                                        sku.AttributeOptionId ===
-                                          attribute.Id &&
-                                        sku.Inventory > 0
-                                      ) {
-                                        setSelectedSku(sku.Id);
-                                      }
-                                    });
-                                  }}
-                                  key={attribute.Id}
-                                >
-                                  {attribute.Value}
-                                </button>
-                              );
-                            }
-                            return <></>;
-                          })}
-                        </div>
-                      </div>
-                    )}
+                  <div className="flex flex-wrap gap-[5px]">
+                    {productVariationsResponse?.Data.map((variation) => (
+                      <Button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setSelectedVariation(variation.Id);
+                        }}
+                        className={cn(
+                          variation.Id === selectedVariation
+                            ? 'bg-black'
+                            : 'bg-slate-400'
+                        )}
+                      >
+                        {variation.ChoiceName}
+                      </Button>
+                    ))}
+                  </div>
 
                   <span className="block mb-2 ">Quantity</span>
                   <div className="flex">
@@ -248,113 +208,109 @@ const ProductDetails: React.FC = () => {
                       onClick={(e) => {
                         e.preventDefault();
                         if (productDetails && productDetails?.HasVariant) {
-                          productSku?.forEach((sku) => {
-                            if (sku.Id === selectedSku) {
-                              const attr = productAttributeOptions?.find(
-                                (o) => o.Id === sku.AttributeOptionId
-                              );
-                              if (!attr) {
-                                return;
-                              }
-                              // if already have increase qty
-                              if (
-                                cart.find(
-                                  (c) =>
-                                    c.ProductId === sku.ProductId &&
-                                    c.ProductAttribute === attr.Value
-                                )
-                              ) {
-                                const theCartItem = cart.find(
-                                  (c) =>
-                                    c.ProductId === sku.ProductId &&
-                                    c.ProductAttribute === attr.Value
-                                );
-
-                                // check if enough stock
-                                if (
-                                  sku.Inventory <
-                                  (theCartItem?.Quantity || 0) + 1
-                                ) {
-                                  toast({
-                                    variant: 'destructive',
-                                    title: 'Stock Alert',
-                                    description: 'Not enough items in stock.',
-                                  });
-                                  return;
-                                }
-
-                                setQtyCart(
-                                  theCartItem?.Id || '0',
-                                  (theCartItem?.Quantity || 0) + 1
-                                );
-                                return;
-                              }
-
-                              // check if enough stock
-                              if (sku.Inventory < quantity) {
-                                toast({
-                                  variant: 'destructive',
-                                  title: 'Stock Alert',
-                                  description: 'Not enough items in stock.',
-                                });
-                                return;
-                              }
-
-                              // if not already in cart add it
-                              addToCart({
-                                ProductId: productDetails?.Id,
-                                Quantity: quantity,
-                                ProductAttribute: attr.Value,
-                              });
-                            }
-                          });
+                          // productSku?.forEach((sku) => {
+                          //   if (sku.Id === selectedSku) {
+                          //     const attr = productAttributeOptions?.find(
+                          //       (o) => o.Id === sku.AttributeOptionId
+                          //     );
+                          //     if (!attr) {
+                          //       return;
+                          //     }
+                          //     // if already have increase qty
+                          //     if (
+                          //       cart.find(
+                          //         (c) =>
+                          //           c.ProductId === sku.ProductId &&
+                          //           c.ProductAttribute === attr.Value
+                          //       )
+                          //     ) {
+                          //       const theCartItem = cart.find(
+                          //         (c) =>
+                          //           c.ProductId === sku.ProductId &&
+                          //           c.ProductAttribute === attr.Value
+                          //       );
+                          //       // check if enough stock
+                          //       if (
+                          //         sku.Inventory <
+                          //         (theCartItem?.Quantity || 0) + 1
+                          //       ) {
+                          //         toast({
+                          //           variant: 'destructive',
+                          //           title: 'Stock Alert',
+                          //           description: 'Not enough items in stock.',
+                          //         });
+                          //         return;
+                          //       }
+                          //       setQtyCart(
+                          //         theCartItem?.Id || '0',
+                          //         (theCartItem?.Quantity || 0) + 1
+                          //       );
+                          //       return;
+                          //     }
+                          //     // check if enough stock
+                          //     if (sku.Inventory < quantity) {
+                          //       toast({
+                          //         variant: 'destructive',
+                          //         title: 'Stock Alert',
+                          //         description: 'Not enough items in stock.',
+                          //       });
+                          //       return;
+                          //     }
+                          //     // if not already in cart add it
+                          //     addToCart({
+                          //       ProductId: productDetails?.Id,
+                          //       Quantity: quantity,
+                          //       ProductAttribute: attr.Value,
+                          //     });
+                          //   }
+                          // });
                         }
 
-                        if (productDetails && !productDetails.HasVariant) {
-                          // if already have increase qty
-                          if (
-                            cart.find((c) => c.ProductId === productDetails.Id)
-                          ) {
-                            const theCartItem = cart.find(
-                              (c) => c.ProductId === productDetails.Id
-                            );
-                            if (
-                              productSku &&
-                              productSku[0].Inventory <
-                                (theCartItem?.Quantity || 0) + quantity
-                            ) {
-                              toast({
-                                variant: 'destructive',
-                                title: 'Stock Alert',
-                                description: 'Not enough items in stock.',
-                              });
-                              return;
-                            }
-                            setQtyCart(
-                              theCartItem?.Id || '0',
-                              (theCartItem?.Quantity || 0) + quantity
-                            );
-                            return;
-                          }
+                        // if (productDetails && !productDetails.HasVariant) {
+                        //   // if already have increase qty
+                        //   if (
+                        //     cart.find((c) => c.ProductId === productDetails.Id)
+                        //   ) {
+                        //     const theCartItem = cart.find(
+                        //       (c) => c.ProductId === productDetails.Id
+                        //     );
+                        //     if (
+                        //       productSku &&
+                        //       productSku[0].Inventory <
+                        //         (theCartItem?.Quantity || 0) + quantity
+                        //     ) {
+                        //       toast({
+                        //         variant: 'destructive',
+                        //         title: 'Stock Alert',
+                        //         description: 'Not enough items in stock.',
+                        //       });
+                        //       return;
+                        //     }
+                        //     setQtyCart(
+                        //       theCartItem?.Id || '0',
+                        //       (theCartItem?.Quantity || 0) + quantity
+                        //     );
+                        //     return;
+                        //   }
 
-                          if (
-                            productSku &&
-                            productSku[0].Inventory < quantity
-                          ) {
-                            toast({
-                              variant: 'destructive',
-                              title: 'Stock Alert',
-                              description: 'Not enough items in stock.',
-                            });
-                            return;
-                          }
+                        //   if (
+                        //     productSku &&
+                        //     productSku[0].Inventory < quantity
+                        //   ) {
+                        //     toast({
+                        //       variant: 'destructive',
+                        //       title: 'Stock Alert',
+                        //       description: 'Not enough items in stock.',
+                        //     });
+                        //     return;
+                        //   }
 
-                          // if not already in cart add it
-                          addToCart({
-                            ProductId: productDetails?.Id,
-                            Quantity: quantity,
-                          });
-                        }
+                        //   // if not already in cart add it
+                        //   addToCart({
+                        //     ProductId: productDetails?.Id,
+                        //     Quantity: quantity,
+                        //   });
+                        // }
                       }}
                       className="w-full my-1 bg-white border-2 border-gray-700 text-black hover:bg-white hover:shadow-lg"
                     >
@@ -362,51 +318,46 @@ const ProductDetails: React.FC = () => {
                     </Button>
                     <Button
                       onClick={(e) => {
-                        e.preventDefault();
-
-                        if (productDetails && productDetails?.HasVariant) {
-                          clearCart();
-
-                          if (productSku && productSku.length > 0) {
-                            const sk = productSku.find(
-                              (s) => s.Id === selectedSku
-                            );
-                            if (!sk) {
-                              return;
-                            }
-                            if (sk.Inventory < quantity) {
-                              toast({
-                                variant: 'destructive',
-                                title: 'Stock Alert',
-                                description: 'Not enough items in stock.',
-                              });
-                              return;
-                            }
-                            const attr = productAttributeOptions?.find(
-                              (o) => o.Id === sk.AttributeOptionId
-                            );
-
-                            if (attr) {
-                              addToCart({
-                                ProductId: productDetails?.Id,
-                                Quantity: quantity,
-                                ProductAttribute: attr.Value,
-                              });
-                            }
-                          }
-                        }
-
-                        if (productDetails && !productDetails.HasVariant) {
-                          clearCart();
-                          // if not already in cart add it
-                          addToCart({
-                            ProductId: productDetails?.Id,
-                            Quantity: 1,
-                          });
-                        }
-
-                        // redirect to checkout
-                        navigate({ to: '/checkout' });
+                        // e.preventDefault();
+                        // if (productDetails && productDetails?.HasVariant) {
+                        //   clearCart();
+                        //   if (productSku && productSku.length > 0) {
+                        //     const sk = productSku.find(
+                        //       (s) => s.Id === selectedSku
+                        //     );
+                        //     if (!sk) {
+                        //       return;
+                        //     }
+                        //     if (sk.Inventory < quantity) {
+                        //       toast({
+                        //         variant: 'destructive',
+                        //         title: 'Stock Alert',
+                        //         description: 'Not enough items in stock.',
+                        //       });
+                        //       return;
+                        //     }
+                        //     const attr = productAttributeOptions?.find(
+                        //       (o) => o.Id === sk.AttributeOptionId
+                        //     );
+                        //     if (attr) {
+                        //       addToCart({
+                        //         ProductId: productDetails?.Id,
+                        //         Quantity: quantity,
+                        //         ProductAttribute: attr.Value,
+                        //       });
+                        //     }
+                        //   }
+                        // }
+                        // if (productDetails && !productDetails.HasVariant) {
+                        //   clearCart();
+                        //   // if not already in cart add it
+                        //   addToCart({
+                        //     ProductId: productDetails?.Id,
+                        //     Quantity: 1,
+                        //   });
+                        // }
+                        // // redirect to checkout
+                        // navigate({ to: '/checkout' });
                       }}
                       className="w-full my-1 bg-green-500 hover:bg-green-500 hover:shadow-lg"
                     >

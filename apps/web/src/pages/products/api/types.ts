@@ -12,6 +12,19 @@ export interface ProductType {
   UpdatedAt: string;
 }
 
+export interface VariationType {
+  Id: number;
+  ProductId: number;
+  ChoiceName: string;
+  Price: number;
+  SalesPrice: number;
+  Sku: string;
+  Inventory: number;
+  Deleted: boolean;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
+
 export interface ProductsVairantsTypes {
   Id: number;
 
