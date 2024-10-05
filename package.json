@@ -2,7 +2,9 @@
   "name": "@frontend.suprasy.com/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "build": "npx nx build web"
+  },
   "private": true,
   "dependencies": {
     "@emotion/css": "^11.11.2",

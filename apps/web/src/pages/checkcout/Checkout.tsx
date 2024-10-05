@@ -88,40 +88,40 @@ const Checkout = () => {
     },
   });
 
-  useEffect(() => {
-    if (!products) return;
+  // useEffect(() => {
+  //   if (!products) return;
 
-    const dCoded = JSON.parse(decode(products));
+  //   const dCoded = JSON.parse(decode(products));
 
-    if (products && dCoded) {
-      clearCart();
-      dCoded.forEach((prod: { [x: string]: any }) => {
-        if (
-          Object.keys(prod).includes('ProductId') &&
-          Object.keys(prod).includes('Variant')
-        ) {
-          if (
-            typeof prod['ProductId'] === 'number' &&
-            typeof prod['Variant'] === 'string'
-          ) {
-            addToCart({
-              ProductId: prod['ProductId'],
-              ProductAttribute: prod['Variant'],
-              Quantity: 1,
-            });
-          }
-        } else if (Object.keys(prod).includes('ProductId')) {
-          if (typeof prod['ProductId'] === 'number') {
-            addToCart({
-              ProductId: prod['ProductId'],
-              Quantity: 1,
-            });
-          }
-        }
-      });
-      console.log('dcoded', dCoded);
-    }
-  }, [products]);
+  //   if (products && dCoded) {
+  //     clearCart();
+  //     dCoded.forEach((prod: { [x: string]: any }) => {
+  //       if (
+  //         Object.keys(prod).includes('ProductId') &&
+  //         Object.keys(prod).includes('Variant')
+  //       ) {
+  //         if (
+  //           typeof prod['ProductId'] === 'number' &&
+  //           typeof prod['Variant'] === 'string'
+  //         ) {
+  //           addToCart({
+  //             ProductId: prod['ProductId'],
+  //             ProductAttribute: prod['Variant'],
+  //             Quantity: 1,
+  //           });
+  //         }
+  //       } else if (Object.keys(prod).includes('ProductId')) {
+  //         if (typeof prod['ProductId'] === 'number') {
+  //           addToCart({
+  //             ProductId: prod['ProductId'],
+  //             Quantity: 1,
+  //           });
+  //         }
+  //       }
+  //     });
+  //     console.log('dcoded', dCoded);
+  //   }
+  // }, [products]);
 
   // console.log('products url', products);
 
