@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@frontend.suprasy.com/suprasy": ["suprasy/src/index.ts"],
       "@frontend.suprasy.com/ui": ["libs/ui/src/index.ts"],
       "@web/*": ["apps/web/src/*"]
     }
