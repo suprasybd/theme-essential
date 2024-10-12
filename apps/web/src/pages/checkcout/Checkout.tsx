@@ -38,12 +38,11 @@ import { ReloadIcon } from '@radix-ui/react-icons';
 import { Lock } from 'lucide-react';
 import { Route as CheckoutRoute } from '@web/routes/checkout';
 import { encode, decode } from 'js-base64';
-// import { getProductAttributeOptions } from '../products/api';
+
 import ProductDescription from '../products/details/components/ProductDescription';
 const orderProducts = z.object({
-  ProductId: z.number(),
+  VariationId: z.number(),
   Quantity: z.number(),
-  AttributeOptionsId: z.number().optional(),
 });
 
 export const formSchemaCheckout = z.object({
@@ -123,8 +122,6 @@ const Checkout = () => {
   //   }
   // }, [products]);
 
-  // console.log('products url', products);
-
   const { data: shippingMethodsResponse } = useQuery({
     queryKey: ['getShippingMethods'],
     queryFn: () => getShippingMethods(),
@@ -156,43 +153,26 @@ const Checkout = () => {
     if (selectedShippingMethod) {
       form.setValue('ShippingMethodId', selectedShippingMethod);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDeliveryMethod, selectedShippingMethod]);
 
-  // useEffect(() => {
-  //   if (cart && cart.length) {
-  //     const cartFormatter = async () => {
-  //       const formatedCart = cart.map(async (cartItem) => {
-  //         if (cartItem.ProductAttribute) {
-  //           const optionsResponse = await getProductAttributeOptions(
-  //             cartItem.ProductId
-  //           );
-  //           const options = optionsResponse.Data;
+  useEffect(() => {
+    if (cart && cart.length) {
+      const cartFormatter = async () => {
+        const formatedCart = cart.map(async (cartItem) => {
+          return {
+            VariationId: cartItem.VariationId,
+            Quantity: cartItem.Quantity,
+          };
+        });
 
-  //           if (options && options.length > 0) {
-  //             const attr = options.find(
-  //               (o) => o.Value === cartItem.ProductAttribute
-  //             );
-  //             return {
-  //               ProductId: cartItem.ProductId,
-  //               Quantity: cartItem.Quantity,
-  //               AttributeOptionsId: attr?.Id as number,
-  //             };
-  //           }
-  //         } else {
-  //           return {
-  //             ProductId: cartItem.ProductId,
-  //             Quantity: cartItem.Quantity,
-  //           };
-  //         }
-  //       });
-  //       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  //       form.setValue('Products', (await Promise.all(formatedCart)) as any);
-  //       // console.log('formated cart', await Promise.all(formatedCart));
-  //     };
+        form.setValue('Products', await Promise.all(formatedCart));
+      };
 
-  //     cartFormatter();
-  //   }
-  // }, [cart]);
+      cartFormatter();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cart]);
 
   function onSubmit(
     values: z.infer<typeof formSchemaCheckout>,
@@ -220,6 +200,7 @@ const Checkout = () => {
     } else {
       return 0;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [priceMap, selectedDeliveryMethod, selectedShippingMethod]);
 
   const [siteKey, turnstileLoaded] = useTurnStileHook();

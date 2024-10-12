@@ -13,6 +13,7 @@ import { formatPrice } from '@web/libs/helpers/formatPrice';
 import {
   getProductImages,
   getProductsDetailsById,
+  getProductVariationDetails,
 } from '@web/pages/products/api';
 import { ProductCartType, useCartStore } from '@web/store/cartStore';
 import { useModalStore } from '@web/store/modalStore';
@@ -152,47 +153,39 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
 
   const productDetails = productsDetailsResponse?.Data;
 
+  const { data: productVariationResponse } = useQuery({
+    queryKey: ['getProductVariation', Cart.VariationId],
+    queryFn: () => getProductVariationDetails(Cart.VariationId),
+    enabled: !!Cart.VariationId,
+  });
+
   const { data: productImagesResponse } = useQuery({
-    queryKey: ['getProductImages', productDetails?.Id],
-    queryFn: () => getProductImages(productDetails?.Id || 0),
-    enabled: !!productDetails?.Id,
+    queryKey: ['getProductImages', Cart.VariationId],
+    queryFn: () => getProductImages(Cart.VariationId || 0),
+    enabled: !!Cart.VariationId,
   });
 
   const productImages = productImagesResponse?.Data;
+  const variation = productVariationResponse?.Data;
 
-  // useEffect(() => {
-  //   if (!HasVariant && productDetails && productSku) {
-  //     setPriceMap(Cart.Id || '', productSku[0].Price * Cart.Quantity);
-  //   }
+  useEffect(() => {
+    if (!productDetails && productGetSuccess && Cart.Id) {
+      removeFromCart(Cart.Id);
+    }
 
-  //   if (!productDetails && productGetSuccess && Cart.Id) {
-  //     removeFromCart(Cart.Id);
-  //   }
+    if (variation && Cart.Id) {
+      setPriceMap(Cart.Id, variation?.Price * Cart.Quantity);
+    }
+  }, [
+    productDetails,
+    Cart,
+    setPriceMap,
+    variation,
+    productGetSuccess,
+    removeFromCart,
+  ]);
 
-  //   if (HasVariant && productDetails && productSku) {
-  //     productSku.map((sku) => {
-  //       const attr = productAttributeOptions?.find(
-  //         (o) => o.Id === sku.AttributeOptionId
-  //       );
-  //       if (attr?.Value === Cart.ProductAttribute) {
-  //         setPriceMap(Cart.Id || '', sku.Price * Cart.Quantity);
-  //       }
-  //     });
-  //   }
-
-  //   if (HasVariant && !Cart.ProductAttribute && Cart.Id) {
-  //     removeFromCart(Cart.Id);
-  //   }
-  // }, [
-  //   HasVariant,
-  //   productDetails,
-  //   productSku,
-  //   Cart,
-  //   setPriceMap,
-  //   productGetSuccess,
-  // ]);
-
-  const totalInStock = 234;
+  const totalInStock = variation?.Inventory || 0;
 
   return (
     <div className="flex p-2">
@@ -210,62 +203,18 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
       </div>
 
       <div>
-        <h1 className="text-sm font-bold">{productDetails?.Title}</h1>
+        <h1 className="text-sm font-bold">
+          {productDetails?.Title} - ({variation?.ChoiceName})
+        </h1>
 
-        {/* {productSku && !productDetails?.HasVariant && (
+        {variation && (
           <div>
+            <h3 className="text-sm">Price: {formatPrice(variation.Price)}</h3>
             <h3 className="text-sm">
-              Price: {formatPrice(productSku[0].Price)}
-            </h3>
-            <h3 className="text-sm">
-              Price x Qty: {formatPrice(productSku[0].Price * Cart.Quantity)}
+              Price x Qty: {formatPrice(variation.Price * Cart.Quantity)}
             </h3>{' '}
           </div>
         )}
-
-        {productSku && productDetails?.HasVariant && (
-          <div>
-            {productSku.map((sku) => {
-              const attr = productAttributeOptions?.find(
-                (o) => o.Id === sku.AttributeOptionId
-              );
-              if (attr?.Value === Cart.ProductAttribute) {
-                return (
-                  <>
-                    <h3 className="text-sm">Price: {formatPrice(sku.Price)}</h3>
-                    <h3 className="text-sm">
-                      Total Price: {formatPrice(sku.Price * Cart.Quantity)}
-                    </h3>{' '}
-                  </>
-                );
-              }
-            })}
-          </div>
-        )} */}
-        {/* 
-        {productDetails?.HasVariant && (
-          <div>
-            <span className="block mb-2 font-light text-sm">
-              {productAttributeName?.Name}:{' '}
-              {productAttributeOptions &&
-                productAttributeOptions.map((attribute, i) => {
-                  if (attribute.Value === Cart.ProductAttribute) {
-                    return attribute.Value;
-                  }
-                  const isFound = productAttributeOptions.find(
-                    (o) => o.Value === Cart.ProductAttribute
-                  );
-                  if (i === productAttributeOptions.length - 1 && !isFound) {
-                    console.log(attribute.Value, Cart.ProductAttribute);
-                    // no attribute found remove it from cart
-                    if (Cart.Id) {
-                      removeFromCart(Cart.Id);
-                    }
-                  }
-                })}
-            </span>
-          </div>
-        )} */}
 
         <span className="block mb-2 font-light text-sm">Quantity</span>
         <div className="flex flex-col gap-[6px] md:gap-[0px] md:flex-row items-end justify-between">

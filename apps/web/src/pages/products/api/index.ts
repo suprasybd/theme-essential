@@ -48,10 +48,10 @@ export const getProductsDetailsById = async (
 };
 
 export const getProductImages = async (
-  productId: number
+  variationId: number
 ): Promise<ListResponseType<ProductImagesTypes>> => {
   const response = await ApiClient.get(
-    `/storefront-products/images/${productId}`
+    `/storefront-products/images/${variationId}`
   );
 
   return response.data;
@@ -62,6 +62,16 @@ export const getProductVariations = async (
 ): Promise<ListResponseType<VariationType>> => {
   const response = await ApiClient.get(
     `/storefront-products/variations/${productId}`
+  );
+
+  return response.data;
+};
+
+export const getProductVariationDetails = async (
+  variationId: number
+): Promise<ResponseType<VariationType>> => {
+  const response = await ApiClient.get(
+    `/storefront-products/variation-id/${variationId}`
   );
 
   return response.data;
