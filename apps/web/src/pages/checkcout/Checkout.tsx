@@ -40,6 +40,7 @@ import { Route as CheckoutRoute } from '@web/routes/checkout';
 import { encode, decode } from 'js-base64';
 
 import ProductDescription from '../products/details/components/ProductDescription';
+import { useAuthStore } from '@web/store/authStore';
 const orderProducts = z.object({
   VariationId: z.number(),
   Quantity: z.number(),
@@ -47,7 +48,6 @@ const orderProducts = z.object({
 
 export const formSchemaCheckout = z.object({
   FullName: z.string().min(1).max(50),
-
   Address: z.string().min(2).max(100),
   Email: z.string().email().min(2).max(100),
   Phone: z.string().min(2).max(100),
@@ -64,6 +64,7 @@ const Checkout = () => {
   const { cart, priceMap, clearCart, addToCart } = useCartStore(
     (state) => state
   );
+  const { isAuthenticated, user } = useAuthStore((state) => state);
 
   const [selectedShippingMethod, setSelectedShippingMethod] =
     useState<number>(0);
@@ -121,6 +122,13 @@ const Checkout = () => {
   //     console.log('dcoded', dCoded);
   //   }
   // }, [products]);
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      form.setValue('Email', user.Email);
+      form.setValue('FullName', user.FullName);
+    }
+  }, [isAuthenticated, user, form]);
 
   const { data: shippingMethodsResponse } = useQuery({
     queryKey: ['getShippingMethods'],
@@ -264,6 +272,7 @@ const Checkout = () => {
               <FormField
                 control={form.control}
                 name="FullName"
+                disabled={isAuthenticated && !!user?.FullName}
                 render={({ field }) => (
                   <FormItem className="!my-[10px] w-full">
                     <FormLabel>Full Name</FormLabel>
@@ -284,6 +293,7 @@ const Checkout = () => {
               <FormField
                 control={form.control}
                 name="Email"
+                disabled={isAuthenticated && !!user?.Email}
                 render={({ field }) => (
                   <FormItem className="!my-[10px]">
                     <FormLabel>Email</FormLabel>
@@ -361,7 +371,7 @@ const Checkout = () => {
                           value={method.Id.toString()}
                           id={method.Id.toString()}
                         />
-                        <div className="flex w-full justify-between">
+                        <div className="flex w-full justify-between items-center">
                           <h3>{method.Area}</h3>
                           <p>
                             {method.Cost !== 0 && (
