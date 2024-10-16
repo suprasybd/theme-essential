@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link, useParams } from '@tanstack/react-router';
 import React from 'react';
-import { verifyEmailCode } from './api';
+import { verifyEmailCode } from '../../api/verify';
 import { Button } from '@frontend.suprasy.com/ui';
 
 const VerifyCode = () => {
