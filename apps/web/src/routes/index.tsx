@@ -5,7 +5,7 @@ import Home from '@web/pages/home/Home';
 import {
   getHomeSectionsOptions,
   getHomesectionsProductsOptions,
-} from '@web/pages/home/api';
+} from '@web/api/home';
 
 export const Route = createFileRoute('/')({
   loader: async ({ context: { queryClient } }) => {

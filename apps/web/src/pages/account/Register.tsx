@@ -16,7 +16,7 @@ import {
   useToast,
 } from '@frontend.suprasy.com/ui';
 import { useMutation } from '@tanstack/react-query';
-import { register } from './api';
+import { register } from '../../api/account';
 import { ReloadIcon } from '@radix-ui/react-icons';
 
 // import logo from '../login/assets/lg-full-blacks.png';

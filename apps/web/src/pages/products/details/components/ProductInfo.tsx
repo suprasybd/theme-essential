@@ -1,5 +1,5 @@
 import React from 'react';
-import { ProductType } from '../../api/types';
+import { ProductType } from '../../../../api/products/types';
 import { RichTextRender } from '@frontend.suprasy.com/ui';
 
 interface ProdcutInfoPropTypes {

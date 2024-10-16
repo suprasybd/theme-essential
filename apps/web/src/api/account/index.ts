@@ -4,12 +4,12 @@ import {
   ResponseType,
   SingleResposeType,
 } from '@web/libs/types/responseTypes';
-import { loginSchema } from '../Login';
+import { loginSchema } from '../../pages/account/Login';
 import { z } from 'zod';
 import Cookie from 'js-cookie';
 import { SITE_URL } from '@web/config/api';
 import { useAuthStore } from '@web/store/authStore';
-import { registerSchema } from '../Register';
+import { registerSchema } from '../../pages/account/Register';
 
 export const login = async (
   data: z.infer<typeof loginSchema>

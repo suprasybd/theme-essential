@@ -29,7 +29,11 @@ import { Input } from '@frontend.suprasy.com/ui';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useCartStore } from '@web/store/cartStore';
 import { CartItem } from '@web/components/Modals/Cart/Cart';
-import { getDevliveryMethods, getShippingMethods, placeOrderPost } from './api';
+import {
+  getDevliveryMethods,
+  getShippingMethods,
+  placeOrderPost,
+} from '../../api/checkout/index';
 import FullScreenLoader from '@web/components/Loader/Loader';
 import { Link, useParams, useSearch } from '@tanstack/react-router';
 import { Turnstile } from '@marsidev/react-turnstile';

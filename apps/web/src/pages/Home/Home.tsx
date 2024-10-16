@@ -3,7 +3,7 @@ import {
   getHomeHeroOptions,
   getHomeSectionsOptions,
   getHomesectionsProductsOptions,
-} from './api/index';
+} from '../../api/home/index';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
   RichTextRender,

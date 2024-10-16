@@ -11,7 +11,7 @@ import {
   getProductImagesOption,
   getProductVariations,
   getProductsDetails,
-} from '../api';
+} from '../../../api/products';
 import ProductImages from './components/ProductImages';
 
 import {

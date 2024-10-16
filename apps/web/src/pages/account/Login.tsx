@@ -23,7 +23,7 @@ import { ReloadIcon, SizeIcon } from '@radix-ui/react-icons';
 
 import { Turnstile } from '@marsidev/react-turnstile';
 import useTurnStileHook from '@web/hooks/turnstile';
-import { login } from './api';
+import { login } from '../../api/account';
 
 export const loginSchema = z.object({
   Email: z.string().email(),

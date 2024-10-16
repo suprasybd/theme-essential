@@ -9,7 +9,7 @@ import {
 } from '@frontend.suprasy.com/ui';
 import React, { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { getProductsList } from '@web/pages/products/api';
+import { getProductsList } from '@web/api/products';
 import { activeFilters } from '@web/libs/helpers/filters';
 import { useDebounce } from 'use-debounce';
 import ProductCardSmall from '@web/components/ProductCard/ProductCardSmall';

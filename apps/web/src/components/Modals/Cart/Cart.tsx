@@ -14,7 +14,7 @@ import {
   getProductImages,
   getProductsDetailsById,
   getProductVariationDetails,
-} from '@web/pages/products/api';
+} from '@web/api/products';
 import { ProductCartType, useCartStore } from '@web/store/cartStore';
 import { useModalStore } from '@web/store/modalStore';
 import { Trash2 } from 'lucide-react';

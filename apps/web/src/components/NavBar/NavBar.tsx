@@ -23,6 +23,7 @@ import {
   Button,
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -117,6 +118,12 @@ const NavBar: React.FC = () => {
                           <h4>{user?.Email}</h4>
                         </div>
                       </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <Link to="/details">
+                        <DropdownMenuItem>
+                          <span>Orders</span>
+                        </DropdownMenuItem>
+                      </Link>
                       <DropdownMenuSeparator />
                       <div className="p-2">
                         <Button

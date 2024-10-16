@@ -1,5 +1,5 @@
 import React from 'react';
-import { getProductsDetailsById } from '../../api';
+import { getProductsDetailsById } from '../../../../api/products';
 import { useQuery } from '@tanstack/react-query';
 import { RichTextRender } from '@frontend.suprasy.com/ui';
 

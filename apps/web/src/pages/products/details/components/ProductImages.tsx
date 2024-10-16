@@ -7,7 +7,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@frontend.suprasy.com/ui';
-import { ProductImagesTypes } from '../../api/types';
+import { ProductImagesTypes } from '../../../../api/products/types';
 import ImagePreview from '@web/components/Image/ImagePreview';
 
 interface ProductImagesPropTypes {

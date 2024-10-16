@@ -4,7 +4,7 @@ import { getCategories, getCategoryId } from '@web/components/NavBar/api';
 import PaginationMain from '@web/components/Pagination/Pagination';
 import ProductCard from '@web/components/ProductCard/ProductCard';
 import { activeFilters } from '@web/libs/helpers/filters';
-import { getProductsList } from '@web/pages/products/api';
+import { getProductsList } from '@web/api/products';
 import React, { useMemo, useState } from 'react';
 
 const CategoryProducts: React.FC = () => {

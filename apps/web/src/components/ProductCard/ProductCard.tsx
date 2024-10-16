@@ -9,7 +9,7 @@ import {
   getProductImagesOption,
   getProductsDetailsByIdOption,
   getProductVariations,
-} from '@web/pages/products/api';
+} from '@web/api/products';
 import { useCartStore } from '@web/store/cartStore';
 import React, { useMemo } from 'react';
 import ImagePreview from '../Image/ImagePreview';

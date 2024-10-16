@@ -3,7 +3,7 @@ import { formatPrice } from '@web/libs/helpers/formatPrice';
 import {
   getProductImagesOption,
   getProductsDetailsByIdOption,
-} from '@web/pages/products/api';
+} from '@web/api/products';
 import React from 'react';
 import ImagePreview from '../Image/ImagePreview';
 import cn from 'classnames';
