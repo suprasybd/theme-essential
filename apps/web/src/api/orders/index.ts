@@ -3,9 +3,20 @@ import { ListResponseType } from '@web/libs/types/responseTypes';
 
 export interface OrdersType {
   Id: number;
-  Area: string;
-  Cost: number;
+  OrderMethod: string;
+  UserId: number;
+  FullName: string;
+  Address: string;
+  Phone: string;
+  Email: string;
+  DeliveryMethod: string;
+  DeliveryMethodPrice: number;
+  ShippingMethod: string;
+  ShippingMethodPrice: number;
+  PaymentType: string;
+  Status: string;
   CreatedAt: string;
+  Note: string;
   UpdatedAt: string;
 }
 

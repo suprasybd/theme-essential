@@ -50,7 +50,12 @@ const Login: React.FC = () => {
         to: '/',
       });
     },
-    onError: (response: { response: { data: { Message: string } } }) => {
+    onError: (response: {
+      response: { data: { Message: string }; status: number };
+    }) => {
+      if (response.response.status === 400) {
+        window.location.reload();
+      }
       toast({
         title: 'Login',
         description: response.response.data.Message,
