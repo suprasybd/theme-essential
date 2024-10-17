@@ -1,9 +1,25 @@
 import React from 'react';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@frontend.suprasy.com/ui';
+import Orders from './components/Orders';
 
 const Details = () => {
   return (
     <div className="w-full max-w-[1220px]  mx-auto gap-6 py-6 px-4 sm:px-8">
-      <h2>Orders</h2>
+      <Tabs defaultValue="orders" className="w-[400px]">
+        <TabsList>
+          <TabsTrigger value="orders">Orders</TabsTrigger>
+          <TabsTrigger value="account">Account</TabsTrigger>
+        </TabsList>
+        <TabsContent value="orders">
+          <Orders />
+        </TabsContent>
+        <TabsContent value="account">Change your password here.</TabsContent>
+      </Tabs>
     </div>
   );
 };

@@ -1,7 +1,6 @@
 import ApiClient from '@web/libs/ApiClient';
 import { ListResponseType, ResponseType } from '@web/libs/types/responseTypes';
-import { z } from 'zod';
-import { formSchemaCheckout } from '../Checkout';
+
 export interface AreaType {
   Id: number;
 
