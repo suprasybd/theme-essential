@@ -223,10 +223,13 @@ const CategoryComponent: React.FC<{
         {subCategories && subCategories.length > 0 ? (
           <HoverCard openDelay={0}>
             <HoverCardTrigger>
-              <button className="flex items-center gap-1.5 text-slate-600 hover:text-slate-900 transition-colors">
+              <Link
+                to={'/category/' + category.Name}
+                className="flex items-center gap-1.5 text-slate-600 hover:text-slate-900 transition-colors"
+              >
                 <span className="font-medium">{category.Name}</span>
                 <ChevronDown className="h-4 w-4" />
-              </button>
+              </Link>
             </HoverCardTrigger>
             <HoverCardContent align="start" className="w-56 p-2">
               <div className="grid gap-1">
