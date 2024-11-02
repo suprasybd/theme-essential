@@ -19,6 +19,7 @@ import {
   formatPrice,
 } from '@web/libs/helpers/formatPrice';
 import { useCartStore } from '@web/store/cartStore';
+import ProductPricing from './components/ProductPricing';
 
 export const getProductsDetailsOptions = (slug: string) =>
   queryOptions({
@@ -104,131 +105,106 @@ const ProductDetails: React.FC = () => {
     ) < 0;
 
   return (
-    <section className="w-full max-w-[1220px] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
-      <section className="py-12 sm:py-16">
-        <div className="container mx-auto px-4">
-          <div className="lg:col-gap-12 xl:col-gap-16 mt-8 grid grid-cols-1 gap-12 lg:mt-12 lg:grid-cols-5 lg:gap-16">
-            <div className="lg:col-span-3 lg:row-end-1">
-              {productImages && (
-                <ProductImages
-                  key={selectedVariation.toString()}
-                  Images={productImages}
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="lg:grid lg:grid-cols-2 lg:gap-x-8 lg:items-start">
+        {/* Left column - Product Images */}
+        <div className="w-full">
+          {productImages && (
+            <ProductImages
+              key={selectedVariation.toString()}
+              Images={productImages}
+            />
+          )}
+        </div>
+
+        {/* Right column - Product Info */}
+        <div className="mt-10 px-4 sm:px-0 sm:mt-16 lg:mt-0">
+          {productDetails && (
+            <>
+              <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+                {productDetails.Title}
+              </h1>
+
+              <div className="mt-6">
+                <ProductPricing
+                  price={productVariation?.Price || 0}
+                  salesPrice={productVariation?.SalesPrice}
                 />
-              )}
-            </div>
-
-            <div className="lg:col-span-2 lg:row-span-2 lg:row-end-2">
-              {productDetails && (
-                <div>
-                  <h1 className="text-4xl font-normal tracking-wide">
-                    {productDetails.Title}
-                  </h1>
-
-                  <p className="text-xl font-normal my-3 tracking-wider">
-                    <div>
-                      {productVariation?.SalesPrice && isOnSale && (
-                        <span className="inline-block mr-3 line-through">
-                          {formatPrice(productVariation?.SalesPrice)}
-                        </span>
-                      )}
-                      {formatPrice(productVariation?.Price || 0)}
-                      {productVariation?.SalesPrice && isOnSale && (
-                        <span className="inline-block ml-3 bg-green-500 text-white p-1 text-sm rounded-sm">
-                          {calculateDiscountPercentage(
-                            productVariation?.SalesPrice,
-                            productVariation?.Price
-                          ).toFixed(2)}
-                          % off
-                        </span>
-                      )}
-                    </div>
-                  </p>
-
-                  <div className="my-3">
-                    <RichTextRender
-                      className="min-h-fit"
-                      initialVal={productDetails.Summary}
-                    />
-                  </div>
-                </div>
-              )}
-
-              <div className="flex flex-wrap gap-[5px]">
-                {productVariationsResponse?.Data?.map((variation) => (
-                  <Button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setSelectedVariation(variation.Id);
-                    }}
-                    className={cn(
-                      variation.Id === selectedVariation
-                        ? 'bg-black'
-                        : 'bg-slate-400'
-                    )}
-                  >
-                    {variation.ChoiceName}
-                  </Button>
-                ))}
               </div>
 
-              <div className="my-[2px]">
-                {productVariationsResponse?.Data?.find(
-                  (v) => v.Id === selectedVariation
-                )?.Inventory || 0 >= 1 ? (
-                  <div className="text-black text-sm font-semibold">
-                    <span>
-                      {
-                        productVariationsResponse?.Data?.find(
-                          (v) => v.Id === selectedVariation
-                        )?.Inventory
-                      }{' '}
-                      Avaliable
-                    </span>
-                  </div>
+              <div className="mt-6">
+                <RichTextRender
+                  className="prose prose-sm max-w-none min-h-fit"
+                  initialVal={productDetails.Summary}
+                />
+              </div>
+
+              {/* Variations */}
+              <div className="mt-8">
+                <h3 className="text-sm font-medium text-gray-900">
+                  Variations
+                </h3>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {productVariationsResponse?.Data?.map((variation) => (
+                    <Button
+                      key={variation.Id}
+                      onClick={() => setSelectedVariation(variation.Id)}
+                      className={cn(
+                        'px-4 py-2 rounded-full transition-all',
+                        variation.Id === selectedVariation
+                          ? 'bg-black text-white'
+                          : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                      )}
+                    >
+                      {variation.ChoiceName}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Inventory Status */}
+              <div className="mt-6">
+                {productVariation?.Inventory &&
+                productVariation.Inventory > 0 ? (
+                  <p className="text-sm text-green-600">
+                    {productVariation.Inventory} items available
+                  </p>
                 ) : (
-                  <div className="text-red-400 text-sm font-semibold">
-                    <span>Out Of Stock</span>
-                  </div>
+                  <p className="text-sm text-red-600">Out of stock</p>
                 )}
               </div>
 
-              <span className="block mb-2 ">Quantity</span>
-              <div className="flex">
-                <button
-                  className="border border-r-0 border-gray-400 py-1 px-5 font-bold rounded-l-full hover:!bg-slate-200"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (quantity - 1 >= 1) {
-                      setQuantity(quantity - 1);
-                    }
-                  }}
-                >
-                  -
-                </button>
-                <input
-                  onChange={(e) => {
-                    setQuantity(parseInt(e.target.value) || 1);
-                  }}
-                  type="text"
-                  className="border w-[50px] border-gray-400 text-center"
-                  value={quantity}
-                  step={'any'}
-                />
-                <button
-                  className="border border-l-0 border-gray-400 py-1 px-5 font-bold rounded-r-full hover:!bg-slate-200"
-                  onClick={(e) => {
-                    e.preventDefault();
-
-                    setQuantity(quantity + 1);
-                  }}
-                >
-                  +
-                </button>
+              {/* Quantity Selector */}
+              <div className="mt-6">
+                <label className="text-sm font-medium text-gray-700">
+                  Quantity
+                </label>
+                <div className="mt-2 flex rounded-md">
+                  <button
+                    className="px-4 py-2 border border-r-0 border-gray-300 rounded-l-md hover:bg-gray-50"
+                    onClick={() => quantity > 1 && setQuantity(quantity - 1)}
+                  >
+                    -
+                  </button>
+                  <input
+                    type="text"
+                    className="w-20 text-center border-y border-gray-300"
+                    value={quantity}
+                    onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
+                  />
+                  <button
+                    className="px-4 py-2 border border-l-0 border-gray-300 rounded-r-md hover:bg-gray-50"
+                    onClick={() => setQuantity(quantity + 1)}
+                  >
+                    +
+                  </button>
+                </div>
               </div>
-              <div className="my-3">
+
+              {/* Action Buttons */}
+              <div className="mt-8 flex flex-col gap-4">
                 <Button
-                  onClick={(e) => {
-                    e.preventDefault();
+                  onClick={() => {
                     if (selectedVariation && ProductID && isVariationUnderQty) {
                       addToCart({
                         ProductId: ProductID,
@@ -239,50 +215,49 @@ const ProductDetails: React.FC = () => {
                       toast({
                         variant: 'destructive',
                         title: 'Stock alert',
-                        description: 'Not enought item in stock',
+                        description: 'Not enough items in stock',
                       });
                     }
                   }}
-                  className="w-full my-1 bg-white border-2 border-gray-700 text-black hover:bg-white hover:shadow-lg"
+                  className="w-full py-3 bg-white border-2 border-black text-black hover:bg-gray-50"
+                  disabled={!isVariationUnderQty}
                 >
-                  Add to cart
+                  Add to Cart
                 </Button>
                 <Button
-                  onClick={(e) => {
-                    e.preventDefault();
+                  onClick={() => {
                     if (selectedVariation && ProductID && isVariationUnderQty) {
                       addToCart({
                         ProductId: ProductID,
                         VariationId: selectedVariation,
                         Quantity: quantity,
                       });
-
-                      // redirect to checkout
                       navigate({ to: '/checkout' });
-                    } else {
-                      toast({
-                        variant: 'destructive',
-                        title: 'Stock alert',
-                        description: 'Not enought item in stock',
-                      });
                     }
                   }}
-                  className="w-full my-1 bg-green-500 hover:bg-green-500 hover:shadow-lg"
+                  className="w-full py-3 bg-green-600 text-white hover:bg-green-700"
+                  disabled={!isVariationUnderQty}
                 >
-                  Buy it now
+                  Buy Now
                 </Button>
               </div>
-            </div>
-          </div>
-          <div>
-            <h2 className="font-medium text-xl mb-5">Description</h2>
-            {productDetails?.Description && (
-              <RichTextRender initialVal={productDetails?.Description} />
-            )}
-          </div>
+            </>
+          )}
         </div>
-      </section>
-    </section>
+      </div>
+
+      {/* Product Description */}
+      <div className="mt-16 lg:mt-24 border-t border-gray-200 pt-12">
+        <h2 className="text-2xl font-bold tracking-tight text-gray-900 mb-6">
+          Description
+        </h2>
+        {productDetails?.Description && (
+          <div className="prose prose-sm max-w-none">
+            <RichTextRender initialVal={productDetails.Description} />
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

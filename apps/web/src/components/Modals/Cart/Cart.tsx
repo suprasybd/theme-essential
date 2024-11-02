@@ -19,6 +19,7 @@ import { ProductCartType, useCartStore } from '@web/store/cartStore';
 import { useModalStore } from '@web/store/modalStore';
 import { Trash2 } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
+import { ShoppingCart } from 'lucide-react';
 
 const CartModal: React.FC = () => {
   const { modal, clearModalPath } = useModalStore((state) => state);
@@ -79,54 +80,55 @@ const CartModal: React.FC = () => {
         }
       }}
     >
-      <SheetContent className="p-3 overflow-auto w-full md:w-[75%]">
-        <SheetHeader>
-          <SheetTitle>Cart</SheetTitle>
-          <SheetDescription>Add items to cart</SheetDescription>
-        </SheetHeader>
-        {isCartEmpty && (
-          <div className="h-full w-full flex justify-center items-center">
-            <div className="text-center">
-              <h1 className="font-bold txt-xl">Cart is empty!</h1>
-              <h1>Please add item to cart</h1>
-            </div>
-          </div>
-        )}
+      <SheetContent className="p-0 overflow-auto w-full md:w-[450px]">
+        <div className="flex flex-col h-full">
+          <SheetHeader className="px-6 py-4 border-b">
+            <SheetTitle className="text-xl">Shopping Cart</SheetTitle>
+            <SheetDescription>Manage your cart items</SheetDescription>
+          </SheetHeader>
 
-        {!isCartEmpty && (
-          <>
-            <div className="grid gap-4 py-4">
-              {cart && (
-                <div>
-                  {cart.map((cartEach) => (
-                    <CartItem Cart={cartEach} />
+          <div className="flex-1 overflow-auto">
+            {isCartEmpty && (
+              <div className="h-full w-full flex justify-center items-center p-6">
+                <div className="text-center">
+                  <ShoppingCart className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                  <h1 className="font-bold text-xl mb-2">Your cart is empty</h1>
+                  <p className="text-gray-500">Add items to start shopping</p>
+                </div>
+              </div>
+            )}
+
+            {!isCartEmpty && (
+              <div className="px-6">
+                <div className="divide-y">
+                  {cart?.map((cartEach) => (
+                    <CartItem key={cartEach.Id} Cart={cartEach} />
                   ))}
                 </div>
-              )}
-            </div>
-            <div>
-              <div className="flex justify-between mt-3">
-                <h1>Estimated Total</h1>
-                <h1>{formatPrice(estimatedTotal)}</h1>
+              </div>
+            )}
+          </div>
+
+          {!isCartEmpty && (
+            <div className="border-t p-6">
+              <div className="flex justify-between mb-4">
+                <h1 className="text-lg font-medium">Total</h1>
+                <h1 className="text-lg font-bold">
+                  {formatPrice(estimatedTotal)}
+                </h1>
               </div>
 
-              <Link to="/checkout">
+              <Link to="/checkout" className="block">
                 <Button
-                  onClick={() => {
-                    closeModal();
-                  }}
-                  className="w-full my-1 bg-green-500 hover:bg-green-500 hover:shadow-lg"
+                  onClick={closeModal}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2.5"
                 >
-                  Check Out{' '}
+                  Proceed to Checkout
                 </Button>
               </Link>
             </div>
-          </>
-        )}
-
-        {/* <SheetClose asChild>
-            <Button type="submit">Save changes</Button>
-          </SheetClose> */}
+          )}
+        </div>
       </SheetContent>
     </Sheet>
   );
@@ -188,39 +190,64 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
   const totalInStock = variation?.Inventory || 0;
 
   return (
-    <div className="flex p-2">
-      <div className="mr-3">
+    <div className="flex gap-4 py-4">
+      <div className="flex-shrink-0">
         {productImages && (
-          <div className="w-[120px] h-fit">
+          <div className="w-[100px] h-[100px] rounded-lg overflow-hidden bg-gray-50">
             <img
-              className="rounded-md"
+              className="w-full h-full object-cover"
               src={productImages[0].ImageUrl}
-              style={{ width: '100%', height: '100%' }}
-              alt="product cart"
+              alt={productDetails?.Title || 'Product image'}
             />
           </div>
         )}
       </div>
 
-      <div>
-        <h1 className="text-sm font-bold">
-          {productDetails?.Title} - ({variation?.ChoiceName})
-        </h1>
+      <div className="flex-1 min-w-0">
+        <div className="flex justify-between gap-2">
+          <h1 className="font-medium text-sm truncate">
+            {productDetails?.Title}
+          </h1>
+          <button
+            className="text-gray-400 hover:text-red-500 transition-colors"
+            onClick={() => {
+              if (Cart.Id) {
+                setPriceMap(Cart.Id, 0);
+                removeFromCart(Cart.Id);
+              }
+            }}
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+
+        {variation?.ChoiceName && (
+          <p className="text-sm text-gray-500 mt-1">
+            Variant: {variation.ChoiceName}
+          </p>
+        )}
 
         {variation && (
-          <div>
-            <h3 className="text-sm">Price: {formatPrice(variation.Price)}</h3>
-            <h3 className="text-sm">
-              Price x Qty: {formatPrice(variation.Price * Cart.Quantity)}
-            </h3>{' '}
+          <div className="mt-2 space-y-1">
+            <p className="text-sm text-gray-600">
+              Price:{' '}
+              <span className="font-medium">
+                {formatPrice(variation.Price)}
+              </span>
+            </p>
+            <p className="text-sm text-gray-600">
+              Subtotal:{' '}
+              <span className="font-medium">
+                {formatPrice(variation.Price * Cart.Quantity)}
+              </span>
+            </p>
           </div>
         )}
 
-        <span className="block mb-2 font-light text-sm">Quantity</span>
-        <div className="flex flex-col gap-[6px] md:gap-[0px] md:flex-row items-end justify-between">
-          <div className="flex">
+        <div className="mt-3">
+          <div className="inline-flex items-center rounded-lg border border-gray-200">
             <button
-              className="border border-r-0 border-gray-400 py-1 px-5 font-bold rounded-l-full hover:!bg-slate-200"
+              className="px-3 py-1 hover:bg-gray-50 transition-colors"
               onClick={(e) => {
                 e.preventDefault();
                 if (quantity - 1 >= 1) {
@@ -231,8 +258,12 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
               -
             </button>
             <input
+              type="text"
+              className="w-12 text-center border-x border-gray-200 py-1"
+              value={quantity}
               onChange={(e) => {
-                if (parseInt(e.target.value) > totalInStock) {
+                const newQty = parseInt(e.target.value);
+                if (newQty > totalInStock) {
                   toast({
                     variant: 'destructive',
                     title: 'Stock Alert',
@@ -240,15 +271,11 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
                   });
                   return;
                 }
-                setQuantity(Cart.Id || '0', parseInt(e.target.value) || 1);
+                setQuantity(Cart.Id || '0', newQty || 1);
               }}
-              type="text"
-              className="border w-[50px] border-gray-400 text-center "
-              value={quantity}
-              step={'any'}
             />
             <button
-              className="border border-l-0 border-gray-400 py-1 px-5 font-bold rounded-r-full hover:!bg-slate-200"
+              className="px-3 py-1 hover:bg-gray-50 transition-colors"
               onClick={(e) => {
                 e.preventDefault();
                 if (quantity + 1 > totalInStock) {
@@ -265,18 +292,6 @@ export const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
               +
             </button>
           </div>
-
-          <button
-            className="md:ml-3"
-            onClick={() => {
-              if (Cart.Id) {
-                setPriceMap(Cart.Id, 0);
-                removeFromCart(Cart.Id);
-              }
-            }}
-          >
-            <Trash2 />
-          </button>
         </div>
       </div>
     </div>

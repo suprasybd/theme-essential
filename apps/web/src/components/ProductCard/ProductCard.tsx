@@ -77,117 +77,121 @@ const ProductCard: React.FC<{ ProductId: number }> = ({ ProductId }) => {
     ) < 0;
 
   return (
-    <div className="w-[310px] md:max-w-[274px] h-[424px] hover:cursor-pointer">
-      <div className="rounded-md overflow-hidden  relative">
+    <div className="w-[310px] md:max-w-[274px] h-fit hover:cursor-pointer group">
+      <div className="rounded-lg overflow-hidden relative border border-gray-200 hover:border-gray-300 transition-all duration-200">
         <Link
           to="/products/$slug"
           params={{ slug: productDetails?.Slug || '/' }}
+          className="block relative"
         >
-          <div>
-            <div
-              className={cn(
-                'h-[200px]',
-                !productImages &&
-                  'bg-slate-200 flex justify-center items-center'
-              )}
-            >
-              {productImages && productImages.length > 0 && (
+          <div
+            className={cn(
+              'h-[200px] relative overflow-hidden',
+              !productImages && 'bg-slate-200 flex justify-center items-center'
+            )}
+          >
+            {productImages && productImages.length > 0 && (
+              <>
                 <ImagePreview
-                  className="w-full h-[200px] object-fill"
+                  className="w-full h-[200px] object-cover transition-transform duration-300 group-hover:scale-110"
                   src={productImages[0].ImageUrl}
-                  alt="product"
+                  alt={productDetails?.Title || 'product'}
                 />
-              )}
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                  <Button variant="secondary" size="sm" className="text-white">
+                    Quick View
+                  </Button>
+                </div>
+              </>
+            )}
+            {!productImages && (
+              <Image size={'50px'} className="text-slate-400" />
+            )}
+          </div>
 
-              {!productImages && (
-                <Image size={'50px'} className="text-slate-400" />
+          {isOnSale && (
+            <span className="absolute top-2 right-2 bg-red-600 text-white text-xs font-medium px-2 py-1 rounded">
+              {Math.abs(
+                calculateDiscountPercentage(
+                  productVariation?.SalesPrice,
+                  productVariation?.Price
+                )
+              ).toFixed(0)}
+              % OFF
+            </span>
+          )}
+
+          <div className="p-4">
+            <h3 className="font-medium text-base mb-2 line-clamp-2 group-hover:text-green-600 transition-colors">
+              {productDetails?.Title}
+            </h3>
+
+            <div className="flex items-baseline gap-2 mb-2">
+              <span className="font-semibold text-lg">
+                {formatPrice(
+                  productVariation?.SalesPrice || productVariation?.Price || 0
+                )}
+              </span>
+              {productVariation?.SalesPrice && isOnSale && (
+                <span className="text-sm text-gray-500 line-through">
+                  {formatPrice(productVariation?.Price)}
+                </span>
               )}
             </div>
 
-            <div className="p-2">
-              <div className="font-normal text-base mb-2">
-                {productDetails?.Title}
-              </div>
-
-              <p className="text-gray-700 text-base">
-                {productVariation?.SalesPrice && isOnSale && (
-                  <span className="font-light line-through mr-3">
-                    {formatPrice(productVariation?.Price)}
-                  </span>
-                )}
-
-                <span className="font-medium text-base">
-                  {formatPrice(productVariation?.SalesPrice || 0)}
+            <div className="text-sm mb-3">
+              {productVariation?.Inventory && productVariation.Inventory > 0 ? (
+                <span className="text-green-600">
+                  {productVariation.Inventory} in stock
                 </span>
-              </p>
+              ) : (
+                <span className="text-red-600">Out of stock</span>
+              )}
             </div>
           </div>
         </Link>
 
-        {isOnSale && (
-          <span className="bg-green-600 text-sm font-light text-white px-2 py-1 absolute top-5 right-5 rounded-tr ">
-            {calculateDiscountPercentage(
-              productVariation?.SalesPrice,
-              productVariation?.Price
-            ).toFixed(2)}
-            % off
-          </span>
-        )}
-
-        <div className="my-2 ">
-          {!inStock && (
-            <h1 className="text-center h-full p-3 bg-slate-200 rounded-md">
-              Out of stock
-            </h1>
-          )}
-          {inStock && (
-            <>
-              <Button
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (selectedVariation && ProductID && isVariationUnderQty) {
-                    addToCart({
-                      ProductId: ProductID,
-                      VariationId: selectedVariation,
-                      Quantity: 1,
-                    });
-                  } else {
-                    toast({
-                      variant: 'destructive',
-                      title: 'Stock alert',
-                      description: 'Not enought item in stock',
-                    });
-                  }
-                }}
-                className="w-full my-1 bg-white border-2 border-gray-700 text-black hover:bg-white hover:shadow-lg"
-              >
-                Add to cart
-              </Button>
-              <Button
-                onClick={(e) => {
-                  if (selectedVariation && ProductID && isVariationUnderQty) {
-                    addToCart({
-                      ProductId: ProductID,
-                      VariationId: selectedVariation,
-                      Quantity: 1,
-                    });
-
-                    // redirect to checkout
-                    navigate({ to: '/checkout' });
-                  } else {
-                    toast({
-                      variant: 'destructive',
-                      title: 'Stock alert',
-                      description: 'Not enought item in stock',
-                    });
-                  }
-                }}
-                className="w-full my-1 bg-green-500 hover:bg-green-500 hover:shadow-lg"
-              >
-                Buy it now
-              </Button>
-            </>
-          )}
+        <div className="p-4 pt-0">
+          <div className="flex gap-2">
+            <Button
+              onClick={(e) => {
+                e.preventDefault();
+                if (selectedVariation && ProductID && isVariationUnderQty) {
+                  addToCart({
+                    ProductId: ProductID,
+                    VariationId: selectedVariation,
+                    Quantity: 1,
+                  });
+                } else {
+                  toast({
+                    variant: 'destructive',
+                    title: 'Stock alert',
+                    description: 'Not enough items in stock',
+                  });
+                }
+              }}
+              className="flex-1 bg-white border-2 border-gray-700 text-black hover:bg-gray-50"
+              disabled={!inStock || !isVariationUnderQty}
+            >
+              Add to cart
+            </Button>
+            <Button
+              onClick={(e) => {
+                if (selectedVariation && ProductID && isVariationUnderQty) {
+                  addToCart({
+                    ProductId: ProductID,
+                    VariationId: selectedVariation,
+                    Quantity: 1,
+                  });
+                  navigate({ to: '/checkout' });
+                }
+              }}
+              className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+              disabled={!inStock || !isVariationUnderQty}
+            >
+              Buy now
+            </Button>
+          </div>
         </div>
       </div>
     </div>

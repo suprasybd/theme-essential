@@ -120,7 +120,7 @@ const NavBar: React.FC = () => {
                       </DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <Link to="/details">
-                        <DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer">
                           <span>Orders</span>
                         </DropdownMenuItem>
                       </Link>
