@@ -44,7 +44,7 @@ export const RichTextRender: React.FC<{
     <Slate editor={editor} initialValue={initVal || initialValue}>
       <Editable
         readOnly
-        className={cn('min-h-[200px]', className)}
+        className={cn('', className)}
         renderElement={renderElement}
         renderLeaf={renderLeaf}
         placeholder="Enter some rich text…"

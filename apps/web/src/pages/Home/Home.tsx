@@ -66,7 +66,7 @@ const Home = () => {
                 </h1>
                 <div className="max-w-3xl mx-auto">
                   <RichTextRender
-                    className="text-gray-600"
+                    className="text-gray-600 !min-h-fit"
                     initialVal={section.Description}
                   />
                 </div>

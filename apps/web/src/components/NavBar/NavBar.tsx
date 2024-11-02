@@ -75,32 +75,36 @@ const NavBar: React.FC = () => {
   }, [cart]);
 
   return (
-    <div className="sticky top-0 z-50 w-full bg-white border-b border-slate-200">
+    <div className="sticky top-0 z-50 w-full bg-white border-b border-slate-200 shadow-sm">
       <div className="max-w-[1220px] mx-auto">
         {/* Desktop Navigation - Top Row */}
-        <div className="hidden md:flex items-center justify-between py-4 px-4 sm:px-8">
+        <div className="hidden md:flex items-center justify-between py-3 px-4 sm:px-8">
           <Link to="/" className="flex-shrink-0">
-            <img className="h-12 w-auto" src={logo?.LogoLink} alt="logo" />
+            <img className="h-10 w-auto" src={logo?.LogoLink} alt="logo" />
           </Link>
 
           {/* Right Actions */}
-          <div className="flex items-center space-x-6">
-            <button
-              className="p-2 hover:bg-slate-100 rounded-full transition-colors"
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-slate-600 hover:text-slate-900"
               onClick={() => setModalPath({ modal: 'search' })}
             >
               <Search className="h-5 w-5" strokeWidth={1.5} />
-            </button>
+            </Button>
 
             {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="flex items-center space-x-2 hover:bg-slate-100"
+                    className="flex items-center space-x-2"
                   >
                     <UserRound className="h-5 w-5" />
-                    <span className="font-medium">{user?.FullName}</span>
+                    <span className="font-medium hidden sm:inline">
+                      {user?.FullName}
+                    </span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
@@ -126,15 +130,16 @@ const NavBar: React.FC = () => {
               <Button
                 variant="ghost"
                 onClick={() => navigate({ to: '/login' })}
-                className="hover:bg-slate-100"
               >
                 <UserRound className="h-5 w-5 mr-2" />
-                Sign in
+                <span className="hidden sm:inline">Sign in</span>
               </Button>
             )}
 
-            <button
-              className="p-2 hover:bg-slate-100 rounded-full transition-colors relative"
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-slate-600 hover:text-slate-900 relative"
               onClick={() => setModalPath({ modal: 'cart' })}
             >
               <ShoppingCart className="h-5 w-5" strokeWidth={1.5} />
@@ -143,21 +148,17 @@ const NavBar: React.FC = () => {
                   {totalCartQuantity}
                 </span>
               )}
-            </button>
+            </Button>
           </div>
         </div>
 
         {/* Desktop Categories - Bottom Row */}
         <div className="hidden md:block border-t border-slate-200">
-          <div className="px-4 sm:px-8 overflow-x-auto">
-            <div className="flex items-center space-x-8 py-3 max-w-full">
+          <div className="px-4 sm:px-8">
+            <div className="flex items-center space-x-8 py-3">
               {categories?.map((category) => (
-                <div className="flex-shrink-0">
-                  <CategoryComponent
-                    key={category.Id}
-                    category={category}
-                    isMobile={false}
-                  />
+                <div key={category.Id} className="flex-shrink-0">
+                  <CategoryComponent category={category} isMobile={false} />
                 </div>
               ))}
             </div>
@@ -216,52 +217,35 @@ const CategoryComponent: React.FC<{
 
   const subCategories = subCategoriesResponse?.Data;
 
-  if (isMobile) {
+  if (!isMobile) {
     return (
       <div>
-        {subCategories && subCategories.length > 0 && (
-          <div>
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem
-                value="item-1"
-                className="border-b border-gray-200"
-              >
-                <AccordionTrigger className="flex justify-between items-center w-full py-3 px-4 text-left">
+        {subCategories && subCategories.length > 0 ? (
+          <HoverCard openDelay={0}>
+            <HoverCardTrigger>
+              <button className="flex items-center gap-1.5 text-slate-600 hover:text-slate-900 transition-colors">
+                <span className="font-medium">{category.Name}</span>
+                <ChevronDown className="h-4 w-4" />
+              </button>
+            </HoverCardTrigger>
+            <HoverCardContent align="start" className="w-56 p-2">
+              <div className="grid gap-1">
+                {subCategories?.map((s) => (
                   <Link
-                    key={category.Id.toString()}
-                    to={'/category/' + category.Name}
-                    className="text-lg font-medium text-gray-900"
+                    key={s.Id.toString()}
+                    to={'/category/' + s.Name}
+                    className="block px-3 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-md transition-colors"
                   >
-                    {category.Name}
+                    {s.Name}
                   </Link>
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-3">
-                  <div className="space-y-2">
-                    {subCategories?.map((s) => (
-                      <Link
-                        key={s.Id.toString()}
-                        to={'/category/' + s.Name}
-                        className="block py-2 text-gray-600 hover:text-gray-900 transition-colors"
-                      >
-                        {s.Name}
-                      </Link>
-                    ))}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </div>
-        )}
-        {subCategories?.length === 0 && (
+                ))}
+              </div>
+            </HoverCardContent>
+          </HoverCard>
+        ) : (
           <Link
-            key={category.Id.toString()}
             to={'/category/' + category.Name}
-            className={classNames(
-              'font-medium transition-colors',
-              !isMobile
-                ? 'px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md'
-                : 'block py-3 px-4 text-lg text-gray-900 hover:bg-gray-50'
-            )}
+            className="text-slate-600 hover:text-slate-900 transition-colors font-medium"
           >
             {category.Name}
           </Link>
@@ -272,32 +256,46 @@ const CategoryComponent: React.FC<{
 
   return (
     <div>
-      {subCategories && subCategories.length > 0 ? (
-        <HoverCard openDelay={0}>
-          <HoverCardTrigger>
-            <button className="flex items-center gap-1 text-gray-700 hover:text-gray-900 whitespace-nowrap">
-              <span className="font-medium">{category.Name}</span>
-              <ChevronDown className="h-4 w-4" />
-            </button>
-          </HoverCardTrigger>
-          <HoverCardContent align="start" className="w-56 p-2">
-            <div className="grid gap-2">
-              {subCategories?.map((s) => (
+      {subCategories && subCategories.length > 0 && (
+        <div>
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="item-1" className="border-b border-gray-200">
+              <AccordionTrigger className="flex justify-between items-center w-full py-3 px-4 text-left">
                 <Link
-                  key={s.Id.toString()}
-                  to={'/category/' + s.Name}
-                  className="block px-3 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-slate-100 rounded-md transition-colors"
+                  key={category.Id.toString()}
+                  to={'/category/' + category.Name}
+                  className="text-lg font-medium text-gray-900"
                 >
-                  {s.Name}
+                  {category.Name}
                 </Link>
-              ))}
-            </div>
-          </HoverCardContent>
-        </HoverCard>
-      ) : (
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pb-3">
+                <div className="space-y-2">
+                  {subCategories?.map((s) => (
+                    <Link
+                      key={s.Id.toString()}
+                      to={'/category/' + s.Name}
+                      className="block py-2 text-gray-600 hover:text-gray-900 transition-colors"
+                    >
+                      {s.Name}
+                    </Link>
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
+      )}
+      {subCategories?.length === 0 && (
         <Link
+          key={category.Id.toString()}
           to={'/category/' + category.Name}
-          className="text-gray-700 hover:text-gray-900 font-medium whitespace-nowrap"
+          className={classNames(
+            'font-medium transition-colors',
+            !isMobile
+              ? 'px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md'
+              : 'block py-3 px-4 text-lg text-gray-900 hover:bg-gray-50'
+          )}
         >
           {category.Name}
         </Link>

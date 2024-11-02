@@ -18,28 +18,37 @@ const Footer = () => {
   const pages = pagesResponse?.Data;
 
   return (
-    <footer className=" py-8 w-full max-w-[1220px] min-h-full mx-auto gap-6  px-4 sm:px-8">
-      <div className="container mx-auto flex flex-wrap justify-around">
-        {pages && pages.length > 0 && (
-          <div className="w-full md:w-1/2 px-4">
-            <h3 className="text-2xl mb-5">Quick Links</h3>
-            <ul className="list-none space-y-5">
-              {pages.map((page) => (
-                <li className="my-3">
-                  <a href={`/page/${page.Url}`} className=" hover:underline">
-                    {page.Url}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+    <footer className="bg-slate-50 border-t border-slate-200">
+      <div className="py-12 w-full max-w-[1220px] mx-auto px-4 sm:px-8">
+        <div className="flex flex-wrap justify-between gap-8">
+          {pages && pages.length > 0 && (
+            <div className="flex-1 min-w-[250px]">
+              <h3 className="text-lg font-semibold text-slate-900 mb-6">
+                Quick Links
+              </h3>
+              <ul className="space-y-3">
+                {pages.map((page) => (
+                  <li key={page.Url}>
+                    <a
+                      href={`/page/${page.Url}`}
+                      className="text-slate-600 hover:text-slate-900 transition-colors"
+                    >
+                      {page.Url}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
-        {footer?.Description && (
-          <div className="w-full md:w-1/2 px-4 mt-5 md:mt-0">
-            <RichTextRender initialVal={footer.Description} />
-          </div>
-        )}
+          {footer?.Description && (
+            <div className="flex-1 min-w-[250px]">
+              <div className="prose prose-slate max-w-none">
+                <RichTextRender initialVal={footer.Description} />
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </footer>
   );

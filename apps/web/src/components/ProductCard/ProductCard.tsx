@@ -98,7 +98,11 @@ const ProductCard: React.FC<{ ProductId: number }> = ({ ProductId }) => {
                   alt={productDetails?.Title || 'product'}
                 />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
-                  <Button variant="secondary" size="sm" className="text-white">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="text-slate-500"
+                  >
                     Quick View
                   </Button>
                 </div>
