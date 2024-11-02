@@ -3,11 +3,13 @@ import { formatPrice } from '@web/libs/helpers/formatPrice';
 import {
   getProductImagesOption,
   getProductsDetailsByIdOption,
+  getProductVariations,
 } from '@web/api/products';
 import React from 'react';
 import ImagePreview from '../Image/ImagePreview';
 import cn from 'classnames';
 import { Image } from 'lucide-react';
+import { Link } from '@tanstack/react-router';
 
 const ProductCardSmall: React.FC<{
   ProductId: number;
@@ -23,59 +25,80 @@ const ProductCardSmall: React.FC<{
     getProductImagesOption(ProductId)
   );
 
-  // const { data: productSkuResponse } = useSuspenseQuery(
-  //   getProductSkuOption(ProductId)
-  // );
+  const { data: productVariationsResponse } = useSuspenseQuery({
+    queryKey: ['getProductVariations', ProductId],
+    queryFn: () => getProductVariations(ProductId),
+  });
 
   const productImages = productImagesResponse?.Data;
-  // const productSku = productSkuResponse?.Data;
+  const variation = productVariationsResponse?.Data?.[0]; // Get first variation
+
+  const handleClick = () => {
+    setModal?.(false);
+  };
 
   return (
-    <div className="w-full h-fit hover:cursor-pointer">
-      <div className="rounded-md overflow-hidden p-2 hover:bg-green-400 hover:text-white relative">
-        <a href={`/products/${productDetails?.Slug || '/'}`}>
-          <div className="flex w-full items-center">
+    <div className="w-full hover:cursor-pointer group">
+      <Link
+        to="/products/$slug"
+        params={{ slug: productDetails?.Slug || '/' }}
+        className="block"
+        onClick={handleClick}
+      >
+        <div className="rounded-lg border border-gray-100 hover:border-gray-200 overflow-hidden p-3 transition-all duration-200">
+          <div className="flex items-center gap-4">
             <div
               className={cn(
+                'w-[80px] h-[80px] rounded-md overflow-hidden flex-shrink-0',
                 !productImages &&
-                  'bg-slate-200 flex justify-center items-center'
+                  'bg-slate-100 flex justify-center items-center'
               )}
             >
-              {productImages && productImages.length > 0 && (
+              {productImages && productImages.length > 0 ? (
                 <ImagePreview
-                  className="w-[60px] h-[60px] object-fill rounded-md"
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                   src={productImages[0].ImageUrl}
-                  alt="product"
+                  alt={productDetails?.Title || 'product'}
                 />
-              )}
-
-              {!productImages && (
-                <Image size={'50px'} className="text-slate-400" />
+              ) : (
+                <Image size={'40px'} className="text-slate-400" />
               )}
             </div>
 
-            <div className="p-2">
-              <div className="font-normal  text-base mb-2">
+            <div className="flex-1 min-w-0">
+              <h3 className="font-medium text-base mb-1 line-clamp-2 group-hover:text-green-600 transition-colors">
                 {productDetails?.Title}
-              </div>
+              </h3>
 
-              {/* {productSku && productSku.length > 0 && (
-                <p className=" text-base">
-                  {productSku[0].ShowCompareAtPrice && (
-                    <span className="font-light line-through mr-3">
-                      {formatPrice(productSku[0].CompareAtPrice)}
-                    </span>
-                  )}
-
-                  <span className="font-medium text-base">
-                    {formatPrice(productSku[0].Price)}
+              {variation && (
+                <div className="flex items-baseline gap-2">
+                  <span className="font-semibold text-base">
+                    {formatPrice(variation.SalesPrice || variation.Price)}
                   </span>
+                  {variation.SalesPrice &&
+                    variation.SalesPrice < variation.Price && (
+                      <span className="text-sm text-gray-500 line-through">
+                        {formatPrice(variation.Price)}
+                      </span>
+                    )}
+                </div>
+              )}
+
+              {variation && (
+                <p className="text-sm text-gray-600 mt-1">
+                  {variation.Inventory > 0 ? (
+                    <span className="text-green-600">
+                      {variation.Inventory} in stock
+                    </span>
+                  ) : (
+                    <span className="text-red-600">Out of stock</span>
+                  )}
                 </p>
-              )} */}
+              )}
             </div>
           </div>
-        </a>
-      </div>
+        </div>
+      </Link>
     </div>
   );
 };

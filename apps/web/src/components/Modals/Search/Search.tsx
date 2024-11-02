@@ -13,6 +13,7 @@ import { getProductsList } from '@web/api/products';
 import { activeFilters } from '@web/libs/helpers/filters';
 import { useDebounce } from 'use-debounce';
 import ProductCardSmall from '@web/components/ProductCard/ProductCardSmall';
+import { Search } from 'lucide-react';
 
 const SearchModal: React.FC = () => {
   const { modal, clearModalPath } = useModalStore((state) => state);
@@ -62,35 +63,57 @@ const SearchModal: React.FC = () => {
           }
         }}
       >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Search Product</DialogTitle>
+        <DialogContent className="sm:max-w-[600px] gap-6">
+          <DialogHeader className="space-y-4">
+            <DialogTitle className="text-2xl">Search Products</DialogTitle>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                }}
+                placeholder="Search for products..."
+                className="pl-10 h-11"
+              />
+            </div>
           </DialogHeader>
 
-          <Input
-            onChange={(e) => {
-              setSearch(e.target.value);
-            }}
-            placeholder="Search product"
-          />
+          <div className="relative min-h-[200px]">
+            {!dSearch && (
+              <div className="text-center text-gray-500 py-8">
+                <Search className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                <p>Start typing to search for products</p>
+              </div>
+            )}
 
-          {products && products?.length > 0 && (
-            <div>
-              {products?.map((product) => (
-                <ProductCardSmall
-                  ProductId={product.Id}
-                  setModal={setModalOpen}
-                ></ProductCardSmall>
-              ))}
-            </div>
-          )}
+            {dSearch && !products?.length && (
+              <div className="text-center text-gray-500 py-8">
+                <p>No products found for "{dSearch}"</p>
+              </div>
+            )}
 
-          <Button
-            className="bg-green-500 hover:bg-green-600"
-            onClick={() => closeModal()}
-          >
-            Close
-          </Button>
+            {products && products.length > 0 && (
+              <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2">
+                {products.map((product) => (
+                  <ProductCardSmall
+                    key={product.Id}
+                    ProductId={product.Id}
+                    setModal={setModalOpen}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="flex justify-end">
+            <Button
+              variant="outline"
+              onClick={() => closeModal()}
+              className="min-w-[100px]"
+            >
+              Close
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
