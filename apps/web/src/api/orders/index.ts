@@ -1,7 +1,19 @@
 import ApiClient from '@web/libs/ApiClient';
 import { ListResponseType } from '@web/libs/types/responseTypes';
 
-export interface OrdersType {
+export interface OrdersProductType {
+  Id: number;
+  StoreKey: string;
+  UserId: number;
+  OrderId: number;
+  VariationId: number;
+  Price: number;
+  Quantity: number;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
+
+export interface OrderType {
   Id: number;
   OrderMethod: string;
   UserId: number;
@@ -20,8 +32,24 @@ export interface OrdersType {
   UpdatedAt: string;
 }
 
-export const getOrders = async (): Promise<ListResponseType<OrdersType>> => {
-  const response = await ApiClient.get(`/storefront-order/orders`);
+interface OrdersQueryParams {
+  Page?: number;
+  Limit?: number;
+}
 
+export const getOrders = async (
+  params?: OrdersQueryParams
+): Promise<ListResponseType<OrderType>> => {
+  const response = await ApiClient.get('/storefront-order/orders', {
+    params,
+  });
+
+  return response.data;
+};
+
+export const getOrderProducts = async (
+  orderId: number
+): Promise<ListResponseType<OrdersProductType>> => {
+  const response = await ApiClient.get(`/storefront-order/${orderId}/products`);
   return response.data;
 };
