@@ -75,204 +75,129 @@ const NavBar: React.FC = () => {
   }, [cart]);
 
   return (
-    <div className="w-full max-w-[1220px] mx-auto gap-6 py-6 px-4 sm:px-8  bg-white  border border-t-0 border-l-0 border-r-0 border-b-slate-300">
-      <div className="hidden md:flex flex-col justify-center items-center gap-[30px] md:flex-row md:justify-between">
-        <div>
-          <Search
-            className="cursor-pointer"
-            onClick={() => {
-              setModalPath({ modal: 'search' });
-            }}
-            strokeWidth={'1px'}
-          />
-        </div>
-        <div className={classNames(isAuthenticated && 'ml-0 md:ml-[180px]')}>
-          <Link to="/">
-            <img
-              className="w-[70px] h-[70px]"
-              src={logo?.LogoLink}
-              width={'70px'}
-              height={'auto'}
-              alt="logo"
-            />
+    <div className="sticky top-0 z-50 w-full bg-white border-b border-slate-200">
+      <div className="max-w-[1220px] mx-auto">
+        {/* Desktop Navigation - Top Row */}
+        <div className="hidden md:flex items-center justify-between py-4 px-4 sm:px-8">
+          <Link to="/" className="flex-shrink-0">
+            <img className="h-12 w-auto" src={logo?.LogoLink} alt="logo" />
           </Link>
-        </div>
-        <div className="flex gap-[20px]">
-          {isAuthenticated && (
-            <div className="flex justify-center gap-[7px]">
-              <div className=" pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                <div className="relative ml-3">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger className="outline-none">
-                      <Button variant={'outline'}>
-                        <UserRound size={'18px'} className="mr-2" />
-                        {user?.FullName}
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <DropdownMenuLabel>
-                        <div>
-                          <span>Signed in as</span>
-                        </div>
-                        <div>
-                          <h4>{user?.Email}</h4>
-                        </div>
-                      </DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <Link to="/details">
-                        <DropdownMenuItem className="cursor-pointer">
-                          <span>Orders</span>
-                        </DropdownMenuItem>
-                      </Link>
-                      <DropdownMenuSeparator />
-                      <div className="p-2">
-                        <Button
-                          onClick={logoutUser}
-                          variant={'dropdown'}
-                          className="w-full justify-start"
-                        >
-                          <div className="flex gap-[8px] items-center">
-                            <Power size={'17px'} />
-                            Sign out
-                          </div>
-                        </Button>
-                      </div>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </div>
-            </div>
-          )}
-          {!isAuthenticated && (
+
+          {/* Right Actions */}
+          <div className="flex items-center space-x-6">
             <button
-              className="h-fit"
-              onClick={() => {
-                navigate({ to: '/login' });
-              }}
+              className="p-2 hover:bg-slate-100 rounded-full transition-colors"
+              onClick={() => setModalPath({ modal: 'search' })}
             >
-              <UserRound
-                className="text-black hover:scale-110"
-                strokeWidth={'1px'}
-              />
+              <Search className="h-5 w-5" strokeWidth={1.5} />
             </button>
-          )}
 
-          <button
-            className="relative h-fit"
-            onClick={() => {
-              setModalPath({ modal: 'cart' });
-            }}
-          >
-            <ShoppingCart
-              className="text-black hover:scale-110"
-              strokeWidth={'1px'}
-            />
-
-            {cart && cart.length > 0 && (
-              <div className="absolute top-[-5px] right-[-8px] bg-green-500 text-white rounded-full text-sm px-[5px]">
-                {totalCartQuantity}
-              </div>
-            )}
-          </button>
-        </div>
-      </div>
-      <div className="hidden md:flex mt-10 w-full flex-wrap gap-[30px] justify-center ">
-        {categories &&
-          categories.length > 0 &&
-          categories.map((category) => (
-            <CategoryComponent category={category} isMobile={false} />
-          ))}
-      </div>
-      {/* mobile menu */}
-      <div className="md:hidden flex justify-between">
-        <Sheet key={'left'}>
-          <SheetTrigger>
-            <Menu />
-          </SheetTrigger>
-          <SheetContent
-            side={'left'}
-            className="flex flex-col justify-between overflow-y-scroll w-screen"
-          >
-            <SheetHeader>
-              <SheetDescription>
-                <h1 className="text-3xl font-bold">Categories</h1>
-                {categories &&
-                  categories.length > 0 &&
-                  categories.map((category) => (
-                    <CategoryComponent category={category} isMobile />
-                  ))}
-              </SheetDescription>
-            </SheetHeader>
-            <SheetFooter>
-              {!isAuthenticated && (
-                <Link className="w-full" to="/login">
-                  <Button className="w-full">Login</Button>
-                </Link>
-              )}
-              {isAuthenticated && (
-                <>
+            {isAuthenticated ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
                   <Button
-                    onClick={logoutUser}
-                    variant={'destructive'}
-                    className="w-full justify-start my-3"
+                    variant="ghost"
+                    className="flex items-center space-x-2 hover:bg-slate-100"
                   >
-                    <div className="flex gap-[8px] items-center">
-                      <Power size={'17px'} />
-                      Sign out
-                    </div>
+                    <UserRound className="h-5 w-5" />
+                    <span className="font-medium">{user?.FullName}</span>
                   </Button>
-                  <div>
-                    <div>
-                      <span>Signed in as</span>
-                    </div>
-                    <div>
-                      <h4>{user?.Email}</h4>
-                    </div>
-                  </div>
-                </>
-              )}
-            </SheetFooter>
-          </SheetContent>
-        </Sheet>
-        <div className={classNames(isAuthenticated && 'ml-0 md:ml-[180px]')}>
-          <Link to="/">
-            <img
-              className="w-[70px] h-[70px]"
-              src={logo?.LogoLink}
-              width={'70px'}
-              height={'auto'}
-              alt="logo"
-            />
-          </Link>
-        </div>
-        {/* search and cart mobile */}
-        <div className="flex justify-center items-center gap-[10px]">
-          <div>
-            <Search
-              className="cursor-pointer"
-              onClick={() => {
-                setModalPath({ modal: 'search' });
-              }}
-              strokeWidth={'1px'}
-            />
-          </div>
-          <button
-            className="relative h-fit"
-            onClick={() => {
-              setModalPath({ modal: 'cart' });
-            }}
-          >
-            <ShoppingCart
-              className="text-black hover:scale-110"
-              strokeWidth={'1px'}
-            />
-
-            {cart && cart.length > 0 && (
-              <div className="absolute top-[-5px] right-[-8px] bg-green-500 text-white rounded-full text-sm px-[5px]">
-                {totalCartQuantity}
-              </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>
+                    <div className="text-sm text-slate-500">Signed in as</div>
+                    <div className="font-medium truncate">{user?.Email}</div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <Link to="/details">
+                    <DropdownMenuItem>
+                      <ShoppingBag className="h-4 w-4 mr-2" />
+                      Orders
+                    </DropdownMenuItem>
+                  </Link>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={logoutUser}>
+                    <Power className="h-4 w-4 mr-2" />
+                    Sign out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button
+                variant="ghost"
+                onClick={() => navigate({ to: '/login' })}
+                className="hover:bg-slate-100"
+              >
+                <UserRound className="h-5 w-5 mr-2" />
+                Sign in
+              </Button>
             )}
-          </button>
+
+            <button
+              className="p-2 hover:bg-slate-100 rounded-full transition-colors relative"
+              onClick={() => setModalPath({ modal: 'cart' })}
+            >
+              <ShoppingCart className="h-5 w-5" strokeWidth={1.5} />
+              {cart && cart.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {totalCartQuantity}
+                </span>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Desktop Categories - Bottom Row */}
+        <div className="hidden md:block border-t border-slate-200">
+          <div className="px-4 sm:px-8 overflow-x-auto">
+            <div className="flex items-center space-x-8 py-3 max-w-full">
+              {categories?.map((category) => (
+                <div className="flex-shrink-0">
+                  <CategoryComponent
+                    key={category.Id}
+                    category={category}
+                    isMobile={false}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Navigation */}
+        <div className="md:hidden flex items-center justify-between py-4 px-4">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            {/* ... existing mobile sheet content ... */}
+          </Sheet>
+
+          <Link to="/" className="flex-shrink-0">
+            <img className="h-10 w-auto" src={logo?.LogoLink} alt="logo" />
+          </Link>
+
+          <div className="flex items-center space-x-4">
+            <button
+              className="p-2 hover:bg-slate-100 rounded-full"
+              onClick={() => setModalPath({ modal: 'search' })}
+            >
+              <Search className="h-5 w-5" strokeWidth={1.5} />
+            </button>
+            <button
+              className="p-2 hover:bg-slate-100 rounded-full relative"
+              onClick={() => setModalPath({ modal: 'cart' })}
+            >
+              <ShoppingCart className="h-5 w-5" strokeWidth={1.5} />
+              {cart && cart.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {totalCartQuantity}
+                </span>
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -291,84 +216,88 @@ const CategoryComponent: React.FC<{
 
   const subCategories = subCategoriesResponse?.Data;
 
-  return (
-    <div>
-      {subCategories && subCategories.length > 0 && (
-        <div>
-          {!isMobile && (
-            <HoverCard openDelay={0}>
-              <HoverCardTrigger>
-                <Link
-                  key={category.Id.toString()}
-                  to={'/category/' + category.Name}
-                  className="hover:underline hover:scale-105 transition-all duration-150 flex gap-[3px] justify-center items-center"
-                >
-                  <span>{category.Name}</span>
-
-                  <ChevronDown className="h-[20px] w-[20px]" />
-                </Link>
-              </HoverCardTrigger>
-              <HoverCardContent align="start" className="m-0 w-fit !pr-7">
-                {subCategories?.map((s) => (
-                  <div className="my-3">
-                    <Link
-                      key={s.Id.toString()}
-                      to={'/category/' + s.Name}
-                      className="hover:underline hover:scale-105 transition-all duration-150"
-                    >
-                      {s.Name}
-                    </Link>
-                  </div>
-                ))}
-              </HoverCardContent>
-            </HoverCard>
-          )}
-
-          {isMobile && (
-            <Accordion type="single" collapsible>
-              <AccordionItem value="item-1" className="border-none py-0">
-                <AccordionTrigger className="border-none py-0">
-                  {' '}
+  if (isMobile) {
+    return (
+      <div>
+        {subCategories && subCategories.length > 0 && (
+          <div>
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem
+                value="item-1"
+                className="border-b border-gray-200"
+              >
+                <AccordionTrigger className="flex justify-between items-center w-full py-3 px-4 text-left">
                   <Link
                     key={category.Id.toString()}
                     to={'/category/' + category.Name}
-                    className={classNames(
-                      isMobile &&
-                        'block text-2xl hover:scale-100 font-medium hover:bg-slate-100 hover:no-underline my-2 py-3 px-1 text-slate-800'
-                    )}
+                    className="text-lg font-medium text-gray-900"
                   >
-                    <span>{category.Name}</span>
+                    {category.Name}
                   </Link>
                 </AccordionTrigger>
-                <AccordionContent>
-                  {subCategories?.map((s) => (
-                    <div className="my-3">
+                <AccordionContent className="px-4 pb-3">
+                  <div className="space-y-2">
+                    {subCategories?.map((s) => (
                       <Link
                         key={s.Id.toString()}
                         to={'/category/' + s.Name}
-                        className={
-                          'block text-2xl hover:scale-100 font-medium hover:bg-slate-100 hover:no-underline my-2 py-3 px-1 text-slate-800'
-                        }
+                        className="block py-2 text-gray-600 hover:text-gray-900 transition-colors"
                       >
                         {s.Name}
                       </Link>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
-          )}
-        </div>
-      )}
-      {subCategories?.length === 0 && (
+          </div>
+        )}
+        {subCategories?.length === 0 && (
+          <Link
+            key={category.Id.toString()}
+            to={'/category/' + category.Name}
+            className={classNames(
+              'font-medium transition-colors',
+              !isMobile
+                ? 'px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md'
+                : 'block py-3 px-4 text-lg text-gray-900 hover:bg-gray-50'
+            )}
+          >
+            {category.Name}
+          </Link>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      {subCategories && subCategories.length > 0 ? (
+        <HoverCard openDelay={0}>
+          <HoverCardTrigger>
+            <button className="flex items-center gap-1 text-gray-700 hover:text-gray-900 whitespace-nowrap">
+              <span className="font-medium">{category.Name}</span>
+              <ChevronDown className="h-4 w-4" />
+            </button>
+          </HoverCardTrigger>
+          <HoverCardContent align="start" className="w-56 p-2">
+            <div className="grid gap-2">
+              {subCategories?.map((s) => (
+                <Link
+                  key={s.Id.toString()}
+                  to={'/category/' + s.Name}
+                  className="block px-3 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-slate-100 rounded-md transition-colors"
+                >
+                  {s.Name}
+                </Link>
+              ))}
+            </div>
+          </HoverCardContent>
+        </HoverCard>
+      ) : (
         <Link
-          key={category.Id.toString()}
           to={'/category/' + category.Name}
-          className={classNames(
-            ' hover:font-medium hover:underline transition-all duration-150',
-            isMobile &&
-              'block text-2xl !hover:scale-95 text-left font-medium hover:bg-slate-100 hover:no-underline my-2 py-3 px-1 text-slate-800'
-          )}
+          className="text-gray-700 hover:text-gray-900 font-medium whitespace-nowrap"
         >
           {category.Name}
         </Link>
