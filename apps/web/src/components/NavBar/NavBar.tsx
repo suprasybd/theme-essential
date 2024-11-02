@@ -167,14 +167,13 @@ const NavBar: React.FC = () => {
 
         {/* Mobile Navigation */}
         <div className="md:hidden flex items-center justify-between py-4 px-4">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
-            {/* ... existing mobile sheet content ... */}
-          </Sheet>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden hover:bg-slate-100 rounded-lg"
+          >
+            <Menu className="h-6 w-6 text-slate-700" />
+          </Button>
 
           <Link to="/" className="flex-shrink-0">
             <img className="h-10 w-auto" src={logo?.LogoLink} alt="logo" />
@@ -193,7 +192,7 @@ const NavBar: React.FC = () => {
             >
               <ShoppingCart className="h-5 w-5" strokeWidth={1.5} />
               {cart && cart.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs font-medium rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center">
                   {totalCartQuantity}
                 </span>
               )}

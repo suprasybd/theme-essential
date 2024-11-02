@@ -39,7 +39,7 @@ import { Link, useParams, useSearch } from '@tanstack/react-router';
 import { Turnstile } from '@marsidev/react-turnstile';
 import useTurnStileHook from '@web/hooks/turnstile';
 import { ReloadIcon } from '@radix-ui/react-icons';
-import { Lock } from 'lucide-react';
+import { CheckCircle, Lock } from 'lucide-react';
 import { Route as CheckoutRoute } from '@web/routes/checkout';
 import { encode, decode } from 'js-base64';
 
@@ -241,20 +241,28 @@ const Checkout = () => {
     return (
       <div className="w-full max-w-[1220px] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
         <div className="flex justify-center items-center w-full h-[80vh]">
-          <div>
-            <h1 className="text-4xl font-medium">
-              Your order has been placed!
+          <div className="text-center max-w-lg">
+            <div className="mb-6">
+              <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
+            </div>
+            <h1 className="text-4xl font-medium mb-4">
+              Thank you for your order!
             </h1>
-            {data?.Data?.Password && (
-              <div className="text-center mt-5">
-                Your generated account is bellow:
-                <p>Email: {form.getValues('Email')}</p>
-                <p>Password: {data.Data.Password}</p>
-              </div>
-            )}
-            <Link to="/">
-              <Button className="w-full my-10">Continute Shoping</Button>
-            </Link>
+            <p className="text-gray-600 mb-6">
+              Your order has been successfully placed. We've sent a confirmation
+              email to your inbox with all the order details. Please check your
+              email for further instructions.
+            </p>
+            <div className="space-y-4">
+              <Link to="/details">
+                <Button variant="outline" className="w-full py-6">
+                  View Order Details
+                </Button>
+              </Link>
+              <Link to="/" className="mt-3">
+                <Button className="w-full py-6">Continue Shopping</Button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -263,134 +271,150 @@ const Checkout = () => {
 
   return (
     <div className="w-full max-w-[1220px] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
-      {/* order summary */}
+      <div className="grid md:grid-cols-[1fr,400px] gap-8">
+        {/* Form Section */}
+        <Form {...form}>
+          <form onSubmit={handleFormWrapper} className="space-y-8">
+            {/* Delivery Details Section */}
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h1 className="text-2xl font-semibold mb-6">Delivery Details</h1>
+              <div className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="FullName"
+                  render={({ field }) => (
+                    <FormItem className="!my-[10px] w-full">
+                      <FormLabel>Full Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          className="py-6"
+                          FormError={!!form.formState.errors.FullName}
+                          placeholder="Full name"
+                          readOnly={isAuthenticated && !!user?.FullName}
+                          {...field}
+                        />
+                      </FormControl>
 
-      <div className="md:flex w-full justify-between gap-[70px]">
-        {/* devliary form */}
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-        <div className="my-5 w-full">
-          <h1 className="text-2xl font-medium mb-3">Devilery</h1>
+                <FormField
+                  control={form.control}
+                  name="Email"
+                  render={({ field }) => (
+                    <FormItem className="!my-[10px]">
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="email"
+                          className="py-6"
+                          FormError={!!form.formState.errors.Email}
+                          placeholder="Email"
+                          readOnly={isAuthenticated && !!user?.Email}
+                          {...field}
+                        />
+                      </FormControl>
 
-          <Form {...form}>
-            <form onSubmit={handleFormWrapper} className="space-y-8">
-              <FormField
-                control={form.control}
-                name="FullName"
-                render={({ field }) => (
-                  <FormItem className="!my-[10px] w-full">
-                    <FormLabel>Full Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        className="py-6"
-                        FormError={!!form.formState.errors.FullName}
-                        placeholder="Full name"
-                        readOnly={isAuthenticated && !!user?.FullName}
-                        {...field}
-                      />
-                    </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="Phone"
+                  render={({ field }) => (
+                    <FormItem className="!my-[10px]">
+                      <FormLabel>Phone</FormLabel>
+                      <FormControl>
+                        <Input
+                          className="py-6"
+                          FormError={!!form.formState.errors.Phone}
+                          placeholder="Phone"
+                          {...field}
+                        />
+                      </FormControl>
 
-              <FormField
-                control={form.control}
-                name="Email"
-                render={({ field }) => (
-                  <FormItem className="!my-[10px]">
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="email"
-                        className="py-6"
-                        FormError={!!form.formState.errors.Email}
-                        placeholder="Email"
-                        readOnly={isAuthenticated && !!user?.Email}
-                        {...field}
-                      />
-                    </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="Address"
+                  render={({ field }) => (
+                    <FormItem className="!my-[10px]">
+                      <FormLabel>Address</FormLabel>
+                      <FormControl>
+                        <Input
+                          className="py-7"
+                          FormError={!!form.formState.errors.Address}
+                          placeholder="Address eg. - Area, Mirpur, Road Number , House Number"
+                          {...field}
+                        />
+                      </FormControl>
 
-              <FormField
-                control={form.control}
-                name="Phone"
-                render={({ field }) => (
-                  <FormItem className="!my-[10px]">
-                    <FormLabel>Phone</FormLabel>
-                    <FormControl>
-                      <Input
-                        className="py-6"
-                        FormError={!!form.formState.errors.Phone}
-                        placeholder="Phone"
-                        {...field}
-                      />
-                    </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="Address"
-                render={({ field }) => (
-                  <FormItem className="!my-[10px]">
-                    <FormLabel>Address</FormLabel>
-                    <FormControl>
-                      <Input
-                        className="py-7"
-                        FormError={!!form.formState.errors.Address}
-                        placeholder="Address eg. - Area, Mirpur, Road Number , House Number"
-                        {...field}
-                      />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <h1 className="text-2xl font-medium mb-3">Shipping Charge</h1>
+            {/* Shipping Section */}
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h2 className="text-2xl font-semibold mb-6">Shipping Area</h2>
               {shippingMethods && shippingMethods.length && (
                 <RadioGroup
-                  onValueChange={(val) => {
-                    setSelectedShippingMethod(parseInt(val));
-                  }}
+                  onValueChange={(val) =>
+                    setSelectedShippingMethod(parseInt(val))
+                  }
                   defaultValue={shippingMethods[0].Id.toString()}
-                  className="border border-gray-200 rounded-md w-full  block"
+                  className="space-y-3"
                 >
                   {shippingMethods.map((method) => (
                     <Label
+                      key={method.Id}
                       htmlFor={method.Id.toString()}
-                      className="p-3 rounded-md py-5 w-full !my-0 block  bg-white  hover:cursor-pointer border-b border-gray-200"
+                      className="relative flex p-4 cursor-pointer rounded-lg border border-gray-200 hover:border-primary transition-colors"
                     >
-                      <div className="flex gap-[7px]">
+                      <div className="flex items-start gap-4 w-full">
                         <RadioGroupItem
-                          className=" !my-0 "
                           value={method.Id.toString()}
                           id={method.Id.toString()}
                         />
-                        <div className="flex w-full justify-between items-center">
-                          <h3>{method.Area}</h3>
-                          <p>
-                            {method.Cost !== 0 && (
-                              <>{formatPrice(method.Cost)}</>
+                        <div className="flex justify-between w-full">
+                          <div>
+                            <h3 className="font-medium">{method.Area}</h3>
+                            <p className="text-sm text-gray-500">
+                              Estimated delivery: 2-3 days
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            {method.Cost === 0 ? (
+                              <span className="font-medium text-green-600">
+                                Free
+                              </span>
+                            ) : (
+                              <span className="font-medium">
+                                {formatPrice(method.Cost)}
+                              </span>
                             )}
-                            {method.Cost === 0 && 'Free'}
-                          </p>
+                          </div>
                         </div>
                       </div>
                     </Label>
                   ))}
                 </RadioGroup>
               )}
+            </div>
 
-              <h1 className="text-2xl font-medium mb-3">Delivery Method</h1>
+            {/* Delivery Method Section */}
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h2 className="text-2xl font-semibold mb-6">Delivery Method</h2>
               {deliveryMethods && deliveryMethods.length && (
                 <RadioGroup
                   onValueChange={(val) => {
@@ -399,165 +423,159 @@ const Checkout = () => {
                     );
                   }}
                   defaultValue={`${deliveryMethods[0].Id.toString()}delivery`}
-                  className="border border-gray-200 rounded-md w-full block"
+                  className="space-y-3"
                 >
                   {deliveryMethods.map((method) => (
                     <Label
+                      key={method.Id}
                       htmlFor={`${method.Id.toString()}delivery`}
-                      className="p-3 rounded-md py-5 w-full !my-0 block   bg-white  hover:cursor-pointer border-b border-gray-200"
+                      className="relative flex p-4 cursor-pointer rounded-lg border border-gray-200 hover:border-primary transition-colors"
                     >
-                      <div className="flex gap-[7px]">
+                      <div className="flex items-start gap-4 w-full">
                         <RadioGroupItem
-                          className=" !my-0 "
                           value={`${method.Id.toString()}delivery`}
                           id={`${method.Id.toString()}delivery`}
                         />
-                        <div className="flex w-full justify-between">
-                          <h3 className="tracking-wide !leading-5">
-                            {method.DeliveryMethod}
-                          </h3>
-                          <p>
-                            {method.Cost !== 0 && (
-                              <>{formatPrice(method.Cost)}</>
+                        <div className="flex justify-between w-full">
+                          <div>
+                            <h3 className="font-medium">
+                              {method.DeliveryMethod}
+                            </h3>
+                            <p className="text-sm text-gray-500">
+                              Standard delivery service
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            {method.Cost === 0 ? (
+                              <span className="font-medium text-green-600">
+                                Free
+                              </span>
+                            ) : (
+                              <span className="font-medium">
+                                {formatPrice(method.Cost)}
+                              </span>
                             )}
-                            {method.Cost === 0 && 'Free'}
-                          </p>
+                          </div>
                         </div>
                       </div>
                     </Label>
                   ))}
                 </RadioGroup>
               )}
+            </div>
 
-              <h1 className="text-2xl font-medium mb-3">Payment</h1>
-              {deliveryMethods && deliveryMethods.length && (
-                <RadioGroup
-                  defaultValue={'payment-cod'}
-                  className="border border-gray-200 rounded-md w-full block"
+            {/* Payment Section */}
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h2 className="text-2xl font-semibold mb-6">Payment Method</h2>
+              <RadioGroup defaultValue="payment-cod" className="space-y-3">
+                <Label
+                  htmlFor="payment-cod"
+                  className="relative flex p-4 cursor-pointer rounded-lg border border-gray-200 hover:border-primary transition-colors"
                 >
-                  <Label
-                    htmlFor={`payment-cod`}
-                    className="p-3 rounded-md py-5 w-full !my-0 block   bg-white  hover:cursor-pointer border-b border-gray-200"
-                  >
-                    <div className="flex gap-[7px]">
-                      <RadioGroupItem
-                        className=" !my-0 "
-                        value={`payment-cod`}
-                        id={`payment-cod`}
-                      />
-                      <div className="flex w-full justify-between">
-                        <h3 className="tracking-wide !leading-5">
-                          Cash On Delivery
-                        </h3>
-                      </div>
+                  <div className="flex items-center gap-4">
+                    <RadioGroupItem value="payment-cod" id="payment-cod" />
+                    <div>
+                      <h3 className="font-medium">Cash on Delivery</h3>
+                      <p className="text-sm text-gray-500">
+                        Pay when you receive
+                      </p>
                     </div>
-                  </Label>
-                </RadioGroup>
-              )}
-
-              {siteKey && (
-                <Turnstile options={{ size: 'auto' }} siteKey={siteKey} />
-              )}
-
-              <Button
-                type="submit"
-                className="w-full h-14 bg-[#1773b0]"
-                disabled={!turnstileLoaded}
-              >
-                {!turnstileLoaded && (
-                  <>
-                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                    wait a few moment..
-                  </>
-                )}
-                {turnstileLoaded && (
-                  <div className="flex justify-center items-center gap-[10px] font-bold ">
-                    <span className="text-xl">Place Order</span>
-                    <Lock />
                   </div>
-                )}
-              </Button>
-            </form>
-          </Form>
-          {isPending && <FullScreenLoader />}
-        </div>
+                </Label>
+              </RadioGroup>
 
-        <Card className="w-full">
-          <CardHeader>
-            <CardTitle>
-              {' '}
-              <div className="flex justify-between w-full">
-                <h2>Order Summary</h2>
-                <h2>{formatPrice(estimatedTotal)}</h2>
-              </div>
-            </CardTitle>
-            <CardDescription>Check the order summary bellow</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div>
-              <h1>Your Order Summary</h1>
-              <div className="my-3">
-                {cart && cart.map((cartItem) => <CartItem Cart={cartItem} />)}
+              {/* Add Turnstile and Place Order Button */}
+              <div className="mt-6 space-y-4">
+                {siteKey && (
+                  <Turnstile options={{ size: 'auto' }} siteKey={siteKey} />
+                )}
+
+                <Button
+                  type="submit"
+                  className="w-full py-6 text-lg font-medium"
+                  disabled={!turnstileLoaded || isPending}
+                  variant="default"
+                >
+                  {!turnstileLoaded && (
+                    <>
+                      <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                      Please wait...
+                    </>
+                  )}
+                  {turnstileLoaded && (
+                    <>
+                      {isPending ? (
+                        <>
+                          <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                          Processing...
+                        </>
+                      ) : (
+                        <>
+                          <Lock className="mr-2 h-4 w-4" />
+                          Place Order
+                        </>
+                      )}
+                    </>
+                  )}
+                </Button>
               </div>
             </div>
-          </CardContent>
-          <CardFooter>
-            <div className="w-full">
-              <h1 className="text-xl my-3">Order Summary</h1>
-              <p className="flex w-full justify-between">
-                <span className="block"> Shipping Charge: </span>
+          </form>
+        </Form>
 
-                {shippingMethods?.find((s) => s.Id === selectedShippingMethod)
-                  ?.Cost !== 0 && (
-                  <span className="font-bold">
+        {/* Order Summary Card - Fixed on desktop */}
+        <div className="md:sticky md:top-24 h-fit">
+          <Card className="shadow-sm">
+            <CardHeader className="border-b">
+              <CardTitle>Order Summary</CardTitle>
+              <CardDescription>
+                {cart?.length} {cart?.length === 1 ? 'item' : 'items'} in cart
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="space-y-4">
+                {cart?.map((cartItem) => (
+                  <CartItem key={cartItem.VariationId} Cart={cartItem} />
+                ))}
+              </div>
+            </CardContent>
+            <CardFooter className="border-t p-6">
+              <div className="w-full space-y-3">
+                <div className="flex justify-between text-sm">
+                  <span>Subtotal</span>
+                  <span>{formatPrice(estimatedTotal)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>Shipping</span>
+                  <span>
                     {formatPrice(
                       shippingMethods?.find(
                         (s) => s.Id === selectedShippingMethod
                       )?.Cost || 0
                     )}
                   </span>
-                )}
-                {shippingMethods?.find((s) => s.Id === selectedShippingMethod)
-                  ?.Cost === 0 && <span className="font-bold">Free</span>}
-              </p>
-
-              <p className="my-2 flex w-full justify-between">
-                <span className="block">Delivery Charge: </span>
-
-                {deliveryMethods?.find((s) => s.Id === selectedDeliveryMethod)
-                  ?.Cost !== 0 && (
-                  <span className="font-bold">
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>Delivery</span>
+                  <span>
                     {formatPrice(
                       deliveryMethods?.find(
                         (s) => s.Id === selectedDeliveryMethod
                       )?.Cost || 0
                     )}
                   </span>
-                )}
-                {deliveryMethods?.find((s) => s.Id === selectedDeliveryMethod)
-                  ?.Cost === 0 && <span className="font-bold">Free</span>}
-              </p>
-              <p className="flex w-full justify-between">
-                <span className="block">Total Cost: </span>
-
-                <span className="font-bold block">
-                  {formatPrice(estimatedTotal)}
-                </span>
-              </p>
-            </div>
-          </CardFooter>
-        </Card>
-      </div>
-
-      {products && (
-        <div className="my-10">
-          <h1 className="font-bold text-3xl">Description</h1>
-
-          {cart.map((c) => (
-            <ProductDescription ProductId={c.ProductId} />
-          ))}
+                </div>
+                <div className="border-t pt-3">
+                  <div className="flex justify-between font-medium">
+                    <span>Total</span>
+                    <span>{formatPrice(estimatedTotal)}</span>
+                  </div>
+                </div>
+              </div>
+            </CardFooter>
+          </Card>
         </div>
-      )}
+      </div>
     </div>
   );
 };
