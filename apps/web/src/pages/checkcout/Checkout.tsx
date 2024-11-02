@@ -276,7 +276,6 @@ const Checkout = () => {
               <FormField
                 control={form.control}
                 name="FullName"
-                disabled={isAuthenticated && !!user?.FullName}
                 render={({ field }) => (
                   <FormItem className="!my-[10px] w-full">
                     <FormLabel>Full Name</FormLabel>
@@ -285,6 +284,7 @@ const Checkout = () => {
                         className="py-6"
                         FormError={!!form.formState.errors.FullName}
                         placeholder="Full name"
+                        readOnly={isAuthenticated && !!user?.FullName}
                         {...field}
                       />
                     </FormControl>
@@ -297,7 +297,6 @@ const Checkout = () => {
               <FormField
                 control={form.control}
                 name="Email"
-                disabled={isAuthenticated && !!user?.Email}
                 render={({ field }) => (
                   <FormItem className="!my-[10px]">
                     <FormLabel>Email</FormLabel>
@@ -307,6 +306,7 @@ const Checkout = () => {
                         className="py-6"
                         FormError={!!form.formState.errors.Email}
                         placeholder="Email"
+                        readOnly={isAuthenticated && !!user?.Email}
                         {...field}
                       />
                     </FormControl>
