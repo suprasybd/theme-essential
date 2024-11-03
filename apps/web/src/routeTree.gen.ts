@@ -11,6 +11,7 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as RequestPasswordResetImport } from './routes/request-password-reset'
 import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
 import { Route as DetailsImport } from './routes/details'
@@ -19,10 +20,16 @@ import { Route as AccountImport } from './routes/account'
 import { Route as IndexImport } from './routes/index'
 import { Route as VerifyCodeIndexImport } from './routes/verify/$code/index'
 import { Route as ProductsSlugIndexImport } from './routes/products/$slug/index'
+import { Route as PasswordresetCodeIndexImport } from './routes/passwordreset/$code/index'
 import { Route as PageUrlIndexImport } from './routes/page/$url/index'
 import { Route as CategoryNameIndexImport } from './routes/category/$name/index'
 
 // Create/Update Routes
+
+const RequestPasswordResetRoute = RequestPasswordResetImport.update({
+  path: '/request-password-reset',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const RegisterRoute = RegisterImport.update({
   path: '/register',
@@ -64,6 +71,11 @@ const ProductsSlugIndexRoute = ProductsSlugIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const PasswordresetCodeIndexRoute = PasswordresetCodeIndexImport.update({
+  path: '/passwordreset/$code/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const PageUrlIndexRoute = PageUrlIndexImport.update({
   path: '/page/$url/',
   getParentRoute: () => rootRoute,
@@ -102,12 +114,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterImport
       parentRoute: typeof rootRoute
     }
+    '/request-password-reset': {
+      preLoaderRoute: typeof RequestPasswordResetImport
+      parentRoute: typeof rootRoute
+    }
     '/category/$name/': {
       preLoaderRoute: typeof CategoryNameIndexImport
       parentRoute: typeof rootRoute
     }
     '/page/$url/': {
       preLoaderRoute: typeof PageUrlIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/passwordreset/$code/': {
+      preLoaderRoute: typeof PasswordresetCodeIndexImport
       parentRoute: typeof rootRoute
     }
     '/products/$slug/': {
@@ -130,8 +150,10 @@ export const routeTree = rootRoute.addChildren([
   DetailsRoute,
   LoginRoute,
   RegisterRoute,
+  RequestPasswordResetRoute,
   CategoryNameIndexRoute,
   PageUrlIndexRoute,
+  PasswordresetCodeIndexRoute,
   ProductsSlugIndexRoute,
   VerifyCodeIndexRoute,
 ])

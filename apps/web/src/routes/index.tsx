@@ -1,11 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { getCategoriesOptions } from '@web/components/NavBar/api';
 import PendingComponent from '@web/components/PendingComponent/PendingComponent';
-import Home from '@web/pages/home/Home';
+import Home from '@web/pages/Home/Home';
 import {
   getHomeSectionsOptions,
   getHomesectionsProductsOptions,
 } from '@web/api/home';
+import RequestPasswordReset from '@web/pages/account/RequestPasswordReset';
+import PasswordReset from '@web/pages/account/PasswordReset';
 
 export const Route = createFileRoute('/')({
   loader: async ({ context: { queryClient } }) => {

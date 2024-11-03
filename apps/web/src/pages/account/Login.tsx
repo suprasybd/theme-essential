@@ -6,6 +6,12 @@ import { z } from 'zod';
 
 import {
   Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
   Form,
   FormControl,
   FormField,
@@ -95,33 +101,30 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-full flex-col justify-center md:px-6  lg:px-8 ">
-      <div className="bg-white p-4 md:p-20  rounded-2xl">
-        <div className="sm:mx-auto sm:w-full text-center sm:max-w-sm">
-          <h2 className="mt-10 mb-2 text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            Sign in to your account
-          </h2>
-          <p>And access your order history and others. </p>
-        </div>
-
-        <div className="mt-4 sm:mx-auto sm:w-full sm:max-w-sm">
-          <Form {...form}>
-            <form onSubmit={handleFormWrapper} className="space-y-8">
+    <div className="container mx-auto max-w-[400px] py-10 px-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>Sign In</CardTitle>
+          <CardDescription>
+            Enter your email and password to sign in
+          </CardDescription>
+        </CardHeader>
+        <Form {...form}>
+          <form onSubmit={handleFormWrapper}>
+            <CardContent className="space-y-4">
               <FormField
                 control={form.control}
                 name="Email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-bold">Email</FormLabel>
+                    <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input
-                        className="h-14"
-                        FormError={!!formErrors.errors.Email}
-                        placeholder="Enter Email"
+                        type="email"
+                        placeholder="Enter your email"
                         {...field}
                       />
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
@@ -130,66 +133,50 @@ const Login: React.FC = () => {
                 control={form.control}
                 name="Password"
                 render={({ field }) => (
-                  <FormItem className="space-y-0 !mt-5">
-                    <FormLabel className="font-bold">Password</FormLabel>
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
                     <FormControl>
                       <Input
-                        className="h-14"
-                        FormError={!!formErrors.errors.Password}
                         type="password"
-                        placeholder="Enter Password"
+                        placeholder="Enter your password"
                         {...field}
                       />
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
               {siteKey && (
-                <Turnstile options={{ size: 'auto' }} siteKey={siteKey} />
+                <Turnstile siteKey={siteKey} options={{ size: 'normal' }} />
               )}
-
+            </CardContent>
+            <CardFooter className="flex flex-col space-y-4">
               <Button
                 type="submit"
-                className="w-full h-14 font-xl font-bold"
-                disabled={!turnstileLoaded}
-                variant={'green'}
+                className="w-full"
+                disabled={!turnstileLoaded || isPending}
               >
-                {!turnstileLoaded && (
+                {isPending ? (
                   <>
-                    <ReloadIcon className="mr-2 h-7 w-7 animate-spin" />
-                    wait a few moment..
+                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                    Logging In...
                   </>
-                )}
-
-                {turnstileLoaded && (
-                  <>
-                    {isPending && (
-                      <>
-                        <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                        Loging In..
-                      </>
-                    )}
-                    {!isPending && <>Sign In</>}
-                  </>
+                ) : (
+                  'Sign In'
                 )}
               </Button>
-
-              <p className="mt-10 text-center text-sm text-gray-500 ">
-                Not a member?
-                <Link
-                  to="/register"
-                  className="font-semibold leading-6 text-black pl-2"
-                >
-                  Click here to signup
+              <div className="flex flex-col items-center gap-2 text-sm text-muted-foreground">
+                <Link to="/request-password-reset" className="hover:underline">
+                  Forgot Password?
                 </Link>
-              </p>
-            </form>
-          </Form>
-        </div>
-      </div>
+                <Link to="/register" className="hover:underline">
+                  Don't have an account? Sign up
+                </Link>
+              </div>
+            </CardFooter>
+          </form>
+        </Form>
+      </Card>
     </div>
   );
 };
