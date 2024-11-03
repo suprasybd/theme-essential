@@ -79,13 +79,19 @@ const ProductCard: React.FC<{ ProductId: number }> = ({ ProductId }) => {
       productVariation?.Price
     ) < 0;
 
+  const truncateTitle = (title: string, maxLength = 45) => {
+    if (!title) return '';
+    if (title.length <= maxLength) return title;
+    return title.slice(0, maxLength) + '...';
+  };
+
   return (
-    <div className="w-[310px] md:max-w-[274px] h-fit hover:cursor-pointer group">
-      <div className="rounded-lg overflow-hidden relative border border-gray-200 hover:border-gray-300 transition-all duration-200">
+    <div className="w-[310px] md:max-w-[274px] h-[400px] hover:cursor-pointer group">
+      <div className="rounded-lg overflow-hidden relative border border-gray-200 hover:border-gray-300 transition-all duration-200 h-full flex flex-col">
         <Link
           to="/products/$slug"
           params={{ slug: productDetails?.Slug || '/' }}
-          className="block relative"
+          className="block relative flex-1"
         >
           <div
             className={cn(
@@ -128,32 +134,35 @@ const ProductCard: React.FC<{ ProductId: number }> = ({ ProductId }) => {
             </span>
           )}
 
-          <div className="p-4">
-            <h3 className="font-medium text-base mb-2 line-clamp-2 group-hover:text-green-600 transition-colors">
-              {productDetails?.Title}
+          <div className="p-4 flex flex-col h-[136px]">
+            <h3 className="font-medium text-base line-clamp-2 group-hover:text-green-600 transition-colors">
+              {truncateTitle(productDetails?.Title || '')}
             </h3>
 
-            <div className="flex items-baseline gap-2 mb-2">
-              <span className="font-semibold text-lg">
-                {formatPrice(
-                  productVariation?.SalesPrice || productVariation?.Price || 0
+            <div className="mt-auto space-y-1">
+              <div className="flex items-baseline gap-2">
+                <span className="font-semibold text-lg">
+                  {formatPrice(
+                    productVariation?.SalesPrice || productVariation?.Price || 0
+                  )}
+                </span>
+                {productVariation?.SalesPrice && isOnSale && (
+                  <span className="text-sm text-gray-500 line-through">
+                    {formatPrice(productVariation?.Price)}
+                  </span>
                 )}
-              </span>
-              {productVariation?.SalesPrice && isOnSale && (
-                <span className="text-sm text-gray-500 line-through">
-                  {formatPrice(productVariation?.Price)}
-                </span>
-              )}
-            </div>
+              </div>
 
-            <div className="text-sm mb-3">
-              {productVariation?.Inventory && productVariation.Inventory > 0 ? (
-                <span className="text-green-600">
-                  {productVariation.Inventory} in stock
-                </span>
-              ) : (
-                <span className="text-red-600">Out of stock</span>
-              )}
+              <div className="text-sm">
+                {productVariation?.Inventory &&
+                productVariation.Inventory > 0 ? (
+                  <span className="text-green-600">
+                    {productVariation.Inventory} in stock
+                  </span>
+                ) : (
+                  <span className="text-red-600">Out of stock</span>
+                )}
+              </div>
             </div>
           </div>
         </Link>
