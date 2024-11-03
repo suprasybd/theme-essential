@@ -31,7 +31,7 @@ const formSchema = z.object({
 
 const RequestPasswordReset = () => {
   const navigate = useNavigate();
-  const [siteKey, turnstileLoaded] = useTurnStileHook();
+  const [siteKey, turnstileLoaded, resetTurnstile] = useTurnStileHook();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -45,6 +45,9 @@ const RequestPasswordReset = () => {
       navigate({ to: '/login' });
     },
     onError: (error: any) => {
+      if (error?.response?.status === 400) {
+        resetTurnstile();
+      }
       toast.error(error?.response?.data?.Message || 'Something went wrong');
     },
   });
@@ -62,7 +65,7 @@ const RequestPasswordReset = () => {
         })
       )(e);
     } catch (error) {
-      window.location.reload();
+      resetTurnstile();
     }
   };
 

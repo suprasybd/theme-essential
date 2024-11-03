@@ -1,37 +1,52 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 
-const useTurnStileHook = (): [string, boolean] => {
-  const intervalRef = useRef(null);
+const useTurnStileHook = (): [string, boolean, () => void] => {
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [siteKey, setSiteKey] = useState<string>('');
 
-  useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      const turnstileDiv = document.getElementById('cf-turnstile');
-      const isLoaded =
-        turnstileDiv?.innerHTML.includes('<input') &&
-        turnstileDiv?.innerHTML.includes('value=');
+  const checkTurnstile = useCallback(() => {
+    const turnstileDiv = document.getElementById('cf-turnstile');
+    const isLoaded =
+      turnstileDiv?.innerHTML.includes('<input') &&
+      turnstileDiv?.innerHTML.includes('value=');
 
-      if (isLoaded) {
-        setIsLoaded(true);
-        clearInterval(intervalRef.current as any);
+    if (isLoaded) {
+      setIsLoaded(true);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
       }
+    }
 
-      const lSKey = localStorage.getItem('turnstile-site-key');
-
-      if (lSKey) {
-        setSiteKey(lSKey);
-      }
-    }, 1000) as any;
-
-    return () => {
-      clearInterval(intervalRef.current as any);
-    };
+    const lSKey = localStorage.getItem('turnstile-site-key');
+    if (lSKey) {
+      setSiteKey(lSKey);
+    }
   }, []);
 
-  return [siteKey, isLoaded];
+  const resetTurnstile = useCallback(() => {
+    setIsLoaded(false);
+    if (window.turnstile) {
+      window.turnstile.reset();
+    }
+    if (!intervalRef.current) {
+      intervalRef.current = setInterval(checkTurnstile, 1000);
+    }
+  }, [checkTurnstile]);
+
+  useEffect(() => {
+    intervalRef.current = setInterval(checkTurnstile, 1000);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [checkTurnstile]);
+
+  return [siteKey, isLoaded, resetTurnstile] as const;
 };
 
 export default useTurnStileHook;

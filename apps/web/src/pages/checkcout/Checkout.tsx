@@ -226,25 +226,19 @@ const Checkout = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [priceMap, selectedDeliveryMethod, selectedShippingMethod]);
 
-  const [siteKey, turnstileLoaded] = useTurnStileHook();
+  const [siteKey, turnstileLoaded, resetTurnstile] = useTurnStileHook();
 
-  const forceUpdate = () => {
-    window.location.reload();
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFormWrapper = (e: any) => {
     e.preventDefault();
     try {
       const tRes = e.target['cf-turnstile-response'].value;
-
       if (!tRes) return;
 
       form.handleSubmit((values: z.infer<typeof formSchemaCheckout>) =>
         onSubmit(values, tRes)
       )(e);
     } catch (error) {
-      forceUpdate();
+      resetTurnstile();
     }
   };
 

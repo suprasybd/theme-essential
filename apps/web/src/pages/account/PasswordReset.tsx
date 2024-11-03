@@ -42,7 +42,7 @@ const formSchema = z
 const PasswordReset = () => {
   const { code } = useParams({ strict: false }) as { code: string };
   const navigate = useNavigate();
-  const [siteKey, turnstileLoaded] = useTurnStileHook();
+  const [siteKey, turnstileLoaded, resetTurnstile] = useTurnStileHook();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -60,6 +60,9 @@ const PasswordReset = () => {
       navigate({ to: '/login' });
     },
     onError: (error: any) => {
+      if (error?.response?.status === 400) {
+        resetTurnstile();
+      }
       toast.error(error?.response?.data?.Message || 'Something went wrong');
     },
   });
@@ -77,7 +80,7 @@ const PasswordReset = () => {
         })
       )(e);
     } catch (error) {
-      window.location.reload();
+      resetTurnstile();
     }
   };
 

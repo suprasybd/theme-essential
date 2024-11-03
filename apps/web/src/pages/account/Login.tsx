@@ -45,7 +45,7 @@ const Login: React.FC = () => {
   const { toast } = useToast();
   const formErrors = form.formState;
 
-  const [siteKey, turnstileLoaded] = useTurnStileHook();
+  const [siteKey, turnstileLoaded, resetTurnstile] = useTurnStileHook();
 
   const navigate = useNavigate();
 
@@ -60,7 +60,7 @@ const Login: React.FC = () => {
       response: { data: { Message: string }; status: number };
     }) => {
       if (response.response.status === 400) {
-        window.location.reload();
+        resetTurnstile();
       }
       toast({
         title: 'Login',
@@ -96,7 +96,7 @@ const Login: React.FC = () => {
         onSubmit(values, tRes)
       )(e);
     } catch (error) {
-      forceUpdate();
+      resetTurnstile();
     }
   };
 

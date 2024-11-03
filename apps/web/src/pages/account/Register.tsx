@@ -56,7 +56,12 @@ const Register: React.FC = () => {
         variant: 'default',
       });
     },
-    onError: (response: { response: { data: { Message: string } } }) => {
+    onError: (response: {
+      response: { data: { Message: string }; status: number };
+    }) => {
+      if (response.response.status === 400) {
+        resetTurnstile();
+      }
       toast({
         title: 'Register',
         description: response.response.data.Message,
@@ -78,26 +83,21 @@ const Register: React.FC = () => {
 
   const usersEmail = form.watch('Email');
 
-  const forceUpdate = () => {
-    window.location.reload();
-  };
+  const [siteKey, turnstileLoaded, resetTurnstile] = useTurnStileHook();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFormWrapper = (e: any) => {
     e.preventDefault();
     try {
       const tRes = e.target['cf-turnstile-response'].value;
-
       if (!tRes) return;
 
       form.handleSubmit((values: z.infer<typeof registerSchema>) =>
         onSubmit(values, tRes)
       )(e);
     } catch (error) {
-      forceUpdate();
+      resetTurnstile();
     }
   };
-  const [siteKey, turnstileLoaded] = useTurnStileHook();
 
   return (
     <div className="flex min-h-full mt-20 md:mt-0 flex-col justify-center px-6 py-3 lg:px-8">
