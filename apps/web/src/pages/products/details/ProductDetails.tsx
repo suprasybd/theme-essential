@@ -105,7 +105,7 @@ const ProductDetails: React.FC = () => {
     ) < 0;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-[1220px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="lg:grid lg:grid-cols-2 lg:gap-x-8 lg:items-start">
         {/* Left column - Product Images */}
         <div className="w-full">

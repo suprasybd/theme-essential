@@ -89,6 +89,6 @@ export const getProductsDetailsByIdOption = (ProductId: number) =>
 export const getProductImagesOption = (VariationId: number) =>
   queryOptions({
     queryKey: ['getProductImages', VariationId],
-    queryFn: () => getProductImages(VariationId || 0),
+    queryFn: () => getProductImages(VariationId),
     enabled: !!VariationId,
   });

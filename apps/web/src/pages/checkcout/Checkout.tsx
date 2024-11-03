@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { toast } from '@frontend.suprasy.com/ui';
 
 import {
   Button,
@@ -89,6 +90,16 @@ const Checkout = () => {
     mutationFn: placeOrderPost,
     onSuccess: () => {
       clearCart();
+    },
+    onError: (error: any) => {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description:
+          error?.response?.data?.Message ||
+          error?.response?.data?.message ||
+          'Something went wrong. Please try again.',
+      });
     },
   });
 

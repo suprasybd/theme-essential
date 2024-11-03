@@ -15,9 +15,9 @@ const Details = () => {
           <TabsTrigger className="cursor-pointer" value="orders">
             Orders
           </TabsTrigger>
-          <TabsTrigger className="cursor-pointer" value="account">
+          {/* <TabsTrigger className="cursor-pointer" value="account">
             Account
-          </TabsTrigger>
+          </TabsTrigger> */}
         </TabsList>
         <TabsContent value="orders">
           <Orders />

@@ -6,6 +6,7 @@ import {
   formatPrice,
 } from '@web/libs/helpers/formatPrice';
 import {
+  getProductImages,
   getProductImagesOption,
   getProductsDetailsByIdOption,
   getProductVariations,
@@ -25,17 +26,19 @@ const ProductCard: React.FC<{ ProductId: number }> = ({ ProductId }) => {
 
   const productDetails = productsDetailsResponse?.Data;
 
-  const { data: productImagesResponse } = useSuspenseQuery(
-    getProductImagesOption(ProductId)
-  );
-
   const { data: productVariationsResponse } = useQuery({
     queryKey: ['getProductVariations', productDetails?.Id],
     queryFn: () => getProductVariations(productDetails?.Id || 0),
     enabled: !!productDetails?.Id,
   });
 
-  const productVariation = productVariationsResponse?.Data[0];
+  const productVariation = productVariationsResponse?.Data?.[0];
+
+  const { data: productImagesResponse } = useQuery({
+    queryKey: ['getProductImages', productVariation?.Id],
+    queryFn: () => getProductImages(productVariation?.Id || 0),
+    enabled: !!productVariation?.Id,
+  });
 
   const productImages = productImagesResponse?.Data;
 

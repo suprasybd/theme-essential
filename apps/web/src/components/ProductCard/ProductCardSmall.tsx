@@ -1,6 +1,7 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery, useQuery } from '@tanstack/react-query';
 import { formatPrice } from '@web/libs/helpers/formatPrice';
 import {
+  getProductImages,
   getProductImagesOption,
   getProductsDetailsByIdOption,
   getProductVariations,
@@ -21,17 +22,22 @@ const ProductCardSmall: React.FC<{
 
   const productDetails = productsDetailsResponse?.Data;
 
-  const { data: productImagesResponse } = useSuspenseQuery(
-    getProductImagesOption(ProductId)
-  );
-
+  // Get variations first
   const { data: productVariationsResponse } = useSuspenseQuery({
     queryKey: ['getProductVariations', ProductId],
     queryFn: () => getProductVariations(ProductId),
   });
 
+  const variation = productVariationsResponse?.Data?.[0];
+
+  // Use variation ID to get images
+  const { data: productImagesResponse } = useQuery({
+    queryKey: ['getProductImages', variation?.Id],
+    queryFn: () => getProductImages(variation?.Id || 0),
+    enabled: !!variation?.Id,
+  });
+
   const productImages = productImagesResponse?.Data;
-  const variation = productVariationsResponse?.Data?.[0]; // Get first variation
 
   const handleClick = () => {
     setModal?.(false);
