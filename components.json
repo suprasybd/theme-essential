@@ -9,7 +9,7 @@
     "cssVariables": true
   },
   "aliases": {
-    "components": "@frontend.suprasy.com/ui/components",
-    "utils": "@frontend.suprasy.com/ui/utils"
+    "components": "@/components/ui/components",
+    "utils": "@/components/ui/utils"
   }
 }
