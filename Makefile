@@ -1,3 +1,2 @@
 default:
-	npx nx serve web
-	
+	npm run dev
