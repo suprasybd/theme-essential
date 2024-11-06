@@ -1,1 +1,2 @@
-export const STORE_KEY = '9F4626E5A98240A390C3659A1FAEE350';
+import { STORE_KEY as sk } from './api';
+export const STORE_KEY = sk;
