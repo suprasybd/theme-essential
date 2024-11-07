@@ -6,7 +6,7 @@ A powerful and customizable e-commerce storefront theme for Suprasy merchants. T
 
 ### Before You Begin
 
-1. Create your store at [Suprasy.com](https://suprasy.com)
+1. Create your store at [Suprasy.com](https://suprasy.com). You can create a store for free.
 2. Get your Store Key from your Suprasy dashboard
 3. Have Node.js v16+ installed
 
