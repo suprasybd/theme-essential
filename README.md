@@ -28,11 +28,19 @@ A powerful and customizable e-commerce storefront theme for Suprasy merchants. T
    ```
 
 3. Configure your environment:
+
    - Copy `.env.example` to `.env`
    - Add your Suprasy Store Key:
      ```
      VITE_STORE_KEY=YOUR_STORE_KEY_HERE
      ```
+
+4. Start development server:
+   ```bash
+   npm start
+   # or using make command
+   make
+   ```
 
 ### Customization Guide
 
@@ -42,5 +50,15 @@ This theme is designed to be customized. Here's how you can make it your own:
 - **Components**: All UI components are in `src/components` - extend or modify as needed
 - **Layout**: Adjust page layouts in `src/layouts`
 - **Features**: Add new features by creating new components and routes
+
+### Deployment
+
+You can deploy your theme frontend to any hosting provider or static site hosting service. We recommend using Cloudflare Pages for free hosting with these benefits:
+
+- Zero configuration deployment
+- Automatic builds and deployments
+- Free SSL certificates
+- Global CDN distribution
+- Unlimited bandwidth
 
 ### Development
