@@ -19,6 +19,9 @@ import ImagePreview from '@/components/Image/ImagePreview';
 import { Image } from 'lucide-react';
 import cn from 'classnames';
 
+import { ShoppingBag } from 'lucide-react';
+import { Link } from '@tanstack/react-router';
+
 const Orders = () => {
   const [limit] = React.useState<number>(10);
   const [page, setPage] = React.useState<number>(1);
@@ -29,6 +32,24 @@ const Orders = () => {
   });
 
   const orders = ordersResponse?.Data;
+
+  if (!orders || orders.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 text-center">
+        <ShoppingBag className="h-16 w-16 text-gray-300 mb-4" />
+        <h2 className="text-2xl font-medium text-gray-900 mb-2">
+          No orders yet
+        </h2>
+        <p className="text-gray-500 max-w-md mb-8">
+          When you place orders, they will appear here. Start shopping to create
+          your first order!
+        </p>
+        <Link to="/">
+          <Button className="min-w-[200px]">Start Shopping</Button>
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div>
