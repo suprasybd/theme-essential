@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Link, useNavigate } from '@tanstack/react-router';
+import { Link, useNavigate, useSearch } from '@tanstack/react-router';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -46,15 +46,22 @@ const Login: React.FC = () => {
   const formErrors = form.formState;
 
   const [siteKey, turnstileLoaded, resetTurnstile] = useTurnStileHook();
-
   const navigate = useNavigate();
+  const search = useSearch({ from: '/login' });
 
-  const { mutate: loginMutation, isPending } = useMutation({
+  const {
+    mutate: loginMutation,
+    isPending,
+    isSuccess,
+  } = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
-      navigate({
-        to: '/',
-      });
+      // After successful login, redirect back to checkout if that's where user came from
+      if (search && 'redirect' in search && search.redirect === '/checkout') {
+        navigate({ to: '/checkout' });
+      } else {
+        navigate({ to: '/' });
+      }
     },
     onError: (response: {
       response: { data: { Message: string }; status: number };

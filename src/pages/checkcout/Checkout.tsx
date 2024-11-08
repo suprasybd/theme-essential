@@ -34,9 +34,15 @@ import {
   getDevliveryMethods,
   getShippingMethods,
   placeOrderPost,
+  checkUserExists,
 } from '../../api/checkout/index';
 import FullScreenLoader from '@/components/Loader/Loader';
-import { Link, useParams, useSearch } from '@tanstack/react-router';
+import {
+  Link,
+  useParams,
+  useSearch,
+  useNavigate,
+} from '@tanstack/react-router';
 import { Turnstile } from '@marsidev/react-turnstile';
 import useTurnStileHook from '@/hooks/turnstile';
 import { ReloadIcon } from '@radix-ui/react-icons';
@@ -61,6 +67,35 @@ export const formSchemaCheckout = z.object({
   PaymentType: z.string().min(1).max(100).default('cod'),
   Products: z.array(orderProducts).min(1).max(10),
 });
+
+const LoginPrompt = () => {
+  return (
+    <div className="mt-2 p-4 bg-blue-50 rounded-lg border border-blue-100">
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+            <Lock className="h-5 w-5 text-blue-600" />
+          </div>
+          <div>
+            <h3 className="text-sm font-medium text-blue-900">Welcome Back!</h3>
+            <p className="text-sm text-blue-600">
+              Looks like you already have an account. Please sign in to continue
+              with your purchase.
+            </p>
+          </div>
+        </div>
+        <Link to="/login" search={{ redirect: '/checkout' }} className="w-full">
+          <Button
+            variant="default"
+            className="w-full bg-blue-600 hover:bg-blue-700"
+          >
+            Sign In to Continue
+          </Button>
+        </Link>
+      </div>
+    </div>
+  );
+};
 
 const Checkout = () => {
   const { products } = useSearch({
@@ -102,41 +137,6 @@ const Checkout = () => {
       });
     },
   });
-
-  // useEffect(() => {
-  //   if (!products) return;
-
-  //   const dCoded = JSON.parse(decode(products));
-
-  //   if (products && dCoded) {
-  //     clearCart();
-  //     dCoded.forEach((prod: { [x: string]: any }) => {
-  //       if (
-  //         Object.keys(prod).includes('ProductId') &&
-  //         Object.keys(prod).includes('Variant')
-  //       ) {
-  //         if (
-  //           typeof prod['ProductId'] === 'number' &&
-  //           typeof prod['Variant'] === 'string'
-  //         ) {
-  //           addToCart({
-  //             ProductId: prod['ProductId'],
-  //             ProductAttribute: prod['Variant'],
-  //             Quantity: 1,
-  //           });
-  //         }
-  //       } else if (Object.keys(prod).includes('ProductId')) {
-  //         if (typeof prod['ProductId'] === 'number') {
-  //           addToCart({
-  //             ProductId: prod['ProductId'],
-  //             Quantity: 1,
-  //           });
-  //         }
-  //       }
-  //     });
-  //     console.log('dcoded', dCoded);
-  //   }
-  // }, [products]);
 
   useEffect(() => {
     if (isAuthenticated && user) {
@@ -197,12 +197,51 @@ const Checkout = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cart]);
 
+  const [canPurchase, setCanPurchase] = useState<boolean | null>(null);
+  const navigate = useNavigate();
+
+  const { mutate: checkUser } = useMutation({
+    mutationFn: checkUserExists,
+    onSuccess: (response) => {
+      setCanPurchase(response.Data.canPurchase);
+    },
+  });
+
+  useEffect(() => {
+    const email = form.watch('Email');
+    const debounceTimer = setTimeout(() => {
+      if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        checkUser(email);
+      }
+    }, 500);
+
+    return () => clearTimeout(debounceTimer);
+  }, [form.watch('Email')]);
+
   function onSubmit(
     values: z.infer<typeof formSchemaCheckout>,
     turnstileResponse: string | null
   ) {
+    if (!canPurchase) {
+      toast({
+        title: 'Authentication Required',
+        description: 'You must be logged in to place an order.',
+        variant: 'destructive',
+      });
+      navigate({
+        to: '/login',
+        search: { redirect: '/checkout' },
+      });
+      return;
+    }
     handlePlaceOrder({ ...values, 'cf-turnstile-response': turnstileResponse });
   }
+
+  useEffect(() => {
+    if (isAuthenticated && user?.Email) {
+      checkUser(user.Email);
+    }
+  }, [isAuthenticated, user]);
 
   const estimatedTotal = useMemo(() => {
     if (priceMap) {
@@ -231,14 +270,27 @@ const Checkout = () => {
   const handleFormWrapper = (e: any) => {
     e.preventDefault();
     try {
-      const tRes = e.target['cf-turnstile-response'].value;
-      if (!tRes) return;
+      const tRes = e.target['cf-turnstile-response']?.value;
+
+      if (!tRes) {
+        toast({
+          title: 'Verification Required',
+          description: 'Please complete the verification check',
+          variant: 'destructive',
+        });
+        return;
+      }
 
       form.handleSubmit((values: z.infer<typeof formSchemaCheckout>) =>
         onSubmit(values, tRes)
       )(e);
     } catch (error) {
       resetTurnstile();
+      toast({
+        title: 'Error',
+        description: 'Something went wrong. Please try again.',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -321,8 +373,8 @@ const Checkout = () => {
                           {...field}
                         />
                       </FormControl>
-
                       <FormMessage />
+                      {canPurchase === false && <LoginPrompt />}
                     </FormItem>
                   )}
                 />
@@ -498,16 +550,20 @@ const Checkout = () => {
                 <Button
                   type="submit"
                   className="w-full py-6 text-lg font-medium"
-                  disabled={!turnstileLoaded || isPending}
+                  disabled={!turnstileLoaded || isPending || !canPurchase}
                   variant="default"
                 >
-                  {!turnstileLoaded && (
+                  {!turnstileLoaded ? (
                     <>
                       <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                       Please wait...
                     </>
-                  )}
-                  {turnstileLoaded && (
+                  ) : !canPurchase ? (
+                    <>
+                      <Lock className="mr-2 h-4 w-4" />
+                      Login Required
+                    </>
+                  ) : (
                     <>
                       {isPending ? (
                         <>

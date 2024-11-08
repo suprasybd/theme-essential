@@ -42,3 +42,18 @@ export const placeOrderPost = async (
 
   return response.data;
 };
+
+export interface CheckUserResponse {
+  Success: boolean;
+  Data: {
+    canPurchase: boolean;
+  };
+  Message: string;
+}
+
+export const checkUserExists = async (
+  email: string
+): Promise<CheckUserResponse> => {
+  const response = await ApiClient.get(`/storefront-order/check-user/${email}`);
+  return response.data;
+};
