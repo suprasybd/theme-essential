@@ -26,7 +26,6 @@ export * from './checkbox';
 export * from './toast';
 export * from './toaster';
 export * from './use-toast';
-export * from '../SlateEditor/RichText';
 export * from './sheet';
 export * from './radio-group';
 export * from './hover-card';

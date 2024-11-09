@@ -23,6 +23,18 @@ const ProductCard: React.FC<{ ProductId: number }> = ({ ProductId }) => {
   );
 
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const {
+    addToCart,
+    cart,
+    setQuantity: setQtyCart,
+    clearCart,
+  } = useCartStore((state) => state);
+
+  // Return early if no product data
+  if (!productsDetailsResponse?.Data) {
+    return null;
+  }
 
   const productDetails = productsDetailsResponse?.Data;
 
@@ -41,15 +53,6 @@ const ProductCard: React.FC<{ ProductId: number }> = ({ ProductId }) => {
   });
 
   const productImages = productImagesResponse?.Data;
-
-  const {
-    addToCart,
-    cart,
-    setQuantity: setQtyCart,
-    clearCart,
-  } = useCartStore((state) => state);
-
-  const navigate = useNavigate();
 
   const inStock = true;
 
