@@ -1,4 +1,4 @@
-import { Button, RichTextRender, useToast } from '@/components/ui';
+import { Button, useToast } from '@/components/ui';
 import {
   queryOptions,
   useQuery,
@@ -7,6 +7,7 @@ import {
 import { useNavigate, useParams } from '@tanstack/react-router';
 import cn from 'classnames';
 import React, { useEffect, useMemo, useState } from 'react';
+import { SuprasyRender } from 'suprasy-render-react';
 import {
   getProductImagesOption,
   getProductVariations,
@@ -133,7 +134,7 @@ const ProductDetails: React.FC = () => {
               </div>
 
               <div className="mt-6">
-                <RichTextRender
+                <SuprasyRender
                   className="prose prose-sm max-w-none min-h-fit"
                   initialVal={productDetails.Summary}
                 />
@@ -258,7 +259,7 @@ const ProductDetails: React.FC = () => {
         </h2>
         {productDetails?.Description && (
           <div className="prose prose-sm max-w-none">
-            <RichTextRender initialVal={productDetails.Description} />
+            <SuprasyRender initialVal={productDetails.Description} />
           </div>
         )}
       </div>

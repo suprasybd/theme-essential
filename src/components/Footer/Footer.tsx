@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { getFooter, getPages } from './api';
-import { RichTextRender } from '@/components/ui';
+import { SuprasyRender } from 'suprasy-render-react';
 
 const Footer = () => {
   const { data: footerResponse } = useQuery({
@@ -44,7 +44,7 @@ const Footer = () => {
           {footer?.Description && (
             <div className="flex-1 min-w-[250px]">
               <div className="prose prose-slate max-w-none">
-                <RichTextRender initialVal={footer.Description} />
+                <SuprasyRender initialVal={footer.Description} />
               </div>
             </div>
           )}

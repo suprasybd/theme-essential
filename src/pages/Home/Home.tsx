@@ -6,7 +6,6 @@ import {
 } from '../../api/home/index';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
-  RichTextRender,
   Carousel,
   CarouselContent,
   CarouselItem,
@@ -15,6 +14,7 @@ import {
 } from '@/components/ui';
 import ProductCard from '@/components/ProductCard/ProductCard';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { SuprasyRender } from 'suprasy-render-react';
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -141,7 +141,7 @@ const Home = () => {
                   {section.Title}
                 </h1>
                 <div className="max-w-3xl mx-auto">
-                  <RichTextRender
+                  <SuprasyRender
                     className="text-gray-600 !min-h-fit"
                     initialVal={section.Description}
                   />

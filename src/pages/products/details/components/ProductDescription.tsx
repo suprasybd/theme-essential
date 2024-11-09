@@ -1,7 +1,7 @@
 import React from 'react';
 import { getProductsDetailsById } from '../../../../api/products';
 import { useQuery } from '@tanstack/react-query';
-import { RichTextRender } from '@/components/ui';
+import { SuprasyRender } from 'suprasy-render-react';
 
 const ProductDescription: React.FC<{ ProductId: number }> = ({ ProductId }) => {
   const { data: productsDetailsResponse } = useQuery({
@@ -18,7 +18,7 @@ const ProductDescription: React.FC<{ ProductId: number }> = ({ ProductId }) => {
         Product Name: {productDetails?.Title}
       </h1>
       {productDetails?.Description && (
-        <RichTextRender initialVal={productDetails?.Description} />
+        <SuprasyRender initialVal={productDetails?.Description} />
       )}
     </div>
   );

@@ -56,6 +56,7 @@
     "slate-history": "^0.100.0",
     "slate-react": "^0.102.0",
     "sonner": "^1.6.1",
+    "suprasy-render-react": "^1.0.4",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
     "use-debounce": "^10.0.1",
@@ -98,12 +99,12 @@
     "eslint-plugin-react-hooks": "4.6.0",
     "jsdom": "~22.1.0",
     "nx": "18.0.4",
-    "postcss": "8.4.21",
+    "postcss": "^8.4.47",
     "prettier": "^2.6.2",
     "sass": "^1.55.0",
     "tailwindcss": "3.2.7",
     "typescript": "~5.3.2",
-    "vite": "~5.0.0",
+    "vite": "^5.4.10",
     "vite-plugin-dts": "~2.3.0",
     "vitest": "^1.0.4"
   }

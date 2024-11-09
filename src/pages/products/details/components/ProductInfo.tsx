@@ -1,6 +1,6 @@
 import React from 'react';
 import { ProductType } from '../../../../api/products/types';
-import { RichTextRender } from '@/components/ui';
+import { SuprasyRender } from 'suprasy-render-react';
 
 interface ProdcutInfoPropTypes {
   ProductDetails: ProductType;
@@ -11,7 +11,7 @@ const ProductInfo: React.FC<ProdcutInfoPropTypes> = ({ ProductDetails }) => {
     <div>
       <h1 className="text-4xl font-medium">{ProductDetails.Title}</h1>
       <div className="my-3">
-        <RichTextRender initialVal={ProductDetails.Summary} />
+        <SuprasyRender initialVal={ProductDetails.Summary} />
       </div>
     </div>
   );
