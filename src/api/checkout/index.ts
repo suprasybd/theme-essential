@@ -6,6 +6,7 @@ export interface AreaType {
 
   Area: string;
   Cost: number;
+  Description: string | null;
   CreatedAt: string;
   UpdatedAt: string;
 }
@@ -15,6 +16,15 @@ export interface DeliveryType {
 
   DeliveryMethod: string;
   Cost: number;
+  Description: string | null;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
+
+export interface PaymentMethodType {
+  Id: number;
+  PaymentMethod: string;
+  Description: string | null;
   CreatedAt: string;
   UpdatedAt: string;
 }
@@ -32,6 +42,13 @@ export const getDevliveryMethods = async (): Promise<
 > => {
   const response = await ApiClient.get(`/storefront-order/delivery-method`);
 
+  return response.data;
+};
+
+export const getPaymentMethods = async (): Promise<
+  ListResponseType<PaymentMethodType>
+> => {
+  const response = await ApiClient.get(`/storefront-order/payment-methods`);
   return response.data;
 };
 

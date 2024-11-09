@@ -35,6 +35,7 @@ import {
   getShippingMethods,
   placeOrderPost,
   checkUserExists,
+  getPaymentMethods,
 } from '../../api/checkout/index';
 import FullScreenLoader from '@/components/Loader/Loader';
 import {
@@ -64,7 +65,7 @@ export const formSchemaCheckout = z.object({
   Phone: z.string().min(2).max(100),
   DeliveryMethodId: z.number(),
   ShippingMethodId: z.number(),
-  PaymentType: z.string().min(1).max(100).default('cod'),
+  PaymentMethodId: z.number(),
   Products: z.array(orderProducts).min(1).max(10),
 });
 
@@ -110,6 +111,7 @@ const Checkout = () => {
     useState<number>(0);
   const [selectedDeliveryMethod, setSelectedDeliveryMethod] =
     useState<number>(0);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<number>(0);
 
   const form = useForm<z.infer<typeof formSchemaCheckout>>({
     resolver: zodResolver(formSchemaCheckout),
@@ -294,6 +296,25 @@ const Checkout = () => {
     }
   };
 
+  const { data: paymentMethodsResponse } = useQuery({
+    queryKey: ['getPaymentMethods'],
+    queryFn: () => getPaymentMethods(),
+  });
+
+  const paymentMethods = paymentMethodsResponse?.Data;
+
+  useEffect(() => {
+    if (paymentMethods && paymentMethods.length) {
+      setSelectedPaymentMethod(paymentMethods[0].Id);
+    }
+  }, [paymentMethods]);
+
+  useEffect(() => {
+    if (selectedPaymentMethod) {
+      form.setValue('PaymentMethodId', selectedPaymentMethod);
+    }
+  }, [selectedPaymentMethod]);
+
   if (isSuccess) {
     return (
       <div className="w-full max-w-[1220px] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
@@ -446,9 +467,11 @@ const Checkout = () => {
                         <div className="flex justify-between w-full">
                           <div>
                             <h3 className="font-medium">{method.Area}</h3>
-                            <p className="text-sm text-gray-500">
-                              Estimated delivery: 2-3 days
-                            </p>
+                            {method.Description && (
+                              <p className="text-sm text-gray-500">
+                                {method.Description}
+                              </p>
+                            )}
                           </div>
                           <div className="text-right">
                             {method.Cost === 0 ? (
@@ -475,32 +498,32 @@ const Checkout = () => {
               {deliveryMethods && deliveryMethods.length && (
                 <RadioGroup
                   onValueChange={(val) => {
-                    setSelectedDeliveryMethod(
-                      parseInt(val.replace(/delivery/g, ''))
-                    );
+                    setSelectedDeliveryMethod(parseInt(val));
                   }}
-                  defaultValue={`${deliveryMethods[0].Id.toString()}delivery`}
+                  defaultValue={deliveryMethods[0].Id.toString()}
                   className="space-y-3"
                 >
                   {deliveryMethods.map((method) => (
                     <Label
                       key={method.Id}
-                      htmlFor={`${method.Id.toString()}delivery`}
+                      htmlFor={`delivery-${method.Id}`}
                       className="relative flex p-4 cursor-pointer rounded-lg border border-gray-200 hover:border-primary transition-colors"
                     >
                       <div className="flex items-start gap-4 w-full">
                         <RadioGroupItem
-                          value={`${method.Id.toString()}delivery`}
-                          id={`${method.Id.toString()}delivery`}
+                          value={method.Id.toString()}
+                          id={`delivery-${method.Id}`}
                         />
                         <div className="flex justify-between w-full">
                           <div>
                             <h3 className="font-medium">
                               {method.DeliveryMethod}
                             </h3>
-                            <p className="text-sm text-gray-500">
-                              Standard delivery service
-                            </p>
+                            {method.Description && (
+                              <p className="text-sm text-gray-500">
+                                {method.Description}
+                              </p>
+                            )}
                           </div>
                           <div className="text-right">
                             {method.Cost === 0 ? (
@@ -524,22 +547,40 @@ const Checkout = () => {
             {/* Payment Section */}
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-2xl font-semibold mb-6">Payment Method</h2>
-              <RadioGroup defaultValue="payment-cod" className="space-y-3">
-                <Label
-                  htmlFor="payment-cod"
-                  className="relative flex p-4 cursor-pointer rounded-lg border border-gray-200 hover:border-primary transition-colors"
+              {paymentMethods && paymentMethods.length > 0 && (
+                <RadioGroup
+                  onValueChange={(val) =>
+                    setSelectedPaymentMethod(parseInt(val))
+                  }
+                  defaultValue={paymentMethods[0].Id.toString()}
+                  className="space-y-3"
                 >
-                  <div className="flex items-center gap-4">
-                    <RadioGroupItem value="payment-cod" id="payment-cod" />
-                    <div>
-                      <h3 className="font-medium">Cash on Delivery</h3>
-                      <p className="text-sm text-gray-500">
-                        Pay when you receive
-                      </p>
-                    </div>
-                  </div>
-                </Label>
-              </RadioGroup>
+                  {paymentMethods.map((method) => (
+                    <Label
+                      key={method.Id}
+                      htmlFor={`payment-${method.Id}`}
+                      className="relative flex p-4 cursor-pointer rounded-lg border border-gray-200 hover:border-primary transition-colors"
+                    >
+                      <div className="flex items-center gap-4 w-full">
+                        <RadioGroupItem
+                          value={method.Id.toString()}
+                          id={`payment-${method.Id}`}
+                        />
+                        <div>
+                          <h3 className="font-medium">
+                            {method.PaymentMethod}
+                          </h3>
+                          {method.Description && (
+                            <p className="text-sm text-gray-500">
+                              {method.Description}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </Label>
+                  ))}
+                </RadioGroup>
+              )}
 
               {/* Add Turnstile and Place Order Button */}
               <div className="mt-6 space-y-4">
