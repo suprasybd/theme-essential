@@ -349,14 +349,16 @@ const Checkout = () => {
 
   return (
     <div className="w-full max-w-[1220px] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
-      <div className="grid md:grid-cols-[1fr,400px] gap-8">
+      <div className="flex flex-col-reverse md:grid md:grid-cols-[1fr,400px] gap-8">
         {/* Form Section */}
         <Form {...form}>
-          <form onSubmit={handleFormWrapper} className="space-y-8">
+          <form onSubmit={handleFormWrapper} className="space-y-6">
             {/* Delivery Details Section */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h1 className="text-2xl font-semibold mb-6">Delivery Details</h1>
-              <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+              <h1 className="text-xl sm:text-2xl font-semibold mb-6">
+                Delivery Details
+              </h1>
+              <div className="space-y-4 sm:space-y-6">
                 <FormField
                   control={form.control}
                   name="FullName"
@@ -365,14 +367,13 @@ const Checkout = () => {
                       <FormLabel>Full Name</FormLabel>
                       <FormControl>
                         <Input
-                          className="py-6"
+                          className="py-5 sm:py-6"
                           FormError={!!form.formState.errors.FullName}
                           placeholder="Full name"
                           readOnly={isAuthenticated && !!user?.FullName}
                           {...field}
                         />
                       </FormControl>
-
                       <FormMessage />
                     </FormItem>
                   )}
@@ -387,7 +388,7 @@ const Checkout = () => {
                       <FormControl>
                         <Input
                           type="email"
-                          className="py-6"
+                          className="py-5 sm:py-6"
                           FormError={!!form.formState.errors.Email}
                           placeholder="Email"
                           readOnly={isAuthenticated && !!user?.Email}
@@ -408,7 +409,7 @@ const Checkout = () => {
                       <FormLabel>Phone</FormLabel>
                       <FormControl>
                         <Input
-                          className="py-6"
+                          className="py-5 sm:py-6"
                           FormError={!!form.formState.errors.Phone}
                           placeholder="Phone"
                           {...field}
@@ -443,8 +444,10 @@ const Checkout = () => {
             </div>
 
             {/* Shipping Section */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-2xl font-semibold mb-6">Shipping Area</h2>
+            <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+              <h2 className="text-xl sm:text-2xl font-semibold mb-6">
+                Shipping Area
+              </h2>
               {shippingMethods && shippingMethods.length && (
                 <RadioGroup
                   onValueChange={(val) =>
@@ -457,14 +460,14 @@ const Checkout = () => {
                     <Label
                       key={method.Id}
                       htmlFor={method.Id.toString()}
-                      className="relative flex p-4 cursor-pointer rounded-lg border border-gray-200 hover:border-primary transition-colors"
+                      className="relative flex p-3 sm:p-4 cursor-pointer rounded-lg border border-gray-200 hover:border-primary transition-colors"
                     >
-                      <div className="flex items-start gap-4 w-full">
+                      <div className="flex items-start gap-3 sm:gap-4 w-full">
                         <RadioGroupItem
                           value={method.Id.toString()}
                           id={method.Id.toString()}
                         />
-                        <div className="flex justify-between w-full">
+                        <div className="flex justify-between w-full flex-col sm:flex-row gap-2">
                           <div>
                             <h3 className="font-medium">{method.Area}</h3>
                             {method.Description && (
@@ -473,7 +476,7 @@ const Checkout = () => {
                               </p>
                             )}
                           </div>
-                          <div className="text-right">
+                          <div className="sm:text-right">
                             {method.Cost === 0 ? (
                               <span className="font-medium text-green-600">
                                 Free
@@ -493,8 +496,10 @@ const Checkout = () => {
             </div>
 
             {/* Delivery Method Section */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-2xl font-semibold mb-6">Delivery Method</h2>
+            <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+              <h2 className="text-xl sm:text-2xl font-semibold mb-6">
+                Delivery Method
+              </h2>
               {deliveryMethods && deliveryMethods.length && (
                 <RadioGroup
                   onValueChange={(val) => {
@@ -507,14 +512,14 @@ const Checkout = () => {
                     <Label
                       key={method.Id}
                       htmlFor={`delivery-${method.Id}`}
-                      className="relative flex p-4 cursor-pointer rounded-lg border border-gray-200 hover:border-primary transition-colors"
+                      className="relative flex p-3 sm:p-4 cursor-pointer rounded-lg border border-gray-200 hover:border-primary transition-colors"
                     >
-                      <div className="flex items-start gap-4 w-full">
+                      <div className="flex items-start gap-3 sm:gap-4 w-full">
                         <RadioGroupItem
                           value={method.Id.toString()}
                           id={`delivery-${method.Id}`}
                         />
-                        <div className="flex justify-between w-full">
+                        <div className="flex justify-between w-full flex-col sm:flex-row gap-2">
                           <div>
                             <h3 className="font-medium">
                               {method.DeliveryMethod}
@@ -525,7 +530,7 @@ const Checkout = () => {
                               </p>
                             )}
                           </div>
-                          <div className="text-right">
+                          <div className="sm:text-right">
                             {method.Cost === 0 ? (
                               <span className="font-medium text-green-600">
                                 Free
@@ -545,8 +550,10 @@ const Checkout = () => {
             </div>
 
             {/* Payment Section */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-2xl font-semibold mb-6">Payment Method</h2>
+            <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+              <h2 className="text-xl sm:text-2xl font-semibold mb-6">
+                Payment Method
+              </h2>
               {paymentMethods && paymentMethods.length > 0 && (
                 <RadioGroup
                   onValueChange={(val) =>
@@ -559,9 +566,9 @@ const Checkout = () => {
                     <Label
                       key={method.Id}
                       htmlFor={`payment-${method.Id}`}
-                      className="relative flex p-4 cursor-pointer rounded-lg border border-gray-200 hover:border-primary transition-colors"
+                      className="relative flex p-3 sm:p-4 cursor-pointer rounded-lg border border-gray-200 hover:border-primary transition-colors"
                     >
-                      <div className="flex items-center gap-4 w-full">
+                      <div className="flex items-center gap-3 sm:gap-4 w-full">
                         <RadioGroupItem
                           value={method.Id.toString()}
                           id={`payment-${method.Id}`}
@@ -582,15 +589,20 @@ const Checkout = () => {
                 </RadioGroup>
               )}
 
-              {/* Add Turnstile and Place Order Button */}
+              {/* Turnstile and Place Order Button */}
               <div className="mt-6 space-y-4">
                 {siteKey && (
-                  <Turnstile options={{ size: 'auto' }} siteKey={siteKey} />
+                  <div className="w-full overflow-hidden">
+                    <Turnstile
+                      options={{ size: 'compact' }}
+                      siteKey={siteKey}
+                    />
+                  </div>
                 )}
 
                 <Button
                   type="submit"
-                  className="w-full py-6 text-lg font-medium"
+                  className="w-full py-5 sm:py-6 text-base sm:text-lg font-medium"
                   disabled={!turnstileLoaded || isPending || !canPurchase}
                   variant="default"
                 >
@@ -625,23 +637,23 @@ const Checkout = () => {
           </form>
         </Form>
 
-        {/* Order Summary Card - Fixed on desktop */}
-        <div className="md:sticky md:top-24 h-fit">
+        {/* Order Summary Card */}
+        <div className="md:sticky md:top-24 h-fit mb-6 md:mb-0">
           <Card className="shadow-sm">
-            <CardHeader className="border-b">
+            <CardHeader className="border-b p-4 sm:p-6">
               <CardTitle>Order Summary</CardTitle>
               <CardDescription>
                 {cart?.length} {cart?.length === 1 ? 'item' : 'items'} in cart
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <div className="space-y-4">
                 {cart?.map((cartItem) => (
                   <CartItem key={cartItem.VariationId} Cart={cartItem} />
                 ))}
               </div>
             </CardContent>
-            <CardFooter className="border-t p-6">
+            <CardFooter className="border-t p-4 sm:p-6">
               <div className="w-full space-y-3">
                 <div className="flex justify-between text-sm">
                   <span>Subtotal</span>

@@ -44,11 +44,13 @@ import {
 import { useAuthStore } from '@/store/authStore';
 import { logoutUser } from '@/config/profile/logout';
 import classNames from 'classnames';
+import { useSidebarStore } from '@/store/sidebarStore';
 
 const NavBar: React.FC = () => {
   const { cart } = useCartStore((state) => state);
   const { isAuthenticated, user } = useAuthStore((state) => state);
   const { setModalPath } = useModalStore((state) => state);
+  const { toggleSideBar } = useSidebarStore((state) => state);
 
   const navigate = useNavigate();
 
@@ -167,13 +169,60 @@ const NavBar: React.FC = () => {
 
         {/* Mobile Navigation */}
         <div className="md:hidden flex items-center justify-between py-4 px-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden hover:bg-slate-100 rounded-lg"
-          >
-            <Menu className="h-6 w-6 text-slate-700" />
-          </Button>
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden hover:bg-slate-100 rounded-lg"
+              >
+                <Menu className="h-6 w-6 text-slate-700" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[300px] p-0">
+              <div className="flex flex-col h-full">
+                <SheetHeader className="p-4 border-b">
+                  <SheetTitle>Menu</SheetTitle>
+                </SheetHeader>
+                <div className="flex-1 overflow-auto">
+                  <nav className="flex flex-col">
+                    {categories?.map((category) => (
+                      <div key={category.Id}>
+                        <CategoryComponent
+                          category={category}
+                          isMobile={true}
+                        />
+                      </div>
+                    ))}
+                  </nav>
+                </div>
+                {isAuthenticated && (
+                  <div className="border-t p-4">
+                    <div className="flex items-center space-x-3 mb-2">
+                      <UserRound className="h-5 w-5" />
+                      <span className="font-medium">{user?.FullName}</span>
+                    </div>
+                    <div className="space-y-3">
+                      <Link
+                        to="/details"
+                        className="flex items-center space-x-2 text-sm text-slate-600 hover:text-slate-900"
+                      >
+                        <ShoppingBag className="h-4 w-4" />
+                        <span>Orders</span>
+                      </Link>
+                      <button
+                        onClick={logoutUser}
+                        className="flex items-center space-x-2 text-sm text-slate-600 hover:text-slate-900"
+                      >
+                        <Power className="h-4 w-4" />
+                        <span>Sign out</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </SheetContent>
+          </Sheet>
 
           <Link to="/" className="flex-shrink-0">
             <img className="h-10 w-auto" src={logo?.LogoLink} alt="logo" />

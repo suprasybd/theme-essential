@@ -164,16 +164,18 @@ const SectionProducts: React.FC<{ sectionId: number }> = ({ sectionId }) => {
   const sectionProducts = sectionProductsResponse?.Data;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      {sectionProducts?.length > 0 &&
-        sectionProducts.map((products) => (
-          <div
-            key={products.Id.toString()}
-            className="transform transition duration-300 hover:scale-105"
-          >
-            <ProductCard ProductId={products.ProductId} />
-          </div>
-        ))}
+    <div className="flex justify-center">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
+        {sectionProducts?.length > 0 &&
+          sectionProducts.map((products) => (
+            <div
+              key={products.Id.toString()}
+              className="transform transition duration-300 hover:scale-105 flex justify-center"
+            >
+              <ProductCard ProductId={products.ProductId} />
+            </div>
+          ))}
+      </div>
     </div>
   );
 };
