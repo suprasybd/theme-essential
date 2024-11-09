@@ -211,6 +211,11 @@ const ProductDetails: React.FC = () => {
                         VariationId: selectedVariation,
                         Quantity: quantity,
                       });
+                      toast({
+                        title: 'Success',
+                        description: 'Item added to cart',
+                        variant: 'default',
+                      });
                     } else {
                       toast({
                         variant: 'destructive',

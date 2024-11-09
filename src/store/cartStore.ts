@@ -53,19 +53,14 @@ export const useCartStore = create<CartStoreTypes>()(
       }));
     },
     setCart(cart) {
-      set((state) => ({ ...state, cart: cart as any }));
+      set((state) => ({ ...state, cart }));
     },
     removeFromCart(id) {
-      set((state) => {
-        const afterRemove = state.cart.filter((item) => item.Id !== id);
-        if (afterRemove.length === 0) {
-          localStorage.removeItem('CartData');
-        }
-        return { cart: state.cart.filter((item) => item.Id !== id) };
-      });
+      set((state) => ({
+        cart: state.cart.filter((item) => item.Id !== id),
+      }));
     },
     clearCart() {
-      localStorage.removeItem('CartData');
       set({ cart: [] });
     },
     setQuantity(id, quantity) {

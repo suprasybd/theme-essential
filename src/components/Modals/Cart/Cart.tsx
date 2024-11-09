@@ -37,23 +37,7 @@ const CartModal: React.FC = () => {
     clearModalPath();
   };
 
-  const { cart, priceMap, setCart } = useCartStore((state) => state);
-
-  // persest cart data
-  useEffect(() => {
-    if (cart && cart.length) {
-      // save changes on change cart to localstorage
-      localStorage.setItem('CartData', JSON.stringify(cart));
-    } else {
-      // load from local storage if found in localstorage
-      if (localStorage.getItem('CartData')) {
-        const parsed = JSON.parse(localStorage.getItem('CartData') || '');
-        if (parsed && parsed.length) {
-          setCart(parsed);
-        }
-      }
-    }
-  }, [cart, setCart]);
+  const { cart, priceMap } = useCartStore((state) => state);
 
   const estimatedTotal = useMemo(() => {
     if (priceMap) {

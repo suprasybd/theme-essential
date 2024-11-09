@@ -178,6 +178,11 @@ const ProductCard: React.FC<{ ProductId: number }> = ({ ProductId }) => {
                     VariationId: selectedVariation,
                     Quantity: 1,
                   });
+                  toast({
+                    title: 'Success',
+                    description: 'Item added to cart',
+                    variant: 'default',
+                  });
                 } else {
                   toast({
                     variant: 'destructive',
