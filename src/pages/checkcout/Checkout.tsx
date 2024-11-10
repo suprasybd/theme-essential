@@ -431,7 +431,7 @@ const Checkout = () => {
                         <Input
                           className="py-7"
                           FormError={!!form.formState.errors.Address}
-                          placeholder="Address eg. - Area, Mirpur, Road Number , House Number"
+                          placeholder="Address eg. - Area, Road Number , House Number"
                           {...field}
                         />
                       </FormControl>
