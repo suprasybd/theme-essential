@@ -29,8 +29,9 @@ A powerful and customizable e-commerce storefront theme for Suprasy merchants. T
 
 3. Configure your environment:
 
-   - Copy `.env.example` to `.env`
+   - In`.env.development`
    - Add your Suprasy Store Key:
+   - And update api urls to production urls
      ```
      VITE_STORE_KEY=YOUR_STORE_KEY_HERE
      ```
