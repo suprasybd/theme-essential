@@ -33,7 +33,9 @@ A powerful and customizable e-commerce storefront theme for Suprasy merchants. T
    - Add your Suprasy Store Key:
    - And update api urls to production urls
      ```
-     VITE_STORE_KEY=YOUR_STORE_KEY_HERE
+     VITE_API_URL=https://api.suprasy.com
+      VITE_RENDER_URL=https://render.suprasy.com
+      VITE_STORE_KEY=STORE_KEY_GOES_HERE
      ```
 
 4. Start development server:
