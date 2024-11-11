@@ -63,8 +63,8 @@ const SearchModal: React.FC = () => {
           }
         }}
       >
-        <DialogContent className="sm:max-w-[600px] gap-6">
-          <DialogHeader className="space-y-4">
+        <DialogContent className="sm:max-w-[600px] gap-6 h-[90vh] sm:h-auto flex flex-col">
+          <DialogHeader className="space-y-4 flex-shrink-0">
             <DialogTitle className="text-2xl">Search Products</DialogTitle>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -78,34 +78,36 @@ const SearchModal: React.FC = () => {
             </div>
           </DialogHeader>
 
-          <div className="relative min-h-[200px]">
-            {!dSearch && (
-              <div className="text-center text-gray-500 py-8">
-                <Search className="h-12 w-12 mx-auto mb-3 text-gray-300" />
-                <p>Start typing to search for products</p>
-              </div>
-            )}
+          <div className="flex-1 overflow-hidden">
+            <div className="h-full overflow-y-auto">
+              {!dSearch && (
+                <div className="text-center text-gray-500 py-8">
+                  <Search className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                  <p>Start typing to search for products</p>
+                </div>
+              )}
 
-            {dSearch && !products?.length && (
-              <div className="text-center text-gray-500 py-8">
-                <p>No products found for "{dSearch}"</p>
-              </div>
-            )}
+              {dSearch && !products?.length && (
+                <div className="text-center text-gray-500 py-8">
+                  <p>No products found for "{dSearch}"</p>
+                </div>
+              )}
 
-            {products && products.length > 0 && (
-              <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2">
-                {products.map((product) => (
-                  <ProductCardSmall
-                    key={product.Id}
-                    ProductId={product.Id}
-                    setModal={setModalOpen}
-                  />
-                ))}
-              </div>
-            )}
+              {products && products.length > 0 && (
+                <div className="space-y-2 pr-2">
+                  {products.map((product) => (
+                    <ProductCardSmall
+                      key={product.Id}
+                      ProductId={product.Id}
+                      setModal={setModalOpen}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-end flex-shrink-0 pt-4">
             <Button
               variant="outline"
               onClick={() => closeModal()}

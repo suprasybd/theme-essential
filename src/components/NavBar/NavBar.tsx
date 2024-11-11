@@ -196,7 +196,7 @@ const NavBar: React.FC = () => {
                     ))}
                   </nav>
                 </div>
-                {isAuthenticated && (
+                {isAuthenticated ? (
                   <div className="border-t p-4">
                     <div className="flex items-center space-x-3 mb-2">
                       <UserRound className="h-5 w-5" />
@@ -218,6 +218,17 @@ const NavBar: React.FC = () => {
                         <span>Sign out</span>
                       </button>
                     </div>
+                  </div>
+                ) : (
+                  <div className="border-t p-4">
+                    <Button
+                      variant="default"
+                      className="w-full"
+                      onClick={() => navigate({ to: '/login' })}
+                    >
+                      <UserRound className="h-5 w-5 mr-2" />
+                      Sign in
+                    </Button>
                   </div>
                 )}
               </div>
